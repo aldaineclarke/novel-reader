@@ -15,6 +15,8 @@ import 'firebase_options.dart';
 import 'utils/http_client.dart';
 
 void main() async {
+  print('This is the Server: ${Env.serverUrl}');
+
   await runZonedGuarded(
     () async {
       final widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
@@ -24,7 +26,9 @@ void main() async {
         options: DefaultFirebaseOptions.currentPlatform,
       );
       GetIt.instance.registerLazySingleton(
-        () => HttpClient(baseOptions: BaseOptions(baseUrl: Env.serverUrl)),
+        () {
+          return HttpClient(baseOptions: BaseOptions(baseUrl: Env.serverUrl));
+        },
       );
       if (!kIsWeb) {
         if (kDebugMode) {

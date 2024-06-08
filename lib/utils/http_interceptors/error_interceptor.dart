@@ -7,6 +7,7 @@ class ErrorInterceptor extends Interceptor {
     ErrorInterceptorHandler handler,
   ) async {
     var dioError = err;
+    print(err);
     switch (err.type) {
       case DioExceptionType.cancel:
         dioError = err.copyWith(error: 'Request to API server was cancelled');

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "953081664116",
+    "project_id": "novelworld-a84e4",
+    "storage_bucket": "novelworld-a84e4.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:953081664116:android:d779a50c46260a58e6f721",
+        "android_client_info": {
+          "package_name": "com.vainestudios.novelworld"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBb0XlskVG9WzAdC07XqRvzFNThlGbRSLQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

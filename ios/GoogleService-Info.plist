@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>API_KEY</key>
+	<string>AIzaSyBHKMmq_dPnx1XtcycpcUO-qWN8Vkg9G5Q</string>
+	<key>GCM_SENDER_ID</key>
+	<string>953081664116</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.vainestudios.novelworld</string>
+	<key>PROJECT_ID</key>
+	<string>novelworld-a84e4</string>
+	<key>STORAGE_BUCKET</key>
+	<string>novelworld-a84e4.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:953081664116:ios:dfbb54ec0459740ae6f721</string>
+</dict>
+</plist>
