@@ -136,7 +136,7 @@ class NovelSectionWidget extends StatelessWidget {
                       return InkWell(
                         onTap: () {
                           return GoRouter.of(context)
-                              .go('/novel/${novelItem.id}');
+                              .go('/novels/${novelItem.id}');
                         },
                         child: NovelItemWidget(novelItem: novelItem),
                       );

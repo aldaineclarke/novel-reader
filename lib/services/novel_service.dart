@@ -11,16 +11,10 @@ class NovelService {
     try {
       final response =
           await GetIt.I<HttpClient>().get<Map<String, dynamic>>(fullRoute);
-      print(response);
       final apiResult = APIResult.fromJson(response.data!);
       final results = apiResult.results.map((data) {
         return NovelItem.fromJson(data as Map<String, dynamic>);
       }).toList();
-      // This is used because the API has the structure {results: []}
-      // final resultsDynamic = data.cast<String, List<dynamic>>()['results'];
-
-      // Ensure that results is a List<String>
-      // final List<LightNovel> results = resultsDynamic!.cast<String>();
       return results;
     } catch (e) {
       print(e);
@@ -32,18 +26,34 @@ class NovelService {
     try {
       final response =
           await GetIt.I<HttpClient>().get<Map<String, dynamic>>('/genres');
-
-      print('Data : ${response.data!}');
       final data = response.data!;
       // This is used because the API has the structure {results: []}
       final resultsDynamic = data.cast<String, List<dynamic>>()['results'];
-
       // Ensure that results is a List<String>
-      final List<String> results = resultsDynamic!.cast<String>();
+      final results = resultsDynamic!.cast<String>();
       return results;
     } catch (e) {
       print(e);
       return ["genre1", "genre 2"];
+    }
+  }
+
+  static Future<LightNovel> getNovelInfo(String novelId) async {
+    try {
+      final response = await GetIt.I<HttpClient>()
+          .get<Map<String, dynamic>>('/info?id=$novelId');
+      if (response.data == null) throw Exception('No novel found');
+      var lightNovel = LightNovel.fromJson(response.data!);
+      return lightNovel;
+    } catch (e) {
+      print(e);
+      return LightNovel(
+          id: 'id',
+          title: 'title',
+          genres: [],
+          description: 'description',
+          status: 'status',
+          chapters: []);
     }
   }
 }

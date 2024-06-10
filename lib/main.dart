@@ -15,8 +15,6 @@ import 'firebase_options.dart';
 import 'utils/http_client.dart';
 
 void main() async {
-  print('This is the Server: ${Env.serverUrl}');
-
   await runZonedGuarded(
     () async {
       final widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
