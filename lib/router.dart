@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutterboilerplate/main_scaffold.dart';
 import 'package:flutterboilerplate/pages/genres.dart';
 import 'package:flutterboilerplate/pages/novel_details.dart';
+import 'package:flutterboilerplate/pages/novel_list.dart';
 import 'package:go_router/go_router.dart';
 
 import 'pages/home.dart';
@@ -28,9 +29,16 @@ GoRouter appRouter() => GoRouter(
             name: NovelDetailsPage.routeName,
             builder: (BuildContext context, GoRouterState state) {
               final id = state.pathParameters['id'] ?? '';
-              print('in Router: $id');
               return NovelDetailsPage(novelId: id);
             }),
+        GoRoute(
+          path: '/novel-list/:id',
+          name: NovelListScreen.routeName,
+          builder: (BuildContext context, GoRouterState state) {
+            final id = state.pathParameters['id'] ?? '';
+            return const NovelListScreen(listId: 'latest-release');
+          },
+        ),
       ],
       observers: [
         FirebaseAnalyticsObserver(analytics: FirebaseAnalytics.instance),

@@ -6,7 +6,7 @@ import 'package:go_router/go_router.dart';
 class NovelDetailsPage extends StatelessWidget {
   const NovelDetailsPage({required this.novelId, super.key});
   final String novelId;
-  static const routeName = 'Novel Details';
+  static const routeName = 'Novel List';
   @override
   Widget build(BuildContext context) {
     return Scaffold(

@@ -113,7 +113,14 @@ class NovelSectionWidget extends StatelessWidget {
                   .bodyMedium
                   ?.copyWith(fontWeight: FontWeight.w700),
             ),
-            TextButton(onPressed: () {}, child: const Text('See All'))
+            TextButton(
+              onPressed: () {
+                GoRouter.of(context).go(
+                  Uri(path: '/novel-list/$routeName').toString(),
+                );
+              },
+              child: const Text('See All'),
+            )
           ],
         ),
         SizedBox(
@@ -127,20 +134,21 @@ class NovelSectionWidget extends StatelessWidget {
                 return Text('Has the error ${snapshot.error}');
               } else {
                 return ListView.separated(
-                    scrollDirection: Axis.horizontal,
-                    itemCount: snapshot.data!.length,
-                    separatorBuilder: (BuildContext context, int index) =>
-                        const SizedBox(width: 20, height: 20),
-                    itemBuilder: (BuildContext context, int index) {
-                      final novelItem = snapshot.data![index];
-                      return InkWell(
-                        onTap: () {
-                          return GoRouter.of(context)
-                              .go('/novels/${novelItem.id}');
-                        },
-                        child: NovelItemWidget(novelItem: novelItem),
-                      );
-                    });
+                  scrollDirection: Axis.horizontal,
+                  itemCount: snapshot.data!.length,
+                  separatorBuilder: (BuildContext context, int index) =>
+                      const SizedBox(width: 20, height: 20),
+                  itemBuilder: (BuildContext context, int index) {
+                    final novelItem = snapshot.data![index];
+                    return InkWell(
+                      onTap: () {
+                        return GoRouter.of(context)
+                            .go('/novels/${novelItem.id}');
+                      },
+                      child: NovelItemWidget(novelItem: novelItem),
+                    );
+                  },
+                );
               }
             },
           ),
