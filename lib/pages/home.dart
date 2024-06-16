@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutterboilerplate/home_tabs/discover.dart';
+import 'package:novel_reader/home_tabs/discover.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});

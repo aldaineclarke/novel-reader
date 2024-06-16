@@ -1,6 +1,6 @@
-import 'package:flutterboilerplate/models/models.dart';
-import 'package:flutterboilerplate/models/novel_item.dart';
-import 'package:flutterboilerplate/utils/http_client.dart';
+import 'package:novel_reader/models/models.dart';
+import 'package:novel_reader/models/novel_item.dart';
+import 'package:novel_reader/utils/http_client.dart';
 import 'package:get_it/get_it.dart';
 
 class NovelService {
@@ -46,7 +46,6 @@ class NovelService {
       var lightNovel = LightNovel.fromJson(response.data!);
       return lightNovel;
     } catch (e) {
-      print(e);
       return LightNovel(
           id: 'id',
           title: 'title',
@@ -56,11 +55,26 @@ class NovelService {
           chapters: []);
     }
   }
+
+  static Future<ChapterData> getNovelChapter(String chapterId) async {
+    try {
+      final response = await GetIt.I<HttpClient>()
+          .get<Map<String, dynamic>>('/read?chapterId=$chapterId');
+      if (response.data == null) throw Exception('No novel found');
+      var chapterData = ChapterData.fromJson(response.data!);
+      return chapterData;
+    } catch (e) {
+      print(e);
+      return ChapterData(
+        text: 'No Data',
+        chapterTitle: 'Dummy text',
+        novelTitle: 'Novel Data',
+      );
+    }
+  }
 }
 
 class APIResult {
-  final List<dynamic> results;
-
   APIResult({required this.results});
 
   factory APIResult.fromJson(Map<String, dynamic> json) {
@@ -68,4 +82,23 @@ class APIResult {
       results: json['results'] as List<dynamic>,
     );
   }
+  final List<dynamic> results;
+}
+
+class ChapterData {
+  ChapterData(
+      {required this.text,
+      required this.chapterTitle,
+      required this.novelTitle});
+
+  factory ChapterData.fromJson(Map<String, dynamic> json) {
+    return ChapterData(
+      novelTitle: json['novelTitle'] as String,
+      chapterTitle: json['chapterTitle'] as String,
+      text: json['text'] as String,
+    );
+  }
+  final String novelTitle;
+  final String chapterTitle;
+  final String text;
 }

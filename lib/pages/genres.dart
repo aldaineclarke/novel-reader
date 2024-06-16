@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:flutterboilerplate/services/novel_service.dart';
+import 'package:novel_reader/services/novel_service.dart';
 
 class GenresPage extends StatelessWidget {
   const GenresPage({super.key});

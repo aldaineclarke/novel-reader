@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutterboilerplate/models/novel_item.dart';
-import 'package:flutterboilerplate/services/novel_service.dart';
+import 'package:novel_reader/models/novel_item.dart';
+import 'package:novel_reader/services/novel_service.dart';
 import 'package:go_router/go_router.dart';
 
 class DiscoverTab extends StatelessWidget {

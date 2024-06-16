@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutterboilerplate/services/novel_service.dart';
+import 'package:novel_reader/services/novel_service.dart';
 import 'package:go_router/go_router.dart';
 
 class NovelDetailsPage extends StatelessWidget {
@@ -143,7 +143,10 @@ class NovelDetailsPage extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       TextButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          GoRouter.of(context).go(
+                              '/novels/view/${novelData.chapters[0]['id']}');
+                        },
                         child: const Text('Start Reading'),
                       ),
                       TextButton(
