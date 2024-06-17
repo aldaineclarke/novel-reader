@@ -2,7 +2,7 @@
     package="dev.vainestudios.novel_reader">
    <application
         android:name="${applicationName}"
-        android:label="Flutter Boilerplate"
+        android:label="Novel Reader"
         android:icon="@mipmap/launcher_icon"
         android:enableOnBackInvokedCallback="true">
         <activity

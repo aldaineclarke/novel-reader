@@ -1,17 +1,18 @@
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:novel_reader/main_scaffold.dart';
 import 'package:novel_reader/pages/genres.dart';
 import 'package:novel_reader/pages/novel_details.dart';
 import 'package:novel_reader/pages/novel_list.dart';
 import 'package:novel_reader/pages/novel_view.dart';
-import 'package:go_router/go_router.dart';
 
 import 'pages/home.dart';
 
 GoRouter appRouter() => GoRouter(
       debugLogDiagnostics: kDebugMode,
+      initialLocation: '/',
       routes: <GoRoute>[
         GoRoute(
           path: '/',
@@ -26,7 +27,8 @@ GoRouter appRouter() => GoRouter(
               const MainScaffold(child: GenresPage()),
         ),
         GoRoute(
-          path: '/novels/view/:chapterId(.*)',
+          path:
+              '/novels/view/:chapterId(.*)', // tells go router that everything after view will be apart of the chapterId route parameter.
           name: NovelView.routeName,
           builder: (BuildContext context, GoRouterState state) {
             final id = state.pathParameters['chapterId'] ?? '';

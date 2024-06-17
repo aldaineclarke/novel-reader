@@ -18,7 +18,7 @@ class _MainScaffoldState extends State<MainScaffold> {
     setState(() {
       _selectedIndex = index;
     });
-    GoRouter.of(context).go(_routes[index]);
+    context.push(_routes[index]);
   }
 
   @override
@@ -52,19 +52,5 @@ class _MainScaffoldState extends State<MainScaffold> {
         ],
       ),
     );
-  }
-}
-
-class MyWidget extends StatefulWidget {
-  const MyWidget({super.key});
-
-  @override
-  State<MyWidget> createState() => _MyWidgetState();
-}
-
-class _MyWidgetState extends State<MyWidget> {
-  @override
-  Widget build(BuildContext context) {
-    return const Placeholder();
   }
 }

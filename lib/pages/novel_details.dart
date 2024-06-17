@@ -1,14 +1,16 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:novel_reader/providers/chapter_list_provider.dart';
 import 'package:novel_reader/services/novel_service.dart';
 import 'package:go_router/go_router.dart';
 
-class NovelDetailsPage extends StatelessWidget {
+class NovelDetailsPage extends ConsumerWidget {
   const NovelDetailsPage({required this.novelId, super.key});
   final String novelId;
   static const routeName = 'Novel List';
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final novelDetailsFuture = ref.watch(novelDetailsProvider(novelId));
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
@@ -19,19 +21,15 @@ class NovelDetailsPage extends StatelessWidget {
         ),
         title: const Text('Book Details'),
       ),
-      body: FutureBuilder(
-        future: NovelService.getNovelInfo(novelId),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasData) {
-            final novelData = snapshot.data!;
-            // Define a regular expression to match digits
+      body: novelDetailsFuture.when(
+          error: (error, stackTrace) => const Text("No Content"),
+          loading: () => const Center(child: CircularProgressIndicator()),
+          data: (novelData) {
+// Define a regular expression to match digits
             final regExp = RegExp(r'\d+');
 
             // Find all matches in the input string
             final match = regExp.firstMatch(novelData.lastChapter);
-
             return Padding(
               padding: const EdgeInsets.all(20.0),
               child: Column(
@@ -160,11 +158,7 @@ class NovelDetailsPage extends StatelessWidget {
                 ],
               ),
             );
-          } else {
-            return const Text("No Content");
-          }
-        },
-      ),
+          }),
     );
   }
 }

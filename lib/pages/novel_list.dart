@@ -14,7 +14,7 @@ class NovelListScreen extends StatelessWidget {
       appBar: AppBar(
         leading: IconButton(
           onPressed: () {
-            return GoRouter.of(context).go('/');
+            return context.go('/');
           },
           icon: const Icon(Icons.arrow_back_rounded),
         ),
@@ -35,7 +35,7 @@ class NovelListScreen extends StatelessWidget {
                   final novelItem = snapshot.data![index];
                   return InkWell(
                     onTap: () {
-                      return GoRouter.of(context).go('/novels/${novelItem.id}');
+                      GoRouter.of(context).push('/novels/${novelItem.id}');
                     },
                     child: SizedBox(
                       height: 200,

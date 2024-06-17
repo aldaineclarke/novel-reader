@@ -1,3 +1,4 @@
+import 'package:novel_reader/models/chapter_data.dart';
 import 'package:novel_reader/models/models.dart';
 import 'package:novel_reader/models/novel_item.dart';
 import 'package:novel_reader/utils/http_client.dart';
@@ -83,22 +84,4 @@ class APIResult {
     );
   }
   final List<dynamic> results;
-}
-
-class ChapterData {
-  ChapterData(
-      {required this.text,
-      required this.chapterTitle,
-      required this.novelTitle});
-
-  factory ChapterData.fromJson(Map<String, dynamic> json) {
-    return ChapterData(
-      novelTitle: json['novelTitle'] as String,
-      chapterTitle: json['chapterTitle'] as String,
-      text: json['text'] as String,
-    );
-  }
-  final String novelTitle;
-  final String chapterTitle;
-  final String text;
 }

@@ -7,6 +7,7 @@ import 'package:firebase_performance/firebase_performance.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get_it/get_it.dart';
 
 import 'app.dart';
@@ -48,7 +49,7 @@ void main() async {
         return ErrorWidget(error.exception);
       };
 
-      runApp(const MyApp());
+      runApp(const ProviderScope(child: MyApp()));
       FlutterNativeSplash.remove(); // Now remove splash screen
     },
     (exception, stackTrace) {

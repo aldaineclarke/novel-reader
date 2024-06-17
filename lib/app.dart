@@ -22,7 +22,7 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
-      title: 'Flutter Boilerplate',
+      title: 'Novel Reader',
       theme: ThemeData(primarySwatch: Colors.blue),
       routeInformationParser: router.routeInformationParser,
       routerDelegate: router.routerDelegate,
