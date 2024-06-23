@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get_it/get_it.dart';
+import 'package:pull_to_refresh_flutter3/pull_to_refresh_flutter3.dart';
 
 import 'app.dart';
 import 'env.dart';
@@ -49,7 +50,13 @@ void main() async {
         return ErrorWidget(error.exception);
       };
 
-      runApp(const ProviderScope(child: MyApp()));
+      runApp(
+        ProviderScope(
+          child: RefreshConfiguration(
+            child: MyApp(),
+          ),
+        ),
+      );
       FlutterNativeSplash.remove(); // Now remove splash screen
     },
     (exception, stackTrace) {
