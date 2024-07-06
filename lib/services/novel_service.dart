@@ -39,10 +39,15 @@ class NovelService {
     }
   }
 
-  static Future<LightNovel> getNovelInfo(String novelId) async {
+  static Future<LightNovel> getNovelInfo(String novelId,
+      [int? chapterPage]) async {
     try {
-      final response = await GetIt.I<HttpClient>()
-          .get<Map<String, dynamic>>('/info?id=$novelId');
+      var url = '/info?id=$novelId';
+      if (chapterPage != null) {
+        url += '&chapterPage=$chapterPage';
+      }
+      final response =
+          await GetIt.I<HttpClient>().get<Map<String, dynamic>>(url);
       if (response.data == null) throw Exception('No novel found');
       var lightNovel = LightNovel.fromJson(response.data!);
       return lightNovel;

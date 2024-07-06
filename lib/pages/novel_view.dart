@@ -8,6 +8,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:novel_reader/providers/chapter_list_provider.dart';
+import 'package:novel_reader/providers/database_provider.dart';
 import 'package:novel_reader/services/novel_service.dart';
 import 'package:pull_to_refresh_flutter3/pull_to_refresh_flutter3.dart';
 
@@ -103,6 +104,8 @@ class _NovelViewState extends ConsumerState<NovelView> {
 
   @override
   Widget build(BuildContext context) {
+    final novelList = ref.read(chapterListProvider);
+
     return Scaffold(
       backgroundColor: Colors.amber[50],
       body: FutureBuilder(
@@ -114,6 +117,7 @@ class _NovelViewState extends ConsumerState<NovelView> {
             return const Text('No Content');
           }
           final val = ref.read(chapterListProvider);
+          // currentNovelProvider['someData'] = "";
           return Stack(
             children: [
               Positioned(
@@ -156,11 +160,12 @@ class _NovelViewState extends ConsumerState<NovelView> {
                         return GestureDetector(
                           onDoubleTap: () {
                             showModalBottomSheet(
-                                backgroundColor: Colors.white,
-                                context: context,
-                                builder: (context) {
-                                  return const NovelViewOptionPanel();
-                                });
+                              backgroundColor: Colors.white,
+                              context: context,
+                              builder: (BuildContext context) {
+                                return const NovelViewOptionPanel();
+                              },
+                            );
                           },
                           onTap: () {
                             showSnackBar(context);

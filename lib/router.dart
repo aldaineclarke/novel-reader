@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:novel_reader/main_scaffold.dart';
 import 'package:novel_reader/pages/genres.dart';
+import 'package:novel_reader/pages/novel_chapter_list.dart';
 import 'package:novel_reader/pages/novel_details.dart';
 import 'package:novel_reader/pages/novel_list.dart';
 import 'package:novel_reader/pages/novel_view.dart';
@@ -36,6 +37,14 @@ GoRouter appRouter() => GoRouter(
             return NovelView(novelChapter: id);
           },
         ),
+        GoRoute(
+            path: '/novels/:id(.*)/chapters',
+            name: NovelChapterList.routeName,
+            builder: (BuildContext context, GoRouterState state) {
+              final id = state.pathParameters['id'] ?? '';
+              print('ID: $id');
+              return NovelChapterList(novelId: id);
+            }),
         GoRoute(
             path: '/novels/:id',
             name: NovelDetailsPage.routeName,

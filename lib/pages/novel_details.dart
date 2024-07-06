@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hive/hive.dart';
 import 'package:novel_reader/providers/chapter_list_provider.dart';
 import 'package:novel_reader/services/novel_service.dart';
 import 'package:go_router/go_router.dart';
@@ -22,7 +23,7 @@ class NovelDetailsPage extends ConsumerWidget {
         title: const Text('Book Details'),
       ),
       body: novelDetailsFuture.when(
-          error: (error, stackTrace) => const Text("No Content"),
+          error: (error, stackTrace) => const Text('No Content'),
           loading: () => const Center(child: CircularProgressIndicator()),
           data: (novelData) {
 // Define a regular expression to match digits
@@ -108,9 +109,15 @@ class NovelDetailsPage extends ConsumerWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Chip(
-                        label: Text('${match!.group(0)!}'),
-                        avatar: const Icon(Icons.book),
+                      InkWell(
+                        onTap: () {
+                          GoRouter.of(context).go(
+                              '/novels/${novelData.chapters[0]['id']}/chapters');
+                        },
+                        child: Chip(
+                          label: Text('${match!.group(0)!}'),
+                          avatar: const Icon(Icons.book),
+                        ),
                       ),
                       const SizedBox(width: 10),
                       Chip(

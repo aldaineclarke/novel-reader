@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get_it/get_it.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:pull_to_refresh_flutter3/pull_to_refresh_flutter3.dart';
 
 import 'app.dart';
@@ -19,6 +20,7 @@ import 'utils/http_client.dart';
 void main() async {
   await runZonedGuarded(
     () async {
+      await Hive.initFlutter();
       final widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
       // Retain native splash screen until Dart is ready
       FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
@@ -53,7 +55,7 @@ void main() async {
       runApp(
         ProviderScope(
           child: RefreshConfiguration(
-            child: MyApp(),
+            child: const MyApp(),
           ),
         ),
       );
