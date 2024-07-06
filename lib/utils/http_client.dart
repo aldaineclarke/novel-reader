@@ -1,4 +1,6 @@
 import 'package:dio/dio.dart';
+import 'package:dio/io.dart';
+import 'dart:io' as dartIo;
 import 'package:dio_cache_interceptor/dio_cache_interceptor.dart';
 import 'package:dio_http2_adapter/dio_http2_adapter.dart';
 import 'package:firebase_performance_dio/firebase_performance_dio.dart';
@@ -16,15 +18,33 @@ class HttpClient with DioMixin implements Dio {
         return status != null && status >= 200 && status < 400;
       },
     );
-    httpClientAdapter = Http2Adapter(
-      ConnectionManager(
-        idleTimeout: const Duration(seconds: 10),
-        onClientCreate: (_, config) => config.onBadCertificate = (_) => true,
-      ),
+
+    // Use Http2Adapter for HTTP/2 connections
+    // httpClientAdapter = Http2Adapter(
+    //   ConnectionManager(
+    //     idleTimeout: const Duration(seconds: 10),
+    //     onClientCreate: (_, config) {
+    //       // config.onBadCertificate = (_) => true,
+
+    //     },
+    //   ),
+    // );
+
+    httpClientAdapter = IOHttpClientAdapter(
+      //This is deprecated code.
+      // onHttpClientCreate: (client) {
+      //   client.badCertificateCallback =
+      //       (cert, host, port) => true; // Allow self-signed certificates
+      //   return client;
+      // },
+      createHttpClient: () {
+        final client = dartIo.HttpClient();
+        return client;
+      },
     );
     interceptors.addAll([
       ErrorInterceptor(),
-      AuthInterceptor(),
+      // AuthInterceptor(),
       UserAgentInterceptor(),
       DioFirebasePerformanceInterceptor(),
       /*CookieManager(PersistCookieJar(
@@ -38,7 +58,7 @@ class HttpClient with DioMixin implements Dio {
         PrettyDioLogger(
           responseHeader: true,
           responseBody: false,
-          request: false,
+          // request: false,
         ),
       );
     }
