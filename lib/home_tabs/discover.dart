@@ -1,6 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:novel_reader/models/novel_item.dart';
+import 'package:novel_reader/pages/novel_details.dart';
+import 'package:novel_reader/pages/novel_list.dart';
 import 'package:novel_reader/services/novel_service.dart';
 import 'package:go_router/go_router.dart';
 
@@ -115,8 +117,14 @@ class NovelSectionWidget extends StatelessWidget {
             ),
             TextButton(
               onPressed: () {
-                GoRouter.of(context).go(
-                  Uri(path: '/novel-list/$routeName').toString(),
+                // GoRouter.of(context).go(
+                //   Uri(path: '/novel-list/$routeName').toString(),
+                // );
+                Navigator.push(
+                  context,
+                  MaterialPageRoute<void>(
+                    builder: (context) => NovelListScreen(listId: routeName),
+                  ),
                 );
               },
               child: const Text('See All'),
@@ -142,8 +150,16 @@ class NovelSectionWidget extends StatelessWidget {
                     final novelItem = snapshot.data![index];
                     return InkWell(
                       onTap: () {
-                        return GoRouter.of(context)
-                            .go('/novels/${novelItem.id}');
+                        // return GoRouter.of(context)
+                        //     .go('/novels/${novelItem.id}');
+
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute<void>(
+                            builder: (context) =>
+                                NovelDetailsPage(novelId: novelItem.id),
+                          ),
+                        );
                       },
                       child: NovelItemWidget(novelItem: novelItem),
                     );

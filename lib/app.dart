@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:novel_reader/main_scaffold.dart';
+import 'package:novel_reader/pages/home.dart';
 
 import 'router.dart';
 
@@ -16,17 +18,15 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
-    router = appRouter();
+    // router = appRouter();
   }
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp.router(
+    return MaterialApp(
       title: 'Novel Reader',
       theme: ThemeData(primarySwatch: Colors.blue),
-      routeInformationParser: router.routeInformationParser,
-      routerDelegate: router.routerDelegate,
-      routeInformationProvider: router.routeInformationProvider,
+      home: MainScaffold(),
     );
   }
 }

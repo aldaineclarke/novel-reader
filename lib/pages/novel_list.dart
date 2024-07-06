@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:novel_reader/home_tabs/discover.dart';
+import 'package:novel_reader/pages/novel_view.dart';
 import 'package:novel_reader/services/novel_service.dart';
 import 'package:go_router/go_router.dart';
 
@@ -14,7 +15,7 @@ class NovelListScreen extends StatelessWidget {
       appBar: AppBar(
         leading: IconButton(
           onPressed: () {
-            return context.go('/');
+            Navigator.of(context).pop();
           },
           icon: const Icon(Icons.arrow_back_rounded),
         ),
@@ -35,7 +36,13 @@ class NovelListScreen extends StatelessWidget {
                   final novelItem = snapshot.data![index];
                   return InkWell(
                     onTap: () {
-                      GoRouter.of(context).push('/novels/${novelItem.id}');
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute<void>(
+                          builder: (context) =>
+                              NovelView(novelChapter: novelItem.id),
+                        ),
+                      );
                     },
                     child: SizedBox(
                       height: 200,

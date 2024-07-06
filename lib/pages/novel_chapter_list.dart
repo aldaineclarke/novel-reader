@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:novel_reader/models/chapter_data.dart';
+import 'package:novel_reader/pages/novel_view.dart';
 import 'package:novel_reader/providers/chapter_list_provider.dart';
 import 'package:novel_reader/services/novel_service.dart';
 
@@ -78,8 +79,13 @@ class _NovelChapterListState extends ConsumerState<NovelChapterList> {
                                         .setChapterListItemsFromJson(
                                           snapshot.data!.chapters,
                                         );
-                                    context
-                                        .go('/novels/view/${chapterData.id}');
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute<void>(
+                                        builder: (context) => NovelView(
+                                            novelChapter: chapterData.id),
+                                      ),
+                                    );
                                   },
                                   title: Text(chapterData.title),
                                 );

@@ -18,14 +18,14 @@ GoRouter appRouter() => GoRouter(
         GoRoute(
           path: '/',
           name: HomePage.routeName,
-          builder: (BuildContext context, GoRouterState state) =>
-              const MainScaffold(child: HomePage()),
+          // builder: (BuildContext context, GoRouterState state) =>
+          // const MainScaffold(child: HomePage()),
         ),
         GoRoute(
           path: '/genres',
           name: GenresPage.routeName,
-          builder: (BuildContext context, GoRouterState state) =>
-              const MainScaffold(child: GenresPage()),
+          // builder: (BuildContext context, GoRouterState state) =>
+          // const MainScaffold(child: GenresPage()),
         ),
         GoRoute(
           path:

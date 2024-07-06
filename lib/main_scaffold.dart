@@ -1,37 +1,37 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:novel_reader/pages/genres.dart';
+import 'package:novel_reader/pages/home.dart';
+import 'package:novel_reader/providers/bottom_navigation_provider.dart';
 
-class MainScaffold extends StatefulWidget {
-  const MainScaffold({required this.child, super.key});
-  final Widget child;
+class MainScaffold extends ConsumerWidget {
+  MainScaffold({super.key});
 
-  @override
-  State<MainScaffold> createState() => _MainScaffoldState();
-}
-
-class _MainScaffoldState extends State<MainScaffold> {
-  int _selectedIndex = 0;
-
-  static const List<String> _routes = ['/', '/genres', '/shelf', '/menu'];
-
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-    context.push(_routes[index]);
-  }
+  final List<Widget> _routes = [
+    const HomePage(),
+    const GenresPage(),
+    Container(
+      color: Colors.cyanAccent,
+    ),
+    Container(color: Colors.pinkAccent)
+  ];
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final pageIndex = ref.watch(bottomNavProvider);
+
     return Scaffold(
-      body: widget.child,
+      body: IndexedStack(index: pageIndex, children: _routes),
       bottomNavigationBar: BottomNavigationBar(
         unselectedItemColor: Colors.black38,
         selectedItemColor: Colors.amber,
         unselectedLabelStyle: const TextStyle(color: Colors.black38),
         showUnselectedLabels: true,
-        currentIndex: _selectedIndex,
-        onTap: _onItemTapped,
+        currentIndex: pageIndex,
+        onTap: (index) {
+          ref.read(bottomNavProvider.notifier).setPageIndex(index);
+        },
         items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.home_outlined),

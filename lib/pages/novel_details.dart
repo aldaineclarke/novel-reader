@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive/hive.dart';
+import 'package:novel_reader/models/chapter_data.dart';
+import 'package:novel_reader/pages/novel_chapter_list.dart';
+import 'package:novel_reader/pages/novel_view.dart';
 import 'package:novel_reader/providers/chapter_list_provider.dart';
 import 'package:novel_reader/services/novel_service.dart';
 import 'package:go_router/go_router.dart';
@@ -30,6 +33,8 @@ class NovelDetailsPage extends ConsumerWidget {
             final regExp = RegExp(r'\d+');
 
             // Find all matches in the input string
+            final firstChapter =
+                ChapterListItem.fromJson(novelData.chapters[0]);
             final match = regExp.firstMatch(novelData.lastChapter);
             return Padding(
               padding: const EdgeInsets.all(20.0),
@@ -92,14 +97,13 @@ class NovelDetailsPage extends ConsumerWidget {
                         ),
                       ),
                       Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          Icon(
+                          const Icon(
                             Icons.star,
                             color: Colors.lime,
                             size: 18,
                           ),
-                          SizedBox(width: 10),
+                          const SizedBox(width: 10),
                           Text('${novelData.rating} stars')
                         ],
                       )
@@ -111,8 +115,13 @@ class NovelDetailsPage extends ConsumerWidget {
                     children: [
                       InkWell(
                         onTap: () {
-                          GoRouter.of(context).go(
-                              '/novels/${novelData.chapters[0]['id']}/chapters');
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute<void>(
+                              builder: (BuildContext context) =>
+                                  NovelChapterList(novelId: firstChapter.id),
+                            ),
+                          );
                         },
                         child: Chip(
                           label: Text('${match!.group(0)!}'),
@@ -149,8 +158,13 @@ class NovelDetailsPage extends ConsumerWidget {
                     children: [
                       TextButton(
                         onPressed: () {
-                          GoRouter.of(context).go(
-                              '/novels/view/${novelData.chapters[0]['id']}');
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute<void>(
+                              builder: (context) =>
+                                  NovelView(novelChapter: firstChapter.id),
+                            ),
+                          );
                         },
                         child: const Text('Start Reading'),
                       ),

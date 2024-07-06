@@ -22,6 +22,8 @@ dependencies:
   # dart run flutter_native_splash:create
   freezed_annotation: ^2.4.1
   flutter_riverpod: ^2.5.1
+  hive: ^2.2.3
+  hive_flutter: ^1.1.0
   json_annotation: ^4.9.0
 
   json_serializable: ^6.7.1
