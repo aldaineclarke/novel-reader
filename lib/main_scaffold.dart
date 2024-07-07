@@ -24,6 +24,7 @@ class MainScaffold extends ConsumerWidget {
     return Scaffold(
       body: IndexedStack(index: pageIndex, children: _routes),
       bottomNavigationBar: BottomNavigationBar(
+        type: BottomNavigationBarType.fixed,
         unselectedItemColor: Colors.black38,
         selectedItemColor: Colors.amber,
         unselectedLabelStyle: const TextStyle(color: Colors.black38),

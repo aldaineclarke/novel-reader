@@ -5,21 +5,26 @@ import 'package:novel_reader/models/chapter_data.dart';
 import 'package:novel_reader/pages/novel_chapter_list.dart';
 import 'package:novel_reader/pages/novel_view.dart';
 import 'package:novel_reader/providers/chapter_list_provider.dart';
-import 'package:novel_reader/services/novel_service.dart';
-import 'package:go_router/go_router.dart';
+import 'package:novel_reader/providers/current_novel_provider.dart';
 
-class NovelDetailsPage extends ConsumerWidget {
+class NovelDetailsPage extends ConsumerStatefulWidget {
   const NovelDetailsPage({required this.novelId, super.key});
   final String novelId;
   static const routeName = 'Novel List';
+
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final novelDetailsFuture = ref.watch(novelDetailsProvider(novelId));
+  ConsumerState<NovelDetailsPage> createState() => _NovelDetailsPageState();
+}
+
+class _NovelDetailsPageState extends ConsumerState<NovelDetailsPage> {
+  @override
+  Widget build(BuildContext context) {
+    final novelDetailsFuture = ref.watch(novelDetailsProvider(widget.novelId));
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
           onPressed: () {
-            return GoRouter.of(context).go('/');
+            Navigator.of(context).pop();
           },
           icon: const Icon(Icons.arrow_back_rounded),
         ),
@@ -37,7 +42,7 @@ class NovelDetailsPage extends ConsumerWidget {
                 ChapterListItem.fromJson(novelData.chapters[0]);
             final match = regExp.firstMatch(novelData.lastChapter);
             return Padding(
-              padding: const EdgeInsets.all(20.0),
+              padding: const EdgeInsets.all(20),
               child: Column(
                 children: [
                   SizedBox(
@@ -158,6 +163,19 @@ class NovelDetailsPage extends ConsumerWidget {
                     children: [
                       TextButton(
                         onPressed: () {
+                          final novel = CurrentNovel(
+                            novelTitle: novelData.title,
+                            novelId: novelData.id,
+                            novelImage: novelData.image,
+                            genres: novelData.genres,
+                            author: novelData.author,
+                            description: novelData.description,
+                            currentChapterId: firstChapter.id,
+                            chapterCount: novelData.pages,
+                          );
+                          ref
+                              .read(currentNovelProvider.notifier)
+                              .setNovel(novel);
                           Navigator.push(
                             context,
                             MaterialPageRoute<void>(

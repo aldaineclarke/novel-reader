@@ -1,9 +1,30 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hive/hive.dart';
 import 'package:novel_reader/home_tabs/discover.dart';
+import 'package:novel_reader/providers/current_novel_provider.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends ConsumerStatefulWidget {
   const HomePage({super.key});
   static const routeName = 'Home';
+
+  @override
+  ConsumerState<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends ConsumerState<HomePage> {
+  late Box<CurrentNovel> novelBox;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    novelBox = Hive.box<CurrentNovel>('currentNovelBox');
+    final currentNovel = novelBox.get('currentNovel');
+    if (currentNovel != null) {
+      ref.read(currentNovelProvider.notifier).setNovel(currentNovel);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {

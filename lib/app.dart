@@ -1,28 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:novel_reader/main_scaffold.dart';
-import 'package:novel_reader/pages/home.dart';
 
-import 'router.dart';
-
-class MyApp extends StatefulWidget {
+class MyApp extends ConsumerWidget {
   const MyApp({super.key});
 
   @override
-  State<MyApp> createState() => _MyAppState();
-}
-
-class _MyAppState extends State<MyApp> {
-  late GoRouter router;
-
-  @override
-  void initState() {
-    super.initState();
-    // router = appRouter();
-  }
-
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return MaterialApp(
       title: 'Novel Reader',
       theme: ThemeData(primarySwatch: Colors.blue),

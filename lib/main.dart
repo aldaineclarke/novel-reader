@@ -10,6 +10,8 @@ import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get_it/get_it.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:novel_reader/hive_adapters/current_novel_adapter.dart';
+import 'package:novel_reader/providers/current_novel_provider.dart';
 import 'package:pull_to_refresh_flutter3/pull_to_refresh_flutter3.dart';
 
 import 'app.dart';
@@ -21,6 +23,7 @@ void main() async {
   await runZonedGuarded(
     () async {
       await Hive.initFlutter();
+      Hive.registerAdapter(CurrentNovelAdapter());
       final widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
       // Retain native splash screen until Dart is ready
       FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
@@ -51,6 +54,9 @@ void main() async {
         Zone.current.handleUncaughtError(error.exception, error.stack!);
         return ErrorWidget(error.exception);
       };
+      // Hive Database
+      await Hive.openBox<CurrentNovel>('currentNovelBox');
+      await Hive.openBox<List<CurrentNovel>>('shelf');
 
       runApp(
         ProviderScope(

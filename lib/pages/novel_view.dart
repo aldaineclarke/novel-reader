@@ -2,7 +2,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hive/hive.dart';
 import 'package:novel_reader/providers/chapter_list_provider.dart';
+import 'package:novel_reader/providers/current_novel_provider.dart';
 import 'package:novel_reader/services/novel_service.dart';
 import 'package:pull_to_refresh_flutter3/pull_to_refresh_flutter3.dart';
 
@@ -21,6 +23,7 @@ class _NovelViewState extends ConsumerState<NovelView> {
   final RefreshController _nextChapterController = RefreshController();
   int currentIndex = 1;
   final String hostName = 'AnimeDaily.Net';
+  late Box<CurrentNovel> novelBox;
 
   final testStr =
       'If you find any errors ( Ads popup, ads redirect, broken links, non-standard content, etc.. ), Please let us know < report chapter > so we can fix it as soon as possible.';
@@ -29,6 +32,11 @@ class _NovelViewState extends ConsumerState<NovelView> {
   void initState() {
     super.initState();
     currentNovel = super.widget.novelChapter;
+    novelBox = Hive.box<CurrentNovel>('currentNovelBox');
+    final novel = ref.read(currentNovelProvider);
+
+    novelBox.put('currentNovel', novel!);
+
     // _scrollController.addListener(_scrollListener);
   }
 
@@ -56,6 +64,10 @@ class _NovelViewState extends ConsumerState<NovelView> {
     setState(
       () {
         currentNovel = novelList[currentIndex].id;
+        final novel = ref.read(currentNovelProvider);
+        novel?.copyWith(currentChapterId: currentNovel);
+        novelBox.put('currentNovel', novel!);
+        ref.read(currentNovelProvider.notifier).setNovel(novel);
         print(currentNovel);
         currentIndex++;
       },

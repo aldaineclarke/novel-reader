@@ -1,6 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
 import 'package:novel_reader/home_tabs/discover.dart';
+import 'package:novel_reader/pages/novel_details.dart';
 import 'package:novel_reader/pages/novel_view.dart';
 import 'package:novel_reader/services/novel_service.dart';
 import 'package:go_router/go_router.dart';
@@ -40,7 +42,7 @@ class NovelListScreen extends StatelessWidget {
                         context,
                         MaterialPageRoute<void>(
                           builder: (context) =>
-                              NovelView(novelChapter: novelItem.id),
+                              NovelDetailsPage(novelId: novelItem.id),
                         ),
                       );
                     },
@@ -79,6 +81,7 @@ class NovelListScreen extends StatelessWidget {
                           const SizedBox(width: 10),
                           Expanded(
                             child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
                                   novelItem.title,
@@ -88,6 +91,7 @@ class NovelListScreen extends StatelessWidget {
                                       ?.copyWith(fontWeight: FontWeight.w600),
                                   softWrap: false,
                                   overflow: TextOverflow.fade,
+                                  textAlign: TextAlign.start,
                                 ),
                                 Row(
                                   children: [
@@ -111,20 +115,33 @@ class NovelListScreen extends StatelessWidget {
                                     ),
                                   ],
                                 ),
+                                const SizedBox(height: 10),
                                 SizedBox(
-                                  height: 50,
-                                  child: ListView.separated(
-                                    scrollDirection: Axis.horizontal,
-                                    itemCount: novelItem.genres.length,
-                                    separatorBuilder: (context, index) =>
-                                        const SizedBox(
-                                      width: 10,
-                                    ),
-                                    itemBuilder: (context, index) {
-                                      return Chip(
-                                        label: Text(novelItem.genres[index]),
+                                  child: Wrap(
+                                    runSpacing: 2,
+                                    spacing: 2,
+                                    children: novelItem.genres.map((e) {
+                                      return Container(
+                                        decoration: const BoxDecoration(
+                                          borderRadius: BorderRadius.horizontal(
+                                            left: Radius.circular(10),
+                                            right: Radius.circular(10),
+                                          ),
+                                          color: Color.fromARGB(
+                                              255, 249, 255, 255),
+                                        ),
+                                        padding: const EdgeInsets.all(5),
+                                        child: Text(
+                                          e,
+                                          style: const TextStyle(
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.w500,
+                                            color:
+                                                Color.fromARGB(255, 12, 58, 95),
+                                          ),
+                                        ),
                                       );
-                                    },
+                                    }).toList(),
                                   ),
                                 )
                               ],
