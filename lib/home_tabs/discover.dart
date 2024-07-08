@@ -6,11 +6,16 @@ import 'package:novel_reader/pages/novel_list.dart';
 import 'package:novel_reader/providers/current_novel_provider.dart';
 import 'package:novel_reader/services/novel_service.dart';
 
-class DiscoverTab extends ConsumerWidget {
+class DiscoverTab extends ConsumerStatefulWidget {
   const DiscoverTab({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<DiscoverTab> createState() => _DiscoverTabState();
+}
+
+class _DiscoverTabState extends ConsumerState<DiscoverTab> {
+  @override
+  Widget build(BuildContext context) {
     final currentNovel = ref.watch(currentNovelProvider);
     return ListView(
       padding: const EdgeInsets.all(20),
@@ -75,7 +80,11 @@ class DiscoverTab extends ConsumerWidget {
                       ),
                       const SizedBox(height: 10),
                       TextButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          // Since we will only have access to the last chapter
+                          // We need to navigate to the chapter to let the user read
+                          // as well as fetch the subsequent chapters for that page
+                        },
                         child: const Text('Continue '),
                       ),
                     ],

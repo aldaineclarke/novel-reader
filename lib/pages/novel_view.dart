@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive/hive.dart';
+import 'package:novel_reader/env.dart';
+import 'package:novel_reader/hive_adapters/current_novel.dart';
 import 'package:novel_reader/providers/chapter_list_provider.dart';
 import 'package:novel_reader/providers/current_novel_provider.dart';
 import 'package:novel_reader/services/novel_service.dart';
@@ -32,7 +34,7 @@ class _NovelViewState extends ConsumerState<NovelView> {
   void initState() {
     super.initState();
     currentNovel = super.widget.novelChapter;
-    novelBox = Hive.box<CurrentNovel>('currentNovelBox');
+    novelBox = Hive.box<CurrentNovel>(Env.novel_db_name);
     final novel = ref.read(currentNovelProvider);
 
     novelBox.put('currentNovel', novel!);

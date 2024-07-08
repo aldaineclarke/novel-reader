@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:hive/hive.dart';
+import 'package:novel_reader/hive_adapters/current_novel.dart';
 import 'package:novel_reader/models/chapter_data.dart';
 import 'package:novel_reader/pages/novel_chapter_list.dart';
 import 'package:novel_reader/pages/novel_view.dart';
@@ -171,7 +171,7 @@ class _NovelDetailsPageState extends ConsumerState<NovelDetailsPage> {
                             author: novelData.author,
                             description: novelData.description,
                             currentChapterId: firstChapter.id,
-                            chapterCount: novelData.pages,
+                            chapterCount: novelData.pages ?? 1,
                           );
                           ref
                               .read(currentNovelProvider.notifier)

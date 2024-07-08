@@ -10,8 +10,9 @@ import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get_it/get_it.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:novel_reader/hive_adapters/current_novel_adapter.dart';
+import 'package:novel_reader/hive_adapters/current_novel.dart';
 import 'package:novel_reader/providers/current_novel_provider.dart';
+// import 'package:novel_reader/providers/current_novel_provider.dart';
 import 'package:pull_to_refresh_flutter3/pull_to_refresh_flutter3.dart';
 
 import 'app.dart';
@@ -22,8 +23,6 @@ import 'utils/http_client.dart';
 void main() async {
   await runZonedGuarded(
     () async {
-      await Hive.initFlutter();
-      Hive.registerAdapter(CurrentNovelAdapter());
       final widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
       // Retain native splash screen until Dart is ready
       FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
@@ -55,11 +54,22 @@ void main() async {
         return ErrorWidget(error.exception);
       };
       // Hive Database
-      await Hive.openBox<CurrentNovel>('currentNovelBox');
+      await Hive.initFlutter();
+      Hive.registerAdapter(CurrentNovelAdapter());
+      if (!Hive.isBoxOpen(Env.novel_db_name)) {
+        final box = await Hive.openBox<CurrentNovel>(Env.novel_db_name);
+      }
       await Hive.openBox<List<CurrentNovel>>('shelf');
+
+      final currentNovelNotifier = await loadCurrentNovel();
 
       runApp(
         ProviderScope(
+          overrides: [
+            currentNovelProvider.overrideWith((ref) {
+              return currentNovelNotifier;
+            }),
+          ],
           child: RefreshConfiguration(
             child: const MyApp(),
           ),
@@ -71,4 +81,14 @@ void main() async {
       FirebaseCrashlytics.instance.recordError(exception, stackTrace);
     },
   );
+}
+
+Future<CurrentNovelNotifier> loadCurrentNovel() async {
+  final novelBox = Hive.box<CurrentNovel>(Env.novel_db_name);
+  final currentNovel = novelBox.get('currentNovel');
+  final notifier = CurrentNovelNotifier();
+  if (currentNovel != null) {
+    notifier.setNovel(currentNovel);
+  }
+  return notifier;
 }
