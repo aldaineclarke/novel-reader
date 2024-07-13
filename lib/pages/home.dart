@@ -29,7 +29,8 @@ class _HomePageState extends ConsumerState<HomePage> {
       length: 6,
       child: Scaffold(
         appBar: TabBar(
-          padding: EdgeInsets.zero,
+          // padding: EdgeInsets,
+          padding: EdgeInsets.only(top: 20),
           tabAlignment: TabAlignment.start,
           isScrollable: true,
           tabs: [
