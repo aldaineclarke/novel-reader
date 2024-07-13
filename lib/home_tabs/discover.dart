@@ -49,7 +49,9 @@ class _DiscoverTabState extends ConsumerState<DiscoverTab> {
           onChanged: _onSearchChanged,
           decoration: InputDecoration(
             labelText: 'Search Novel',
-            prefixIcon: Icon(
+            labelStyle: const TextStyle(
+                fontSize: 12, fontWeight: FontWeight.w600, color: Colors.blue),
+            prefixIcon: const Icon(
               Icons.search_rounded,
               color: Colors.blue,
             ),
@@ -60,19 +62,19 @@ class _DiscoverTabState extends ConsumerState<DiscoverTab> {
                         searchCtrl.text = '';
                       });
                     },
-                    child: Icon(Icons.close_rounded),
+                    child: const Icon(Icons.close_rounded),
                   )
                 : null,
             floatingLabelBehavior: FloatingLabelBehavior.never,
-            contentPadding: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-            enabledBorder: OutlineInputBorder(
+            contentPadding:
+                const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+            enabledBorder: const OutlineInputBorder(
               borderRadius: BorderRadius.all(
                 Radius.circular(20),
               ),
-              borderSide: BorderSide(
-                  color: Color.fromARGB(255, 194, 224, 236), width: 2),
+              borderSide: BorderSide(color: Color.fromARGB(255, 194, 224, 236)),
             ),
-            border: OutlineInputBorder(
+            border: const OutlineInputBorder(
               borderRadius: BorderRadius.all(
                 Radius.circular(20),
               ),

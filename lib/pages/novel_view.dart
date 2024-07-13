@@ -1,10 +1,12 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive/hive.dart';
 import 'package:novel_reader/env.dart';
 import 'package:novel_reader/hive_adapters/current_novel.dart';
+import 'package:novel_reader/models/chapter_data.dart';
 import 'package:novel_reader/providers/chapter_list_provider.dart';
 import 'package:novel_reader/providers/current_novel_provider.dart';
 import 'package:novel_reader/services/novel_service.dart';
@@ -36,6 +38,13 @@ class _NovelViewState extends ConsumerState<NovelView> {
     currentNovel = super.widget.novelChapter;
     novelBox = Hive.box<CurrentNovel>(Env.novel_db_name);
     final novel = ref.read(currentNovelProvider);
+    final novelList = ref.read(chapterListProvider);
+    if (kDebugMode) {
+      print(novel?.currentChapterId);
+    }
+    currentIndex = novelList.indexWhere((chapterItem) {
+      return chapterItem.id == novel?.currentChapterId;
+    });
 
     novelBox.put('currentNovel', novel!);
 
@@ -61,17 +70,17 @@ class _NovelViewState extends ConsumerState<NovelView> {
 
   void _loadNextChapter() {
     // Simulate fetching more items
+    final novel = ref.read(currentNovelProvider);
     final novelList = ref.read(chapterListProvider);
 
     setState(
       () {
+        currentIndex++;
         currentNovel = novelList[currentIndex].id;
-        final novel = ref.read(currentNovelProvider);
         novel?.copyWith(currentChapterId: currentNovel);
         novelBox.put('currentNovel', novel!);
         ref.read(currentNovelProvider.notifier).setNovel(novel);
         print(currentNovel);
-        currentIndex++;
       },
     );
   }
