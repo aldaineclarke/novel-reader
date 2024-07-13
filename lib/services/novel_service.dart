@@ -62,6 +62,26 @@ class NovelService {
     }
   }
 
+  static Future<List<NovelItem>> searchNovel(String searchText) async {
+    final fullRoute = '/search?query=$searchText';
+    if (searchText == '') {
+      return [];
+    }
+    ;
+    try {
+      final response =
+          await GetIt.I<HttpClient>().get<Map<String, dynamic>>(fullRoute);
+      final apiResult = APIResult.fromJson(response.data!);
+      final results = apiResult.results.map((data) {
+        return NovelItem.fromJson(data as Map<String, dynamic>);
+      }).toList();
+      return results;
+    } catch (e) {
+      print(e);
+      return [];
+    }
+  }
+
   static Future<ChapterData> getNovelChapter(String chapterId) async {
     try {
       final response = await GetIt.I<HttpClient>()
