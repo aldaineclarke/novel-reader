@@ -59,7 +59,7 @@ void main() async {
       if (!Hive.isBoxOpen(Env.novel_db_name)) {
         final box = await Hive.openBox<CurrentNovel>(Env.novel_db_name);
       }
-      await Hive.openBox<List<CurrentNovel>>('shelf');
+      await Hive.openBox<CurrentNovel>(Env.shelf_db_name);
 
       final currentNovelNotifier = await loadCurrentNovel();
 

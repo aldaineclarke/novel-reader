@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:novel_reader/pages/genres.dart';
 import 'package:novel_reader/pages/home.dart';
+import 'package:novel_reader/pages/shelf.dart';
 import 'package:novel_reader/providers/bottom_navigation_provider.dart';
 
 class MainScaffold extends ConsumerWidget {
@@ -11,9 +12,7 @@ class MainScaffold extends ConsumerWidget {
   final List<Widget> _routes = [
     const HomePage(),
     const GenresPage(),
-    Container(
-      color: Colors.cyanAccent,
-    ),
+    const ShelfScreen(),
     Container(color: Colors.pinkAccent)
   ];
 

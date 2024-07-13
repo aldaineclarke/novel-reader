@@ -6,6 +6,7 @@ import 'package:novel_reader/pages/novel_chapter_list.dart';
 import 'package:novel_reader/pages/novel_view.dart';
 import 'package:novel_reader/providers/chapter_list_provider.dart';
 import 'package:novel_reader/providers/current_novel_provider.dart';
+import 'package:novel_reader/providers/shelf_provider.dart';
 
 class NovelDetailsPage extends ConsumerStatefulWidget {
   const NovelDetailsPage({required this.novelId, super.key});
@@ -41,6 +42,17 @@ class _NovelDetailsPageState extends ConsumerState<NovelDetailsPage> {
             final firstChapter =
                 ChapterListItem.fromJson(novelData.chapters[0]);
             final match = regExp.firstMatch(novelData.lastChapter);
+
+            final novel = CurrentNovel(
+              novelTitle: novelData.title,
+              novelId: novelData.id,
+              novelImage: novelData.image,
+              genres: novelData.genres,
+              author: novelData.author,
+              description: novelData.description,
+              currentChapterId: firstChapter.id,
+              chapterCount: novelData.pages ?? 1,
+            );
             return Padding(
               padding: const EdgeInsets.all(20),
               child: Column(
@@ -163,16 +175,6 @@ class _NovelDetailsPageState extends ConsumerState<NovelDetailsPage> {
                     children: [
                       TextButton(
                         onPressed: () {
-                          final novel = CurrentNovel(
-                            novelTitle: novelData.title,
-                            novelId: novelData.id,
-                            novelImage: novelData.image,
-                            genres: novelData.genres,
-                            author: novelData.author,
-                            description: novelData.description,
-                            currentChapterId: firstChapter.id,
-                            chapterCount: novelData.pages ?? 1,
-                          );
                           ref
                               .read(currentNovelProvider.notifier)
                               .setNovel(novel);
@@ -187,10 +189,19 @@ class _NovelDetailsPageState extends ConsumerState<NovelDetailsPage> {
                         child: const Text('Start Reading'),
                       ),
                       TextButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          ref
+                              .read(shelfProvider.notifier)
+                              .addNovelToShelf(novel);
+                          setState(() {});
+                        },
                         style:
                             TextButton.styleFrom(backgroundColor: Colors.lime),
-                        child: const Text('Add to Shelf'),
+                        child: (ref
+                                .read(shelfProvider.notifier)
+                                .novelInShelf(novel))
+                            ? const Text('On Shelf')
+                            : const Text('Add to Shelf'),
                       ),
                     ],
                   )
