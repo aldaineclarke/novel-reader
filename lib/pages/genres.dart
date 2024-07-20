@@ -1,14 +1,18 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:novel_reader/pages/novel_list.dart';
+import 'package:novel_reader/pages/search.dart';
+import 'package:novel_reader/providers/novel_notifier_provider.dart';
 import 'package:novel_reader/services/novel_service.dart';
 
-class GenresPage extends StatelessWidget {
+class GenresPage extends ConsumerWidget {
   const GenresPage({super.key});
 
   static const routeName = 'Genres';
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       appBar: AppBar(
         title: Text("Genres"),
@@ -21,7 +25,8 @@ class GenresPage extends StatelessWidget {
           }
           if (snapshot.hasData) {
             return GridView.builder(
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              padding: const EdgeInsets.all(20),
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 2,
                 childAspectRatio: 3,
                 crossAxisSpacing: 10,
@@ -29,16 +34,31 @@ class GenresPage extends StatelessWidget {
               ),
               itemCount: snapshot.data?.length,
               itemBuilder: (context, index) {
-                return Container(
-                  decoration: BoxDecoration(
-                    color: Color.fromARGB(255, 207, 149, 24),
-                    borderRadius: BorderRadius.circular(
-                      10,
+                return InkWell(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute<void>(
+                        builder: (context) => NovelListScreen(
+                          listId: snapshot.data![index],
+                          provider: ref.read(
+                            novelsByGenreProvider(snapshot.data![index]),
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Color.fromARGB(255, 207, 149, 24),
+                      borderRadius: BorderRadius.circular(
+                        10,
+                      ),
                     ),
-                  ),
-                  child: Center(
-                    child: Text(
-                      snapshot.data![index],
+                    child: Center(
+                      child: Text(
+                        snapshot.data![index],
+                      ),
                     ),
                   ),
                 );

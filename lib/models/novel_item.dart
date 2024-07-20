@@ -13,7 +13,9 @@ class NovelItem {
       id: json['id'] as String,
       title: json['title'] as String,
       url: json['url'] as String,
-      genres: List<String>.from(json['genres'] as Iterable<dynamic>),
+      genres: json['genres'] != null
+          ? List<String>.from(json['genres'] as Iterable<dynamic>)
+          : [],
       image: json['image'] as String,
       lastChapter: json['lastChapter'] as String,
     );

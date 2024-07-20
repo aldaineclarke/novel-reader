@@ -6,9 +6,10 @@ import 'package:get_it/get_it.dart';
 
 class NovelService {
   // Send un-cached http request
-  static Future<List<NovelItem>> getNovelList(String? criteria) async {
+  static Future<List<NovelItem>> getNovelList(String? criteria,
+      [int? page = 1]) async {
     final route = criteria ?? '/latest-release';
-    final fullRoute = '/novel-list/$route';
+    final fullRoute = '/novel-list/$route/page/$page';
     try {
       final response =
           await GetIt.I<HttpClient>().get<Map<String, dynamic>>(fullRoute);
@@ -59,6 +60,29 @@ class NovelService {
           description: 'description',
           status: 'status',
           chapters: []);
+    }
+  }
+
+  static Future<List<NovelItem>> searchNovel(
+    String searchText, [
+    int? page = 1,
+  ]) async {
+    final fullRoute = '/search?query=$searchText&page=$page';
+    if (searchText == '') {
+      return [];
+    }
+    ;
+    try {
+      final response =
+          await GetIt.I<HttpClient>().get<Map<String, dynamic>>(fullRoute);
+      final apiResult = APIResult.fromJson(response.data!);
+      final results = apiResult.results.map((data) {
+        return NovelItem.fromJson(data as Map<String, dynamic>);
+      }).toList();
+      return results;
+    } catch (e) {
+      print(e);
+      return [];
     }
   }
 

@@ -1,14 +1,14 @@
-import 'package:flutter/animation.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/painting.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hive/hive.dart';
+import 'package:novel_reader/env.dart';
+import 'package:novel_reader/hive_adapters/current_novel.dart';
+import 'package:novel_reader/models/chapter_data.dart';
 import 'package:novel_reader/providers/chapter_list_provider.dart';
-import 'package:novel_reader/providers/database_provider.dart';
+import 'package:novel_reader/providers/current_novel_provider.dart';
 import 'package:novel_reader/services/novel_service.dart';
 import 'package:pull_to_refresh_flutter3/pull_to_refresh_flutter3.dart';
 
@@ -27,6 +27,7 @@ class _NovelViewState extends ConsumerState<NovelView> {
   final RefreshController _nextChapterController = RefreshController();
   int currentIndex = 1;
   final String hostName = 'AnimeDaily.Net';
+  late Box<CurrentNovel> novelBox;
 
   final testStr =
       'If you find any errors ( Ads popup, ads redirect, broken links, non-standard content, etc.. ), Please let us know < report chapter > so we can fix it as soon as possible.';
@@ -35,6 +36,18 @@ class _NovelViewState extends ConsumerState<NovelView> {
   void initState() {
     super.initState();
     currentNovel = super.widget.novelChapter;
+    novelBox = Hive.box<CurrentNovel>(Env.novel_db_name);
+    final novel = ref.read(currentNovelProvider);
+    final novelList = ref.read(chapterListProvider);
+    if (kDebugMode) {
+      print(novel?.currentChapterId);
+    }
+    currentIndex = novelList.indexWhere((chapterItem) {
+      return chapterItem.id == novel?.currentChapterId;
+    });
+
+    novelBox.put('currentNovel', novel!);
+
     // _scrollController.addListener(_scrollListener);
   }
 
@@ -57,13 +70,17 @@ class _NovelViewState extends ConsumerState<NovelView> {
 
   void _loadNextChapter() {
     // Simulate fetching more items
+    final novel = ref.read(currentNovelProvider);
     final novelList = ref.read(chapterListProvider);
 
     setState(
       () {
-        currentNovel = novelList[currentIndex].id;
-        print(currentNovel);
         currentIndex++;
+        currentNovel = novelList[currentIndex].id;
+        novel?.copyWith(currentChapterId: currentNovel);
+        novelBox.put('currentNovel', novel!);
+        ref.read(currentNovelProvider.notifier).setNovel(novel);
+        print(currentNovel);
       },
     );
   }
@@ -159,7 +176,7 @@ class _NovelViewState extends ConsumerState<NovelView> {
                         final paragraphs = snapshot.data!.text.split('\n');
                         return GestureDetector(
                           onDoubleTap: () {
-                            showModalBottomSheet(
+                            showModalBottomSheet<void>(
                               backgroundColor: Colors.white,
                               context: context,
                               builder: (BuildContext context) {
