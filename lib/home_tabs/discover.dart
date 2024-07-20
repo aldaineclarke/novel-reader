@@ -8,6 +8,7 @@ import 'package:novel_reader/models/novel_item.dart';
 import 'package:novel_reader/pages/novel_details.dart';
 import 'package:novel_reader/pages/novel_list.dart';
 import 'package:novel_reader/providers/current_novel_provider.dart';
+import 'package:novel_reader/providers/novel_notifier_provider.dart';
 import 'package:novel_reader/services/novel_service.dart';
 
 class DiscoverTab extends ConsumerStatefulWidget {
@@ -311,46 +312,52 @@ class _DiscoverTabState extends ConsumerState<DiscoverTab> {
         )
       else
         const SizedBox.shrink(),
-      const NovelSectionWidget(
+      NovelSectionWidget(
         sectionHeader: 'Latest Release',
         ctaText: 'See All',
         routeName: 'latest-release',
+        provider: latestReleasesProvider,
       ),
       const SizedBox(height: 20),
-      const NovelSectionWidget(
+      NovelSectionWidget(
         sectionHeader: 'New Novels',
         ctaText: 'See All',
         routeName: 'new-novels',
+        provider: newNovelsProvider,
       ),
       const SizedBox(height: 20),
-      const NovelSectionWidget(
+      NovelSectionWidget(
         sectionHeader: 'Completed Novels',
         ctaText: 'See All',
         routeName: 'complete-novels',
+        provider: completedNovelsProvider,
       ),
       const SizedBox(height: 20),
-      const NovelSectionWidget(
+      NovelSectionWidget(
         sectionHeader: 'Most Popular',
         ctaText: 'See All',
         routeName: 'most-popular',
+        provider: mostPopularNovelsProvider,
       ),
     ];
   }
 }
 
-class NovelSectionWidget extends StatelessWidget {
+class NovelSectionWidget extends ConsumerWidget {
   const NovelSectionWidget({
     required this.sectionHeader,
     required this.ctaText,
     required this.routeName,
+    required this.provider,
     super.key,
   });
   final String sectionHeader;
   final String ctaText;
   final String routeName;
+  final StateNotifierProvider<NovelsNotifier, List<NovelItem>> provider;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Column(
       children: [
         Row(
@@ -371,7 +378,10 @@ class NovelSectionWidget extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute<void>(
-                    builder: (context) => NovelListScreen(listId: routeName),
+                    builder: (context) => NovelListScreen(
+                      listId: routeName,
+                      provider: getNovelProvider(routeName),
+                    ),
                   ),
                 );
               },
