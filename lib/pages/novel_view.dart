@@ -176,7 +176,7 @@ class _NovelViewState extends ConsumerState<NovelView> {
                         final paragraphs = snapshot.data!.text.split('\n');
                         return GestureDetector(
                           onDoubleTap: () {
-                            showModalBottomSheet(
+                            showModalBottomSheet<void>(
                               backgroundColor: Colors.white,
                               context: context,
                               builder: (BuildContext context) {
