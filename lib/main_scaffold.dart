@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:novel_reader/pages/genres.dart';
 import 'package:novel_reader/pages/home.dart';
+import 'package:novel_reader/pages/menu_screen.dart';
 import 'package:novel_reader/pages/shelf.dart';
 import 'package:novel_reader/providers/bottom_navigation_provider.dart';
 
@@ -13,7 +13,7 @@ class MainScaffold extends ConsumerWidget {
     const HomePage(),
     const GenresPage(),
     const ShelfScreen(),
-    Container(color: Colors.pinkAccent)
+    const MenuScreen()
   ];
 
   @override
