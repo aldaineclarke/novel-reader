@@ -1,16 +1,18 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:novel_reader/pages/novel_list.dart';
 import 'package:novel_reader/pages/search.dart';
+import 'package:novel_reader/providers/novel_notifier_provider.dart';
 import 'package:novel_reader/services/novel_service.dart';
 
-class GenresPage extends StatelessWidget {
+class GenresPage extends ConsumerWidget {
   const GenresPage({super.key});
 
   static const routeName = 'Genres';
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       appBar: AppBar(
         title: Text("Genres"),
@@ -39,6 +41,9 @@ class GenresPage extends StatelessWidget {
                       MaterialPageRoute<void>(
                         builder: (context) => NovelListScreen(
                           listId: snapshot.data![index],
+                          provider: ref.read(
+                            novelsByGenreProvider(snapshot.data![index]),
+                          ),
                         ),
                       ),
                     );
