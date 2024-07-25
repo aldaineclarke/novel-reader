@@ -5,7 +5,9 @@ analyzer:
     - lib/**/*.g.dart
     - lib/**/*.freezed.dart
     - lib/firebase_options.dart
-
+  plugins:
+      - custom_lint
+      
 linter:
   rules:
     public_member_api_docs: false

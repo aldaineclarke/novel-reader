@@ -52,14 +52,6 @@ GoRouter appRouter() => GoRouter(
               final id = state.pathParameters['id'] ?? '';
               return NovelDetailsPage(novelId: id);
             }),
-        GoRoute(
-          path: '/novel-list/:id',
-          name: NovelListScreen.routeName,
-          builder: (BuildContext context, GoRouterState state) {
-            final id = state.pathParameters['id'] ?? '';
-            return const NovelListScreen(listId: 'latest-release');
-          },
-        ),
       ],
       observers: [
         FirebaseAnalyticsObserver(analytics: FirebaseAnalytics.instance),

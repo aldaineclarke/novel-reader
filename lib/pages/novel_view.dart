@@ -7,6 +7,8 @@ import 'package:hive/hive.dart';
 import 'package:novel_reader/env.dart';
 import 'package:novel_reader/hive_adapters/current_novel.dart';
 import 'package:novel_reader/models/chapter_data.dart';
+import 'package:flutter_tts/flutter_tts.dart';
+
 import 'package:novel_reader/providers/chapter_list_provider.dart';
 import 'package:novel_reader/providers/current_novel_provider.dart';
 import 'package:novel_reader/services/novel_service.dart';
@@ -32,9 +34,20 @@ class _NovelViewState extends ConsumerState<NovelView> {
   final testStr =
       'If you find any errors ( Ads popup, ads redirect, broken links, non-standard content, etc.. ), Please let us know < report chapter > so we can fix it as soon as possible.';
 
+  late FlutterTts flutterTts;
+  String _text = 'This is a test'; // Combined text
+
+  Future<void> _speak(String speech) async {
+    await flutterTts.setLanguage('en-US');
+    await flutterTts.setPitch(1);
+    // Text to speech have a limit with the length of the string 2000
+    await flutterTts.speak(speech.substring(0, 4000));
+  }
+
   @override
   void initState() {
     super.initState();
+    flutterTts = FlutterTts();
     currentNovel = super.widget.novelChapter;
     novelBox = Hive.box<CurrentNovel>(Env.novel_db_name);
     final novel = ref.read(currentNovelProvider);
@@ -56,17 +69,6 @@ class _NovelViewState extends ConsumerState<NovelView> {
     _scrollController.dispose();
     super.dispose();
   }
-
-  // void _scrollListener() {
-  //   print("scrolling");
-  //   if (_scrollController.position.atEdge) {
-  //     bool isBottom = _scrollController.position.pixels != 0;
-  //     if (isBottom) {
-  //       // _loadNextChapter();
-  //       print(_scrollController.position.maxScrollExtent);
-  //     }
-  //   }
-  // }
 
   void _loadNextChapter() {
     // Simulate fetching more items
@@ -114,36 +116,28 @@ class _NovelViewState extends ConsumerState<NovelView> {
       padding: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
       duration: Duration(milliseconds: 500),
       shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(20))),
+        borderRadius: BorderRadius.all(Radius.circular(20)),
+      ),
     );
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 
   @override
   Widget build(BuildContext context) {
-    final novelList = ref.read(chapterListProvider);
-
+    final chapterDataAsyncValue = ref.watch(chapterDataProvider(currentNovel));
+    final textToSpeech = ref.watch(textToSpeechProvider);
     return Scaffold(
-      backgroundColor: Colors.amber[50],
-      body: FutureBuilder(
-        future: NovelService.getNovelChapter(currentNovel),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
-            return const Text('No Content');
-          }
-          final val = ref.read(chapterListProvider);
-          // currentNovelProvider['someData'] = "";
+      body: chapterDataAsyncValue.when(
+        data: (data) {
+          final chapterData = data;
+          final paragraphs = chapterData.text.split('\n');
+          // _text = paragraphs.join('\n\n'); // Update combined text
+
           return Stack(
             children: [
               Positioned(
                 child: Scrollbar(
                   child: SmartRefresher(
-                    // onRefresh: () {
-                    //   _onRefresh();
-                    //   print("Refreshing");
-                    // },
                     onLoading: _onLoad,
                     enablePullUp: true,
                     enablePullDown: false,
@@ -173,7 +167,6 @@ class _NovelViewState extends ConsumerState<NovelView> {
                       padding: const EdgeInsets.all(20),
                       itemCount: 1,
                       itemBuilder: (context, index) {
-                        final paragraphs = snapshot.data!.text.split('\n');
                         return GestureDetector(
                           onDoubleTap: () {
                             showModalBottomSheet<void>(
@@ -194,7 +187,7 @@ class _NovelViewState extends ConsumerState<NovelView> {
                                 padding:
                                     const EdgeInsets.symmetric(vertical: 10),
                                 child: Text(
-                                  snapshot.data!.chapterTitle,
+                                  chapterData.chapterTitle,
                                   style: const TextStyle(
                                     fontSize: 20,
                                     color: Colors.black87,
@@ -233,8 +226,136 @@ class _NovelViewState extends ConsumerState<NovelView> {
             ],
           );
         },
+        error: (error, stacktrace) => const Text('No Content'),
+        loading: () => const Center(child: CircularProgressIndicator()),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          print('test');
+          _speak(textToSpeech);
+        },
+        child: const Icon(Icons.mic_none),
       ),
     );
+    //   return Scaffold(
+    //     backgroundColor: Colors.amber[50],
+    //     body: FutureBuilder<ChapterData>(
+    //       future: ref.watch(chapterDataProvider(currentNovel)),
+    //       builder: (context, snapshot) {
+    //         if (snapshot.connectionState == ConnectionState.waiting) {
+    //           return const Center(child: CircularProgressIndicator());
+    //         } else if (snapshot.hasError) {
+    //           return const Text('No Content');
+    //         }
+    //         if (!snapshot.hasData) {
+    //           return const Center(child: Text('No Content'));
+    //         }
+
+    //         final chapterData = snapshot.data!;
+    //         final paragraphs = chapterData.text.split('\n');
+    //         // _text = paragraphs.join('\n\n'); // Update combined text
+
+    //         return Stack(
+    //           children: [
+    //             Positioned(
+    //               child: Scrollbar(
+    //                 child: SmartRefresher(
+    //                   onLoading: _onLoad,
+    //                   enablePullUp: true,
+    //                   enablePullDown: false,
+    //                   controller: _nextChapterController,
+    //                   footer: CustomFooter(
+    //                     builder: (BuildContext context, LoadStatus? mode) {
+    //                       Widget body;
+    //                       if (mode == LoadStatus.idle) {
+    //                         body = const Text('pull up load');
+    //                       } else if (mode == LoadStatus.loading) {
+    //                         body = const CupertinoActivityIndicator();
+    //                       } else if (mode == LoadStatus.failed) {
+    //                         body = const Text('Load Failed!Click retry!');
+    //                       } else if (mode == LoadStatus.canLoading) {
+    //                         body = const Text('release to load more');
+    //                       } else {
+    //                         body = const Text('No more Data');
+    //                       }
+    //                       return SizedBox(
+    //                         height: 55,
+    //                         child: Center(child: body),
+    //                       );
+    //                     },
+    //                   ),
+    //                   child: ListView.builder(
+    //                     controller: _scrollController,
+    //                     padding: const EdgeInsets.all(20),
+    //                     itemCount: 1,
+    //                     itemBuilder: (context, index) {
+    //                       return GestureDetector(
+    //                         onDoubleTap: () {
+    //                           showModalBottomSheet<void>(
+    //                             backgroundColor: Colors.white,
+    //                             context: context,
+    //                             builder: (BuildContext context) {
+    //                               return const NovelViewOptionPanel();
+    //                             },
+    //                           );
+    //                         },
+    //                         onTap: () {
+    //                           showSnackBar(context);
+    //                         },
+    //                         child: Column(
+    //                           crossAxisAlignment: CrossAxisAlignment.start,
+    //                           children: [
+    //                             Padding(
+    //                               padding:
+    //                                   const EdgeInsets.symmetric(vertical: 10),
+    //                               child: Text(
+    //                                 chapterData.chapterTitle,
+    //                                 style: const TextStyle(
+    //                                   fontSize: 20,
+    //                                   color: Colors.black87,
+    //                                 ),
+    //                                 textAlign: TextAlign.start,
+    //                               ),
+    //                             ),
+    //                             RichText(
+    //                               text: TextSpan(
+    //                                 children: paragraphs.map((paragraph) {
+    //                                   if (testStr == paragraph) {
+    //                                     return const TextSpan(text: '');
+    //                                   }
+    //                                   if (hostName == paragraph) {
+    //                                     return const TextSpan();
+    //                                   }
+    //                                   return TextSpan(
+    //                                     text: '$paragraph\n\n',
+    //                                     style: const TextStyle(
+    //                                       color: Colors.black,
+    //                                       fontSize: 16,
+    //                                       height: 1.6,
+    //                                     ),
+    //                                   );
+    //                                 }).toList(),
+    //                               ),
+    //                             ),
+    //                           ],
+    //                         ),
+    //                       );
+    //                     },
+    //                   ),
+    //                 ),
+    //               ),
+    //             ),
+    //           ],
+    //         );
+    //       },
+    //     ),
+    //     floatingActionButton: FloatingActionButton(
+    //       onPressed: () {
+    //         _speak();
+    //       },
+    //       child: const Icon(Icons.mic_none),
+    //     ),
+    //   );
   }
 }
 
@@ -362,5 +483,24 @@ class _NovelViewOptionPanelState extends State<NovelViewOptionPanel> {
         ],
       ),
     );
+  }
+}
+
+var chapterDataProvider =
+    FutureProvider.family<ChapterData, String>((ref, currentNovel) async {
+  var currentChapter = await NovelService.getNovelChapter(currentNovel);
+  //set text
+  ref.read(textToSpeechProvider.notifier).updateText(currentChapter.text);
+  return currentChapter;
+});
+
+var textToSpeechProvider = StateNotifierProvider<TextToSpeechNotifier, String>(
+    (ref) => TextToSpeechNotifier(''));
+
+class TextToSpeechNotifier extends StateNotifier<String> {
+  TextToSpeechNotifier(super.state);
+
+  updateText(String text) {
+    state = state + text;
   }
 }
