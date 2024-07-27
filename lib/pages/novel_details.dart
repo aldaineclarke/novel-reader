@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:novel_reader/hive_adapters/current_novel.dart';
@@ -21,6 +22,8 @@ class _NovelDetailsPageState extends ConsumerState<NovelDetailsPage> {
   @override
   Widget build(BuildContext context) {
     final novelDetailsFuture = ref.watch(novelDetailsProvider(widget.novelId));
+    final shelf = ref.watch(shelfProvider);
+    print(shelf.map((e) => e.novelId));
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
@@ -36,7 +39,18 @@ class _NovelDetailsPageState extends ConsumerState<NovelDetailsPage> {
           loading: () => const Center(child: CircularProgressIndicator()),
           data: (novelData) {
 // Define a regular expression to match digits
+            print(novelData.id);
+            CurrentNovel? novelInShelf;
             final regExp = RegExp(r'\d+');
+            try {
+              novelInShelf = shelf
+                  .where(
+                    (element) => element.novelId == novelData.id,
+                  )
+                  .first;
+            } on StateError catch (e) {
+              novelInShelf = null;
+            }
 
             // Find all matches in the input string
             final firstChapter =
@@ -178,6 +192,11 @@ class _NovelDetailsPageState extends ConsumerState<NovelDetailsPage> {
                           ref
                               .read(currentNovelProvider.notifier)
                               .setNovel(novel);
+                          if (kDebugMode) {
+                            print(
+                                'novelInShelf: ${novelInShelf?.currentChapterId}');
+                          }
+
                           Navigator.push(
                             context,
                             MaterialPageRoute<void>(
@@ -186,14 +205,17 @@ class _NovelDetailsPageState extends ConsumerState<NovelDetailsPage> {
                             ),
                           );
                         },
-                        child: const Text('Start Reading'),
+                        child: (novelInShelf == null)
+                            ? const Text('Start Reading')
+                            : Text(
+                                'Continue Chapter ${regExp.firstMatch(novelInShelf.currentChapterId)?.group(0)}',
+                              ),
                       ),
                       TextButton(
                         onPressed: () {
                           ref
                               .read(shelfProvider.notifier)
                               .addNovelToShelf(novel);
-                          setState(() {});
                         },
                         style:
                             TextButton.styleFrom(backgroundColor: Colors.lime),

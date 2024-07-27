@@ -11,6 +11,7 @@ import 'package:flutter_tts/flutter_tts.dart';
 
 import 'package:novel_reader/providers/chapter_list_provider.dart';
 import 'package:novel_reader/providers/current_novel_provider.dart';
+import 'package:novel_reader/providers/shelf_provider.dart';
 import 'package:novel_reader/services/novel_service.dart';
 import 'package:pull_to_refresh_flutter3/pull_to_refresh_flutter3.dart';
 
@@ -81,6 +82,7 @@ class _NovelViewState extends ConsumerState<NovelView> {
         currentNovel = novelList[currentIndex].id;
         novel?.copyWith(currentChapterId: currentNovel);
         novelBox.put('currentNovel', novel!);
+        ref.read(shelfProvider.notifier).updateNovelCurrentChapter(novel);
         ref.read(currentNovelProvider.notifier).setNovel(novel);
         print(currentNovel);
       },

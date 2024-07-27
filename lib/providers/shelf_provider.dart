@@ -20,6 +20,36 @@ class ShelfNotifier extends StateNotifier<List<CurrentNovel>> {
     state = [...state, novel];
   }
 
+  void updateNovelCurrentChapter(CurrentNovel novel) async {
+    final shelf = Hive.box<CurrentNovel>(Env.shelf_db_name);
+
+    // Retrieve all novels from the state with the matching novelId
+    final novels = state
+        .where((shelfNovel) => shelfNovel.novelId == novel.novelId)
+        .toList();
+
+    if (kDebugMode) {
+      print(novels.first.currentChapterId);
+    }
+
+    // Check if the novel exists in the shelf
+    if (novels.isNotEmpty) {
+      // Update the currentChapterId for the first matching novel
+      final updatedNovel =
+          novels.first.copyWith(currentChapterId: novel.currentChapterId);
+
+      // Update the state
+      state = [
+        for (final n in state)
+          if (n.novelId == novel.novelId) updatedNovel else n
+      ];
+
+      // Clear the shelf and put the updated state back into it
+      await shelf.clear();
+      await shelf.putAll({for (var n in state) n.novelId: n});
+    }
+  }
+
   // Finds the novel in the shelf and return true if it is present;
   bool novelInShelf(CurrentNovel novel) {
     final novels =
