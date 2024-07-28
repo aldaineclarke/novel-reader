@@ -84,14 +84,13 @@ class _NovelViewState extends ConsumerState<NovelView> {
         novelBox.put('currentNovel', novel!);
         ref.read(shelfProvider.notifier).updateNovelCurrentChapter(novel);
         ref.read(currentNovelProvider.notifier).setNovel(novel);
-        print(currentNovel);
       },
     );
   }
 
   void _onRefresh() async {
     // monitor network fetch
-    await Future.delayed(Duration(milliseconds: 1000));
+    await Future.delayed(const Duration(milliseconds: 1000));
     // if failed,use refreshFailed()
     _nextChapterController.refreshCompleted();
   }
@@ -187,20 +186,26 @@ class _NovelViewState extends ConsumerState<NovelView> {
                             children: [
                               Padding(
                                 padding:
-                                    const EdgeInsets.symmetric(vertical: 10),
-                                child: Text(
-                                  chapterData.chapterTitle,
-                                  style: const TextStyle(
-                                    fontSize: 20,
-                                    color: Colors.black87,
+                                    const EdgeInsets.only(top: 150, bottom: 20),
+                                child: Center(
+                                  child: parseChapterTitle(
+                                    chapterData.chapterTitle,
                                   ),
-                                  textAlign: TextAlign.start,
                                 ),
                               ),
                               RichText(
                                 text: TextSpan(
                                   children: paragraphs.map((paragraph) {
-                                    if (testStr == paragraph) {
+                                    if (testStr == paragraph ||
+                                        paragraph.contains(
+                                          chapterData.chapterTitle,
+                                        ) ||
+                                        paragraph.toLowerCase().trim() ==
+                                            chapterData.chapterTitle
+                                                .toLowerCase() ||
+                                        paragraph
+                                            .toLowerCase()
+                                            .contains('chapter')) {
                                       return const TextSpan(text: '');
                                     }
                                     if (hostName == paragraph) {
@@ -239,125 +244,42 @@ class _NovelViewState extends ConsumerState<NovelView> {
         child: const Icon(Icons.mic_none),
       ),
     );
-    //   return Scaffold(
-    //     backgroundColor: Colors.amber[50],
-    //     body: FutureBuilder<ChapterData>(
-    //       future: ref.watch(chapterDataProvider(currentNovel)),
-    //       builder: (context, snapshot) {
-    //         if (snapshot.connectionState == ConnectionState.waiting) {
-    //           return const Center(child: CircularProgressIndicator());
-    //         } else if (snapshot.hasError) {
-    //           return const Text('No Content');
-    //         }
-    //         if (!snapshot.hasData) {
-    //           return const Center(child: Text('No Content'));
-    //         }
+  }
 
-    //         final chapterData = snapshot.data!;
-    //         final paragraphs = chapterData.text.split('\n');
-    //         // _text = paragraphs.join('\n\n'); // Update combined text
+  Widget parseChapterTitle(String title) {
+    // Regular expression to match "Chapter <number> - <title>"
+    final regExp = RegExp(r'(?:[Cc]hapter)\s+(\d+)(?:\s*[-:]\s*|\s+)(.*)?');
 
-    //         return Stack(
-    //           children: [
-    //             Positioned(
-    //               child: Scrollbar(
-    //                 child: SmartRefresher(
-    //                   onLoading: _onLoad,
-    //                   enablePullUp: true,
-    //                   enablePullDown: false,
-    //                   controller: _nextChapterController,
-    //                   footer: CustomFooter(
-    //                     builder: (BuildContext context, LoadStatus? mode) {
-    //                       Widget body;
-    //                       if (mode == LoadStatus.idle) {
-    //                         body = const Text('pull up load');
-    //                       } else if (mode == LoadStatus.loading) {
-    //                         body = const CupertinoActivityIndicator();
-    //                       } else if (mode == LoadStatus.failed) {
-    //                         body = const Text('Load Failed!Click retry!');
-    //                       } else if (mode == LoadStatus.canLoading) {
-    //                         body = const Text('release to load more');
-    //                       } else {
-    //                         body = const Text('No more Data');
-    //                       }
-    //                       return SizedBox(
-    //                         height: 55,
-    //                         child: Center(child: body),
-    //                       );
-    //                     },
-    //                   ),
-    //                   child: ListView.builder(
-    //                     controller: _scrollController,
-    //                     padding: const EdgeInsets.all(20),
-    //                     itemCount: 1,
-    //                     itemBuilder: (context, index) {
-    //                       return GestureDetector(
-    //                         onDoubleTap: () {
-    //                           showModalBottomSheet<void>(
-    //                             backgroundColor: Colors.white,
-    //                             context: context,
-    //                             builder: (BuildContext context) {
-    //                               return const NovelViewOptionPanel();
-    //                             },
-    //                           );
-    //                         },
-    //                         onTap: () {
-    //                           showSnackBar(context);
-    //                         },
-    //                         child: Column(
-    //                           crossAxisAlignment: CrossAxisAlignment.start,
-    //                           children: [
-    //                             Padding(
-    //                               padding:
-    //                                   const EdgeInsets.symmetric(vertical: 10),
-    //                               child: Text(
-    //                                 chapterData.chapterTitle,
-    //                                 style: const TextStyle(
-    //                                   fontSize: 20,
-    //                                   color: Colors.black87,
-    //                                 ),
-    //                                 textAlign: TextAlign.start,
-    //                               ),
-    //                             ),
-    //                             RichText(
-    //                               text: TextSpan(
-    //                                 children: paragraphs.map((paragraph) {
-    //                                   if (testStr == paragraph) {
-    //                                     return const TextSpan(text: '');
-    //                                   }
-    //                                   if (hostName == paragraph) {
-    //                                     return const TextSpan();
-    //                                   }
-    //                                   return TextSpan(
-    //                                     text: '$paragraph\n\n',
-    //                                     style: const TextStyle(
-    //                                       color: Colors.black,
-    //                                       fontSize: 16,
-    //                                       height: 1.6,
-    //                                     ),
-    //                                   );
-    //                                 }).toList(),
-    //                               ),
-    //                             ),
-    //                           ],
-    //                         ),
-    //                       );
-    //                     },
-    //                   ),
-    //                 ),
-    //               ),
-    //             ),
-    //           ],
-    //         );
-    //       },
-    //     ),
-    //     floatingActionButton: FloatingActionButton(
-    //       onPressed: () {
-    //         _speak();
-    //       },
-    //       child: const Icon(Icons.mic_none),
-    //     ),
-    //   );
+    final match = regExp.firstMatch(title);
+    if (match != null) {
+      final chapterNumber = int.parse(match.group(1)!);
+      final chapterName = match.group(2) ?? '';
+      final chapterTitle = chapterName.split('-').last;
+      return Column(
+        children: [
+          Text('Chapter $chapterNumber'),
+          const SizedBox(height: 10),
+          Text(
+            chapterTitle,
+            style: const TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.w600,
+              color: Colors.black87,
+            ),
+            textAlign: TextAlign.center,
+          ),
+        ],
+      );
+    }
+    return Text(
+      title,
+      style: const TextStyle(
+        fontSize: 24,
+        fontWeight: FontWeight.w600,
+        color: Colors.black87,
+      ),
+      textAlign: TextAlign.center,
+    );
   }
 }
 

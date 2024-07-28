@@ -39,6 +39,7 @@ class _NovelChapterListState extends ConsumerState<NovelChapterList> {
 
     // Find all matches in the input string
     return Scaffold(
+      appBar: AppBar(),
       body: ListView(
         children: [
           ExpansionPanelList(
@@ -60,8 +61,11 @@ class _NovelChapterListState extends ConsumerState<NovelChapterList> {
                       builder: (context, snapshot) {
                         if (snapshot.connectionState ==
                             ConnectionState.waiting) {
-                          return const Center(
-                            child: CircularProgressIndicator(),
+                          return const Padding(
+                            padding: EdgeInsets.all(10.0),
+                            child: Center(
+                              child: CircularProgressIndicator(),
+                            ),
                           );
                         } else if (snapshot.hasError) {
                           return const Text('No Content');

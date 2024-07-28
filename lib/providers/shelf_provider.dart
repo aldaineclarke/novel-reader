@@ -28,10 +28,6 @@ class ShelfNotifier extends StateNotifier<List<CurrentNovel>> {
         .where((shelfNovel) => shelfNovel.novelId == novel.novelId)
         .toList();
 
-    if (kDebugMode) {
-      print(novels.first.currentChapterId);
-    }
-
     // Check if the novel exists in the shelf
     if (novels.isNotEmpty) {
       // Update the currentChapterId for the first matching novel
@@ -47,6 +43,8 @@ class ShelfNotifier extends StateNotifier<List<CurrentNovel>> {
       // Clear the shelf and put the updated state back into it
       await shelf.clear();
       await shelf.putAll({for (var n in state) n.novelId: n});
+    } else {
+      return;
     }
   }
 
