@@ -254,7 +254,7 @@ class _NovelViewState extends ConsumerState<NovelView> {
     if (match != null) {
       final chapterNumber = int.parse(match.group(1)!);
       final chapterName = match.group(2) ?? '';
-      final chapterTitle = chapterName.split('-').last;
+      final chapterTitle = chapterName;
       return Column(
         children: [
           Text('Chapter $chapterNumber'),

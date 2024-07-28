@@ -75,7 +75,7 @@ final latestReleasesProvider =
 
 final completedNovelsProvider =
     StateNotifierProvider<NovelsNotifier, List<NovelItem>>(
-  (ref) => NovelsNotifier('complete-novelsS'),
+  (ref) => NovelsNotifier('complete-novels'),
 );
 
 final mostPopularNovelsProvider =
