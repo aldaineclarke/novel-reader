@@ -33,13 +33,18 @@ class ShelfNotifier extends StateNotifier<List<CurrentNovel>> {
       // Update the currentChapterId for the first matching novel
       final updatedNovel =
           novels.first.copyWith(currentChapterId: novel.currentChapterId);
-
       // Update the state
       state = [
         for (final n in state)
           if (n.novelId == novel.novelId) updatedNovel else n
       ];
-
+      print('After');
+      state.where((element) {
+        return element.novelId == novel.novelId;
+      }).map((e) {
+        print(e.currentChapterId);
+        return e;
+      });
       // Clear the shelf and put the updated state back into it
       await shelf.clear();
       await shelf.putAll({for (var n in state) n.novelId: n});
@@ -52,20 +57,16 @@ class ShelfNotifier extends StateNotifier<List<CurrentNovel>> {
   bool novelInShelf(CurrentNovel novel) {
     final novels =
         state.where((shelfNovel) => shelfNovel.novelId == novel.novelId);
-    if (kDebugMode) {
-      print(novels);
-      print('Novel On Shelf:  ${novels.isNotEmpty}');
-    }
     return novels.isNotEmpty;
   }
 
-  void clearShelf() async {
+  Future<void> clearShelf() async {
     final shelf = Hive.box<CurrentNovel>(Env.shelf_db_name);
     await shelf.clear();
     state = [];
   }
 
-  void removeFromShelf(int index) async {
+  Future<void> removeFromShelf(int index) async {
     final shelf = Hive.box<CurrentNovel>(Env.shelf_db_name);
     await shelf.deleteAt(index);
     state = shelf.values.toList();

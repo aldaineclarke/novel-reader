@@ -75,17 +75,20 @@ class _NovelViewState extends ConsumerState<NovelView> {
     // Simulate fetching more items
     final novel = ref.read(currentNovelProvider);
     final novelList = ref.read(chapterListProvider);
-
     setState(
       () {
         currentIndex++;
         currentNovel = novelList[currentIndex].id;
-        novel?.copyWith(currentChapterId: currentNovel);
-        novelBox.put('currentNovel', novel!);
-        ref.read(shelfProvider.notifier).updateNovelCurrentChapter(novel);
-        ref.read(currentNovelProvider.notifier).setNovel(novel);
+        // Copy with not working  correctly
+        final updatedNovel = novel?.copyWith(currentChapterId: currentNovel);
+        novelBox.put('currentNovel', updatedNovel!);
+        ref
+            .read(shelfProvider.notifier)
+            .updateNovelCurrentChapter(updatedNovel);
+        ref.read(currentNovelProvider.notifier).setNovel(updatedNovel);
       },
     );
+    print('CurrentNovel: $currentNovel ');
   }
 
   void _onRefresh() async {

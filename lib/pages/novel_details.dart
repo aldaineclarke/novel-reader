@@ -23,7 +23,6 @@ class _NovelDetailsPageState extends ConsumerState<NovelDetailsPage> {
   Widget build(BuildContext context) {
     final novelDetailsFuture = ref.watch(novelDetailsProvider(widget.novelId));
     final shelf = ref.watch(shelfProvider);
-    print(shelf.map((e) => e.novelId));
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
@@ -39,7 +38,6 @@ class _NovelDetailsPageState extends ConsumerState<NovelDetailsPage> {
           loading: () => const Center(child: CircularProgressIndicator()),
           data: (novelData) {
 // Define a regular expression to match digits
-            print(novelData.id);
             CurrentNovel? novelInShelf;
             final regExp = RegExp(r'\d+');
             try {
@@ -192,10 +190,6 @@ class _NovelDetailsPageState extends ConsumerState<NovelDetailsPage> {
                           ref
                               .read(currentNovelProvider.notifier)
                               .setNovel(novel);
-                          if (kDebugMode) {
-                            print(
-                                'novelInShelf: ${novelInShelf?.currentChapterId}');
-                          }
 
                           Navigator.push(
                             context,

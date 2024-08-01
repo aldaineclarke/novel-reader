@@ -25,34 +25,11 @@ class _HomePageState extends ConsumerState<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return const DefaultTabController(
-      length: 6,
-      child: Scaffold(
-        appBar: TabBar(
-          // padding: EdgeInsets,
-          padding: EdgeInsets.only(top: 20),
-          tabAlignment: TabAlignment.start,
-          isScrollable: true,
-          tabs: [
-            Tab(text: 'Explore'),
-            Tab(text: 'New Novels'),
-            Tab(text: 'Chinese'),
-            Tab(text: 'Korean'),
-            Tab(text: 'Western'),
-            Tab(text: 'Completed'),
-          ],
-        ),
-        body: TabBarView(
-          children: [
-            DiscoverTab(),
-            Tab(text: 'Tab 3'),
-            Tab(text: 'Tab 3'),
-            Tab(text: 'Tab 3'),
-            Tab(text: 'Tab 3'),
-            Tab(text: 'Tab 3'),
-          ],
-        ),
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Novel World'),
       ),
+      body: const DiscoverTab(),
     );
   }
 }
