@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:hive/hive.dart';
-import 'package:novel_reader/env.dart';
-import 'package:novel_reader/hive_adapters/current_novel.dart';
+
 import 'package:novel_reader/pages/novel_details.dart';
 import 'package:novel_reader/providers/shelf_provider.dart';
-import 'package:novel_reader/services/novel_service.dart';
 
 class ShelfScreen extends ConsumerStatefulWidget {
   const ShelfScreen({super.key});

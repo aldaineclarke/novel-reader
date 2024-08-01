@@ -190,12 +190,15 @@ class _NovelDetailsPageState extends ConsumerState<NovelDetailsPage> {
                           ref
                               .read(currentNovelProvider.notifier)
                               .setNovel(novel);
-
+                          var chapterId = firstChapter.id;
+                          if (novelInShelf != null) {
+                            chapterId = novelInShelf.currentChapterId;
+                          }
                           Navigator.push(
                             context,
                             MaterialPageRoute<void>(
                               builder: (context) =>
-                                  NovelView(novelChapter: firstChapter.id),
+                                  NovelView(novelChapter: chapterId),
                             ),
                           );
                         },
