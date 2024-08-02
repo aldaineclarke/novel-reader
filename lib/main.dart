@@ -31,7 +31,7 @@ void main() async {
       );
       GetIt.instance.registerLazySingleton(
         () {
-          return HttpClient(baseOptions: BaseOptions(baseUrl: Env.serverUrl));
+          return HttpClient(baseOptions: BaseOptions(baseUrl: Env.hostedUrl));
         },
       );
       if (!kIsWeb) {
@@ -40,7 +40,7 @@ void main() async {
               .setCrashlyticsCollectionEnabled(false);
         } else {
           await FirebaseCrashlytics.instance
-              .setCrashlyticsCollectionEnabled(true);
+              .setCrashlyticsCollectionEnabled(false);
         }
       }
       if (kDebugMode) {

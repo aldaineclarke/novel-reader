@@ -2,8 +2,8 @@ plugins {
     id "com.android.application"
     id "kotlin-android"
     id "dev.flutter.flutter-gradle-plugin"
-    id 'com.google.firebase.crashlytics'
-    id 'com.google.firebase.firebase-perf'
+    // id 'com.google.firebase.crashlytics'
+    // id 'com.google.firebase.firebase-perf'
 }
 
 def localProperties = new Properties()
@@ -28,7 +28,7 @@ android {
     namespace 'dev.vainestudios.novel_reader'
 
     compileSdkVersion flutter.compileSdkVersion
-    ndkVersion flutter.ndkVersion
+    ndkVersion "25.1.8937393"
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8

@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive/hive.dart';
 import 'package:novel_reader/env.dart';
@@ -177,7 +178,7 @@ class _NovelViewState extends ConsumerState<NovelView> {
                               backgroundColor: Colors.white,
                               context: context,
                               builder: (BuildContext context) {
-                                return const NovelViewOptionPanel();
+                                return NovelViewOptionPanel();
                               },
                             );
                           },
@@ -290,14 +291,32 @@ class NovelViewOptionPanel extends StatefulWidget {
   const NovelViewOptionPanel({super.key});
 
   @override
-  State<NovelViewOptionPanel> createState() => _NovelViewOptionPanelState();
+  _NovelViewOptionPanelState createState() => _NovelViewOptionPanelState();
 }
 
 class _NovelViewOptionPanelState extends State<NovelViewOptionPanel> {
-  double _currentSliderValue = 20;
+  double _currentSliderValue = 0.7;
   static const brightnessChannel = MethodChannel('brightnessPlatform');
 
-  String data = '';
+  Future<void> _setBrightness(double brightness) async {
+    try {
+      print('BrightNess: $brightness');
+      await brightnessChannel
+          .invokeMethod('setBrightness', {'brightness': brightness});
+    } on PlatformException catch (e) {
+      print("Failed to set brightness: '${e}'.");
+    }
+  }
+
+  Future<void> _getBrightness() async {
+    try {
+      final brightessVal =
+          await brightnessChannel.invokeMethod('getBrightness');
+      print("THis is the brightness: $brightessVal");
+    } on PlatformException catch (e) {
+      print("Failed to set brightness: '${e}'.");
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -331,9 +350,14 @@ class _NovelViewOptionPanelState extends State<NovelViewOptionPanel> {
                   child: Slider(
                     divisions: 100,
                     min: 0,
-                    max: 10,
-                    value: 8,
-                    onChanged: (value) {},
+                    max: 1,
+                    value: _currentSliderValue,
+                    onChanged: (value) {
+                      setState(() {
+                        _currentSliderValue = value;
+                      });
+                    },
+                    onChangeEnd: _setBrightness,
                   ),
                 ),
               ),
@@ -350,10 +374,15 @@ class _NovelViewOptionPanelState extends State<NovelViewOptionPanel> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Chip(
-                label: Text('White'),
-                backgroundColor: Colors.white,
-                side: BorderSide.none,
+              GestureDetector(
+                onTap: () {
+                  _getBrightness();
+                },
+                child: const Chip(
+                  label: Text('White'),
+                  backgroundColor: Colors.white,
+                  side: BorderSide.none,
+                ),
               ),
               Chip(
                 label: const Text('Yellow'),
