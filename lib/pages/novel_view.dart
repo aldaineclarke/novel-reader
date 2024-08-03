@@ -12,6 +12,7 @@ import 'package:flutter_tts/flutter_tts.dart';
 
 import 'package:novel_reader/providers/chapter_list_provider.dart';
 import 'package:novel_reader/providers/current_novel_provider.dart';
+import 'package:novel_reader/providers/preference_provider.dart';
 import 'package:novel_reader/providers/shelf_provider.dart';
 import 'package:novel_reader/services/novel_service.dart';
 import 'package:pull_to_refresh_flutter3/pull_to_refresh_flutter3.dart';
@@ -32,6 +33,10 @@ class _NovelViewState extends ConsumerState<NovelView> {
   int currentIndex = 1;
   final String hostName = 'AnimeDaily.Net';
   late Box<CurrentNovel> novelBox;
+  double _fontSize = 16;
+  Color _fontColor = Colors.black;
+  Color _backgroundColor = Colors.white;
+  bool isPanelVisible = false;
 
   final testStr =
       'If you find any errors ( Ads popup, ads redirect, broken links, non-standard content, etc.. ), Please let us know < report chapter > so we can fix it as soon as possible.';
@@ -127,11 +132,55 @@ class _NovelViewState extends ConsumerState<NovelView> {
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 
+  Widget _buildPanel(BuildContext context, String title) {
+    return Material(
+      elevation: 5,
+      child: Container(
+        height: 100, // Adjust the height of the panel
+        color: Colors.brown,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            IconButton(
+              icon: const Icon(
+                Icons.chevron_left,
+                color: Colors.white,
+                size: 40,
+              ),
+              onPressed: () {
+                // Add any action if needed
+                print('hey');
+                Navigator.of(context).pop();
+              },
+            ),
+            Expanded(
+              child: Text(
+                title,
+                style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 18,
+                    overflow: TextOverflow.ellipsis),
+              ),
+            ),
+            IconButton(
+              icon: const Icon(Icons.more_vert, color: Colors.white),
+              onPressed: () {
+                // Navigator.of(context).push();
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final chapterDataAsyncValue = ref.watch(chapterDataProvider(currentNovel));
     final textToSpeech = ref.watch(textToSpeechProvider);
+    final preferences = ref.watch(preferenceProvider);
     return Scaffold(
+      backgroundColor: preferences.backgroundColor,
       body: chapterDataAsyncValue.when(
         data: (data) {
           final chapterData = data;
@@ -174,13 +223,9 @@ class _NovelViewState extends ConsumerState<NovelView> {
                       itemBuilder: (context, index) {
                         return GestureDetector(
                           onDoubleTap: () {
-                            showModalBottomSheet<void>(
-                              backgroundColor: Colors.white,
-                              context: context,
-                              builder: (BuildContext context) {
-                                return NovelViewOptionPanel();
-                              },
-                            );
+                            setState(() {
+                              isPanelVisible = !isPanelVisible;
+                            });
                           },
                           onTap: () {
                             showSnackBar(context);
@@ -194,11 +239,14 @@ class _NovelViewState extends ConsumerState<NovelView> {
                                 child: Center(
                                   child: parseChapterTitle(
                                     chapterData.chapterTitle,
+                                    preferences.fontColor,
                                   ),
                                 ),
                               ),
                               RichText(
                                 text: TextSpan(
+                                  style:
+                                      TextStyle(color: preferences.fontColor),
                                   children: paragraphs.map((paragraph) {
                                     if (testStr == paragraph ||
                                         paragraph.contains(
@@ -217,10 +265,10 @@ class _NovelViewState extends ConsumerState<NovelView> {
                                     }
                                     return TextSpan(
                                       text: '$paragraph\n\n',
-                                      style: const TextStyle(
-                                        color: Colors.black,
-                                        fontSize: 16,
-                                        height: 1.6,
+                                      style: TextStyle(
+                                        color: preferences.fontColor,
+                                        fontSize: preferences.fontSize,
+                                        height: preferences.fontSize / 10,
                                       ),
                                     );
                                   }).toList(),
@@ -234,23 +282,43 @@ class _NovelViewState extends ConsumerState<NovelView> {
                   ),
                 ),
               ),
+              AnimatedPositioned(
+                duration: const Duration(milliseconds: 300),
+                top:
+                    isPanelVisible ? 0 : -100, // Adjust the height of the panel
+                left: 0,
+                right: 0,
+                child: _buildPanel(context, chapterData.novelTitle),
+              ),
+              AnimatedPositioned(
+                bottom: isPanelVisible
+                    ? 0
+                    : -(MediaQuery.of(context).size.height * .4),
+                left: 0,
+                right: 0,
+                duration: const Duration(milliseconds: 300),
+                child: SizedBox(
+                  height: MediaQuery.of(context).size.height * .4,
+                  child: const NovelViewOptionPanel(),
+                ),
+              ),
             ],
           );
         },
         error: (error, stacktrace) => const Text('No Content'),
         loading: () => const Center(child: CircularProgressIndicator()),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          print('test');
-          _speak(textToSpeech);
-        },
-        child: const Icon(Icons.mic_none),
-      ),
+      // floatingActionButton: FloatingActionButton(
+      //   onPressed: () {
+      //     print('test');
+      //     _speak(textToSpeech);
+      //   },
+      //   child: const Icon(Icons.mic_none),
+      // ),
     );
   }
 
-  Widget parseChapterTitle(String title) {
+  Widget parseChapterTitle(String title, Color color) {
     // Regular expression to match "Chapter <number> - <title>"
     final regExp = RegExp(r'(?:[Cc]hapter)\s+(\d+)(?:\s*[-:]\s*|\s+)(.*)?');
 
@@ -265,10 +333,10 @@ class _NovelViewState extends ConsumerState<NovelView> {
           const SizedBox(height: 10),
           Text(
             chapterTitle,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 24,
               fontWeight: FontWeight.w600,
-              color: Colors.black87,
+              color: color,
             ),
             textAlign: TextAlign.center,
           ),
@@ -277,24 +345,24 @@ class _NovelViewState extends ConsumerState<NovelView> {
     }
     return Text(
       title,
-      style: const TextStyle(
+      style: TextStyle(
         fontSize: 24,
         fontWeight: FontWeight.w600,
-        color: Colors.black87,
+        color: color,
       ),
       textAlign: TextAlign.center,
     );
   }
 }
 
-class NovelViewOptionPanel extends StatefulWidget {
+class NovelViewOptionPanel extends ConsumerStatefulWidget {
   const NovelViewOptionPanel({super.key});
 
   @override
   _NovelViewOptionPanelState createState() => _NovelViewOptionPanelState();
 }
 
-class _NovelViewOptionPanelState extends State<NovelViewOptionPanel> {
+class _NovelViewOptionPanelState extends ConsumerState<NovelViewOptionPanel> {
   double _currentSliderValue = 0.7;
   static const brightnessChannel = MethodChannel('brightnessPlatform');
 
@@ -312,7 +380,6 @@ class _NovelViewOptionPanelState extends State<NovelViewOptionPanel> {
     try {
       final brightessVal =
           await brightnessChannel.invokeMethod('getBrightness');
-      print("THis is the brightness: $brightessVal");
     } on PlatformException catch (e) {
       print("Failed to set brightness: '${e}'.");
     }
@@ -320,123 +387,203 @@ class _NovelViewOptionPanelState extends State<NovelViewOptionPanel> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(20),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text(
-            'Settings',
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
-          ),
-          const SizedBox(height: 20),
-          Text(
-            'Brightness',
-            style: Theme.of(context)
-                .textTheme
-                .bodyLarge
-                ?.copyWith(fontWeight: FontWeight.w600),
-          ),
-          Row(
-            children: [
-              const Icon(
-                Icons.brightness_1,
-                size: 8,
-              ),
-              Expanded(
-                child: SliderTheme(
-                  data: const SliderThemeData(trackHeight: 1),
-                  child: Slider(
-                    divisions: 100,
-                    min: 0,
-                    max: 1,
-                    value: _currentSliderValue,
-                    onChanged: (value) {
-                      setState(() {
-                        _currentSliderValue = value;
-                      });
-                    },
-                    onChangeEnd: _setBrightness,
+    final preferences = ref.watch(preferenceProvider);
+    return Material(
+      elevation: 3,
+      shadowColor: Colors.black,
+      borderRadius: const BorderRadius.vertical(top: Radius.circular(40)),
+      clipBehavior: Clip.hardEdge,
+      child: Container(
+        color: Color.fromARGB(255, 255, 245, 245),
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'Settings',
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+            ),
+            const SizedBox(height: 20),
+            Text(
+              'Brightness',
+              style: Theme.of(context)
+                  .textTheme
+                  .bodyLarge
+                  ?.copyWith(fontWeight: FontWeight.w600),
+            ),
+            Row(
+              children: [
+                const Icon(
+                  Icons.brightness_1,
+                  size: 8,
+                ),
+                Expanded(
+                  child: SliderTheme(
+                    data: const SliderThemeData(trackHeight: 1),
+                    child: Slider(
+                      divisions: 100,
+                      min: 0,
+                      max: 1,
+                      value: _currentSliderValue,
+                      onChanged: (value) {
+                        setState(() {
+                          _currentSliderValue = value;
+                        });
+                      },
+                      onChangeEnd: _setBrightness,
+                    ),
                   ),
                 ),
-              ),
-              const Icon(Icons.brightness_high, size: 16)
-            ],
-          ),
-          const SizedBox(height: 20),
-          Text('Background Color',
+                const Icon(Icons.brightness_high, size: 16)
+              ],
+            ),
+            const SizedBox(height: 20),
+            Text(
+              'Page Themes',
               style: Theme.of(context)
                   .textTheme
                   .bodyLarge
-                  ?.copyWith(fontWeight: FontWeight.w600)),
-          const SizedBox(height: 5),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              GestureDetector(
-                onTap: () {
-                  _getBrightness();
-                },
-                child: const Chip(
-                  label: Text('White'),
-                  backgroundColor: Colors.white,
-                  side: BorderSide.none,
+                  ?.copyWith(fontWeight: FontWeight.w600),
+            ),
+            const SizedBox(height: 5),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: TextButton(
+                      style: TextButton.styleFrom(
+                          backgroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 10, horizontal: 0),
+                          minimumSize: Size(40, 20), // Adjust the minimum size
+
+                          shape: const RoundedRectangleBorder(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(10)))),
+                      onPressed: () {
+                        preferences
+                          ..setBackgroundColor(Colors.white)
+                          ..setFontColor(Colors.black87);
+                      },
+                      child: const Text(
+                        'Blanc',
+                        style: TextStyle(color: Colors.black),
+                      )),
                 ),
-              ),
-              Chip(
-                label: const Text('Yellow'),
-                backgroundColor: Colors.amber[50],
-                side: BorderSide.none,
-              ),
-              const Chip(
-                label: Text(
-                  'Black',
-                  style: TextStyle(color: Colors.white70),
+                const SizedBox(width: 5),
+                Expanded(
+                  child: TextButton(
+                    style: TextButton.styleFrom(
+                        backgroundColor: const Color(0xFFf8fd98),
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 10, horizontal: 0),
+                        minimumSize:
+                            const Size(40, 20), // Adjust the minimum size
+
+                        shape: const RoundedRectangleBorder(
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(10)))),
+                    onPressed: () {
+                      preferences
+                        ..setBackgroundColor(const Color(0xFFf8fd98))
+                        ..setFontColor(Colors.black87);
+                    },
+                    child: const Text(
+                      'Sunlit',
+                      style: TextStyle(color: Colors.black),
+                    ),
+                  ),
                 ),
-                backgroundColor: Colors.black,
-                side: BorderSide.none,
-              ),
-              const Chip(
-                label: Text(
-                  'Gray',
+                const SizedBox(width: 5),
+                Expanded(
+                  child: TextButton(
+                      style: TextButton.styleFrom(
+                          backgroundColor: Colors.black,
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 10, horizontal: 0),
+                          minimumSize:
+                              const Size(40, 20), // Adjust the minimum size
+
+                          shape: const RoundedRectangleBorder(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(10)))),
+                      onPressed: () {
+                        preferences
+                          ..setBackgroundColor(Colors.black54)
+                          ..setFontColor(Colors.white70);
+                      },
+                      child: const Text(
+                        'Dark Light',
+                        style: TextStyle(color: Colors.white),
+                      )),
                 ),
-                side: BorderSide.none,
-                backgroundColor: Colors.black26,
-              ),
-            ],
-          ),
-          const SizedBox(height: 20),
-          Text('Font Color',
-              style: Theme.of(context)
-                  .textTheme
-                  .bodyLarge
-                  ?.copyWith(fontWeight: FontWeight.w600)),
-          const SizedBox(height: 5),
-          const Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Expanded(child: Chip(label: Text('White'))),
-              Expanded(child: Chip(label: Text('Black'))),
-              Expanded(child: Chip(label: Text('Red'))),
-              Expanded(child: Chip(label: Text('Red'))),
-            ],
-          ),
-          const SizedBox(height: 20),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                'Font Size',
-                style: Theme.of(context)
-                    .textTheme
-                    .bodyLarge
-                    ?.copyWith(fontWeight: FontWeight.w600),
-              ),
-              const Text('14pt')
-            ],
-          )
-        ],
+                const SizedBox(width: 5),
+                Expanded(
+                  child: TextButton(
+                      style: TextButton.styleFrom(
+                          backgroundColor: const Color(0xFFEDD1B0),
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 10, horizontal: 0),
+                          minimumSize:
+                              const Size(40, 20), // Adjust the minimum size
+
+                          shape: const RoundedRectangleBorder(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(10)))),
+                      onPressed: () {
+                        preferences
+                          ..setBackgroundColor(const Color(0xFFEDD1B0))
+                          ..setFontColor(Colors.brown[900]!);
+                      },
+                      child: const Text(
+                        'Vintage',
+                        style: TextStyle(color: Colors.brown),
+                      )),
+                ),
+              ],
+            ),
+            const SizedBox(height: 20),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: Text(
+                    'Font Size',
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodyLarge
+                        ?.copyWith(fontWeight: FontWeight.w600),
+                  ),
+                ),
+                Row(
+                  children: [
+                    InkWell(
+                        onTap: () {
+                          preferences.setFontSize(preferences.fontSize - 1);
+                        },
+                        child: const Text(
+                          'A-',
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        )),
+                    const SizedBox(width: 10),
+                    Text('${preferences.fontSize.toInt()}pt'),
+                    const SizedBox(width: 10),
+                    InkWell(
+                        onTap: () {
+                          preferences.setFontSize(preferences.fontSize + 1);
+                        },
+                        child: const Text(
+                          'A+',
+                          style: TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.bold),
+                        )),
+                  ],
+                )
+              ],
+            )
+          ],
+        ),
       ),
     );
   }
