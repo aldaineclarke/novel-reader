@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:dio/dio.dart';
+import 'package:feedback/feedback.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_performance/firebase_performance.dart';
@@ -14,6 +15,7 @@ import 'package:novel_reader/hive_adapters/current_novel.dart';
 import 'package:novel_reader/providers/current_novel_provider.dart';
 // import 'package:novel_reader/providers/current_novel_provider.dart';
 import 'package:pull_to_refresh_flutter3/pull_to_refresh_flutter3.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 import 'app.dart';
 import 'env.dart';
@@ -71,7 +73,27 @@ void main() async {
             }),
           ],
           child: RefreshConfiguration(
-            child: const MyApp(),
+            child: BetterFeedback(
+                theme: FeedbackThemeData(
+                  background: Colors.grey,
+                  feedbackSheetColor: Colors.grey[50]!,
+                  drawColors: [
+                    Colors.red,
+                    Colors.green,
+                    Colors.blue,
+                    Colors.yellow,
+                  ],
+                ),
+                darkTheme: FeedbackThemeData.dark(),
+                localizationsDelegates: [
+                  GlobalFeedbackLocalizationsDelegate(),
+                  GlobalMaterialLocalizations.delegate,
+                  GlobalCupertinoLocalizations.delegate,
+                  GlobalWidgetsLocalizations.delegate,
+                ],
+                localeOverride: const Locale('en'),
+                pixelRatio: 1,
+                child: const MyApp()),
           ),
         ),
       );
