@@ -301,6 +301,12 @@ class _DiscoverTabState extends ConsumerState<DiscoverTab> {
                         // Since we will only have access to the last chapter
                         // We need to navigate to the chapter to let the user read
                         // as well as fetch the subsequent chapters for that page
+                        Navigator.of(context).push(
+                          MaterialPageRoute<void>(
+                            builder: (context) =>
+                                NovelDetailsPage(novelId: currentNovel.novelId),
+                          ),
+                        );
                       },
                       child: const Text('Continue '),
                     ),

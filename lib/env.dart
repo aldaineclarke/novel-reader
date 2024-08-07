@@ -16,6 +16,9 @@ abstract class Env {
   @EnviedField(varName: 'SHELF_DB_NAME')
   static String shelf_db_name = _Env.shelf_db_name;
 
+  @EnviedField(varName: 'VIEWED_DB_NAME')
+  static String viewed_db_name = _Env.viewed_db_name;
+
   @EnviedField(varName: 'RECIPIENT')
   static String feedback_recipient = _Env.feedback_recipient;
 }

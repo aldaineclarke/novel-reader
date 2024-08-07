@@ -33,7 +33,7 @@ void main() async {
       );
       GetIt.instance.registerLazySingleton(
         () {
-          return HttpClient(baseOptions: BaseOptions(baseUrl: Env.hostedUrl));
+          return HttpClient(baseOptions: BaseOptions(baseUrl: Env.serverUrl));
         },
       );
       if (!kIsWeb) {
@@ -62,6 +62,7 @@ void main() async {
         final box = await Hive.openBox<CurrentNovel>(Env.novel_db_name);
       }
       await Hive.openBox<CurrentNovel>(Env.shelf_db_name);
+      await Hive.openBox<CurrentNovel>(Env.viewed_db_name);
 
       final currentNovelNotifier = await loadCurrentNovel();
 
@@ -75,7 +76,6 @@ void main() async {
           child: RefreshConfiguration(
             child: BetterFeedback(
                 theme: FeedbackThemeData(
-                  background: Colors.grey,
                   feedbackSheetColor: Colors.grey[50]!,
                   drawColors: [
                     Colors.red,
@@ -106,7 +106,7 @@ void main() async {
 }
 
 Future<CurrentNovelNotifier> loadCurrentNovel() async {
-  final novelBox = Hive.box<CurrentNovel>(Env.novel_db_name);
+  final novelBox = Hive.box<CurrentNovel>(Env.shelf_db_name);
   final currentNovel = novelBox.get('currentNovel');
   final notifier = CurrentNovelNotifier();
   if (currentNovel != null) {
