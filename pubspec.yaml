@@ -19,12 +19,12 @@ dependencies:
   firebase_performance_dio: ^0.6.0
   flutter:
     sdk: flutter
-  flutter_native_splash: ^2.3.5
-  # dart run flutter_native_splash:create
-  freezed_annotation: ^2.4.1
   flutter_email_sender: ^6.0.3
+  # dart run flutter_native_splash:create
+  flutter_native_splash: ^2.3.5
   flutter_riverpod: ^2.5.1
   flutter_tts: ^4.0.2
+  freezed_annotation: ^2.4.1
   
   hive: ^2.2.3
   hive_flutter: ^1.1.0
@@ -64,8 +64,12 @@ flutter_launcher_icons:
   image_path: "assets/icon/icon.png"
 
 flutter_native_splash:
-  color: "FFFFFF"
+  color: "#AFC0CF"
   image: assets/splash/splash.png
+  android_12:
+    color: "#AFC0CF"
+    image: assets/splash/android12splash.png
+
 
 
 # For information on the generic Dart part of this file, see the
