@@ -43,7 +43,7 @@ class _DiscoverTabState extends ConsumerState<DiscoverTab> {
   Widget build(BuildContext context) {
     final currentNovel = ref.watch(currentNovelProvider);
     return ListView(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.fromLTRB(20, 20, 20, 80),
       children: [
         TextField(
           controller: searchCtrl,

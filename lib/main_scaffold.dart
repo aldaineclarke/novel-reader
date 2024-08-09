@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:novel_reader/pages/genres.dart';
@@ -21,34 +22,60 @@ class MainScaffold extends ConsumerWidget {
     final pageIndex = ref.watch(bottomNavProvider);
 
     return Scaffold(
-      body: IndexedStack(index: pageIndex, children: _routes),
-      bottomNavigationBar: BottomNavigationBar(
-        type: BottomNavigationBarType.fixed,
-        unselectedItemColor: Colors.black38,
-        selectedItemColor: Colors.amber,
-        unselectedLabelStyle: const TextStyle(color: Colors.black38),
-        showUnselectedLabels: true,
-        currentIndex: pageIndex,
-        onTap: (index) {
-          ref.read(bottomNavProvider.notifier).setPageIndex(index);
-        },
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home_outlined),
-            label: 'Home',
+      body: Stack(
+        children: [
+          Positioned.fill(
+            child: IndexedStack(index: pageIndex, children: _routes),
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.book),
-            label: 'Genres',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.shelves),
-            label: 'Shelf',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.more_horiz),
-            label: 'Menu',
-          ),
+          Positioned(
+            height: 60,
+            bottom: 10,
+            left: 20,
+            right: 20,
+            child: Material(
+              elevation: 10, // Adjust the elevation as needed
+              borderRadius: BorderRadius.circular(100),
+              child: Container(
+                decoration: const BoxDecoration(
+                  // border: Border.all(color: Colors.black12, width: 1),
+                  borderRadius: BorderRadius.all(
+                    Radius.circular(100),
+                  ),
+                ),
+                clipBehavior: Clip.hardEdge,
+                child: BottomNavigationBar(
+                  elevation: 0, // Set elevation to 0 to avoid double shadow
+                  type: BottomNavigationBarType.fixed,
+                  unselectedItemColor: Colors.black38,
+                  selectedItemColor: Colors.amber,
+                  unselectedLabelStyle: TextStyle(color: Colors.black38),
+                  showUnselectedLabels: true,
+                  currentIndex: pageIndex,
+                  onTap: (index) {
+                    ref.read(bottomNavProvider.notifier).setPageIndex(index);
+                  },
+                  items: const [
+                    BottomNavigationBarItem(
+                      icon: Icon(Icons.home_outlined),
+                      label: 'Home',
+                    ),
+                    BottomNavigationBarItem(
+                      icon: Icon(Icons.book),
+                      label: 'Genres',
+                    ),
+                    BottomNavigationBarItem(
+                      icon: Icon(Icons.shelves),
+                      label: 'Shelf',
+                    ),
+                    BottomNavigationBarItem(
+                      icon: Icon(Icons.more_horiz),
+                      label: 'Menu',
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          )
         ],
       ),
     );

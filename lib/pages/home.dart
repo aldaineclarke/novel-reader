@@ -27,7 +27,7 @@ class _HomePageState extends ConsumerState<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Novel World'),
+        title: const Text('Babel Novels'),
       ),
       body: const DiscoverTab(),
     );

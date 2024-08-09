@@ -13,7 +13,7 @@ class MenuScreen extends ConsumerWidget {
         title: Text('Menu', style: Theme.of(context).textTheme.headlineMedium),
       ),
       body: ListView(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 40),
+        padding: const EdgeInsets.fromLTRB(20, 20, 20, 80),
         children: [
           Row(children: [
             Expanded(

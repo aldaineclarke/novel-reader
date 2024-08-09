@@ -25,7 +25,7 @@ class GenresPage extends ConsumerWidget {
           }
           if (snapshot.hasData) {
             return GridView.builder(
-              padding: const EdgeInsets.all(20),
+              padding: const EdgeInsets.fromLTRB(20, 20, 20, 80),
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 2,
                 childAspectRatio: 3,

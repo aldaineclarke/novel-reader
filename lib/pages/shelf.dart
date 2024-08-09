@@ -30,7 +30,7 @@ class _ShelfScreenState extends ConsumerState<ShelfScreen> {
               child: Text('Shelf is Empty'),
             )
           : ListView.separated(
-              padding: const EdgeInsets.all(20),
+              padding: const EdgeInsets.fromLTRB(20, 20, 20, 80),
               itemCount: shelf.length,
               separatorBuilder: (context, index) => const SizedBox(height: 20),
               itemBuilder: (context, index) {
