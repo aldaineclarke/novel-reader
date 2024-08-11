@@ -16,6 +16,9 @@ class ShelfNotifier extends StateNotifier<List<CurrentNovel>> {
 
   void addNovelToShelf(CurrentNovel novel) async {
     final shelf = Hive.box<CurrentNovel>(Env.shelf_db_name);
+    if (novelInShelf(novel)) {
+      return;
+    }
     await shelf.add(novel);
     state = [...state, novel];
   }
