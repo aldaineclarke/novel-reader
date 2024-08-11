@@ -25,13 +25,16 @@ class CurrentNovelAdapter extends TypeAdapter<CurrentNovel> {
       description: fields[5] as String,
       currentChapterId: fields[6] as String,
       chapterCount: fields[7] as int,
+      currentPage: fields[8] != null ? fields[8] as int : 1,
+      chapterList:
+          fields[9] != null ? (fields[9] as List).cast<ChapterListItem>() : [],
     );
   }
 
   @override
   void write(BinaryWriter writer, CurrentNovel obj) {
     writer
-      ..writeByte(8)
+      ..writeByte(10)
       ..writeByte(0)
       ..write(obj.novelTitle)
       ..writeByte(1)
@@ -47,7 +50,11 @@ class CurrentNovelAdapter extends TypeAdapter<CurrentNovel> {
       ..writeByte(6)
       ..write(obj.currentChapterId)
       ..writeByte(7)
-      ..write(obj.chapterCount);
+      ..write(obj.chapterCount)
+      ..writeByte(8)
+      ..write(obj.currentPage)
+      ..writeByte(9)
+      ..write(obj.chapterList);
   }
 
   @override

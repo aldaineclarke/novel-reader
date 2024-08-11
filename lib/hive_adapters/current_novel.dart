@@ -1,4 +1,7 @@
 import 'package:hive/hive.dart';
+import 'package:novel_reader/providers/chapter_data_provider.dart';
+
+import 'chapter_list_item.dart';
 
 part 'current_novel.g.dart';
 
@@ -13,6 +16,8 @@ class CurrentNovel {
     required this.description,
     required this.currentChapterId,
     required this.chapterCount,
+    required this.currentPage,
+    required this.chapterList,
   });
 
   factory CurrentNovel.fromJson(Map<String, dynamic> json) {
@@ -25,6 +30,8 @@ class CurrentNovel {
       author: json['author'] as String,
       description: json['description'] as String,
       chapterCount: json['chapterCount'] as int,
+      currentPage: json['currentPage'] != null ? json['currentPage'] as int : 1,
+      chapterList: json['chapterList'] as List<ChapterListItem>,
     );
   }
   CurrentNovel copyWith({
@@ -36,17 +43,20 @@ class CurrentNovel {
     String? author,
     String? description,
     int? chapterCount,
+    int? currentPage,
+    List<ChapterListItem>? chapterList,
   }) {
     return CurrentNovel(
-      novelTitle: novelTitle ?? this.novelTitle,
-      novelId: novelId ?? this.novelId,
-      novelImage: novelImage ?? this.novelImage,
-      genres: genres ?? this.genres,
-      author: author ?? this.author,
-      description: description ?? this.description,
-      currentChapterId: currentChapterId ?? this.currentChapterId,
-      chapterCount: chapterCount ?? this.chapterCount,
-    );
+        novelTitle: novelTitle ?? this.novelTitle,
+        novelId: novelId ?? this.novelId,
+        novelImage: novelImage ?? this.novelImage,
+        genres: genres ?? this.genres,
+        author: author ?? this.author,
+        description: description ?? this.description,
+        currentChapterId: currentChapterId ?? this.currentChapterId,
+        chapterCount: chapterCount ?? this.chapterCount,
+        currentPage: currentPage ?? this.currentPage,
+        chapterList: chapterList ?? this.chapterList);
   }
 
   @HiveField(0)
@@ -72,4 +82,10 @@ class CurrentNovel {
 
   @HiveField(7)
   final int chapterCount;
+
+  @HiveField(8)
+  final int currentPage;
+
+  @HiveField(9)
+  final List<ChapterListItem> chapterList;
 }
