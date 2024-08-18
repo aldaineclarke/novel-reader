@@ -67,23 +67,23 @@ class CurrentNovelNotifier extends StateNotifier<CurrentNovel?> {
     state = novel;
   }
 
-  void updateNovel({
-    String? novelTitle,
-    String? novelId,
-    String? novelImage,
-    List<String>? genres,
-    String? currentChapterId,
-    int? chapterCount,
-  }) {
+  void updateNovel(
+      {String? novelTitle,
+      String? novelId,
+      String? novelImage,
+      List<String>? genres,
+      String? currentChapterId,
+      int? chapterCount,
+      int? currentPage}) {
     if (state != null) {
       state = state!.copyWith(
-        novelTitle: novelTitle,
-        novelId: novelId,
-        novelImage: novelImage,
-        genres: genres,
-        currentChapterId: currentChapterId,
-        chapterCount: chapterCount,
-      );
+          novelTitle: novelTitle,
+          novelId: novelId,
+          novelImage: novelImage,
+          genres: genres,
+          currentChapterId: currentChapterId,
+          chapterCount: chapterCount,
+          currentPage: currentPage ?? 1);
     }
   }
 

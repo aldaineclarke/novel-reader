@@ -50,10 +50,10 @@ class NovelService {
       final response =
           await GetIt.I<HttpClient>().get<Map<String, dynamic>>(url);
       if (response.data == null) throw Exception('No novel found');
-      var lightNovel = LightNovel.fromJson(response.data!);
+      final lightNovel = LightNovel.fromJson(response.data!);
       return lightNovel;
     } catch (e) {
-      return LightNovel(
+      return const LightNovel(
           id: 'id',
           title: 'title',
           genres: [],

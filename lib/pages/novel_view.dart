@@ -15,6 +15,7 @@ import 'package:novel_reader/providers/current_novel_provider.dart';
 import 'package:novel_reader/providers/preference_provider.dart';
 import 'package:novel_reader/providers/shelf_provider.dart';
 import 'package:novel_reader/services/novel_service.dart';
+import 'package:novel_reader/widgets/novel_panel_options.dart';
 import 'package:pull_to_refresh_flutter3/pull_to_refresh_flutter3.dart';
 
 class NovelView extends ConsumerStatefulWidget {
@@ -60,11 +61,14 @@ class _NovelViewState extends ConsumerState<NovelView> {
     final novel = ref.read(currentNovelProvider);
     final novelList = ref.read(chapterListProvider);
     if (kDebugMode) {
-      print(novel?.currentChapterId);
+      print('chapterLogs: ChapterId -  ${novel?.currentChapterId}');
     }
     currentIndex = novelList.indexWhere((chapterItem) {
       return chapterItem.id == novel?.currentChapterId;
     });
+    if (kDebugMode) {
+      print('chapterLogs: CurrentIndex - ${currentIndex}');
+    }
 
     novelBox.put('currentNovel', novel!);
 
@@ -77,21 +81,57 @@ class _NovelViewState extends ConsumerState<NovelView> {
     super.dispose();
   }
 
+  Future<void> fetchPageChapterList(String novelId, {int page = 1}) async {
+    final novelData = await NovelService.getNovelInfo(novelId, page);
+    if (kDebugMode) {
+      print(novelData.chapters);
+    }
+    ref
+        .read(chapterListProvider.notifier)
+        .addChapterListItemsFromJson(novelData.chapters);
+  }
+
   void _loadNextChapter() {
     // Simulate fetching more items
     final novel = ref.read(currentNovelProvider);
-    final novelList = ref.read(chapterListProvider);
+    final chapterList = ref.read(chapterListProvider);
     setState(
       () {
         currentIndex++;
-        currentNovel = novelList[currentIndex].id;
-        // Copy with not working  correctly
-        final updatedNovel = novel?.copyWith(currentChapterId: currentNovel);
-        novelBox.put('currentNovel', updatedNovel!);
-        ref
-            .read(shelfProvider.notifier)
-            .updateNovelCurrentChapter(updatedNovel);
-        ref.read(currentNovelProvider.notifier).setNovel(updatedNovel);
+        if (currentIndex == chapterList.length) {
+          // novel?.copyWith(currentPage: novel.currentPage + 1);
+
+          fetchPageChapterList(novel!.novelId, page: novel.currentPage + 1)
+              .then((value) {
+            if (kDebugMode) {
+              print(chapterList.length);
+              print(chapterList);
+            }
+            currentNovel = chapterList[currentIndex].id;
+            // Copy with not working  correctly
+            final updatedNovel = novel?.copyWith(
+                currentChapterId: currentNovel,
+                currentPage: novel.currentPage + 1);
+            novelBox.put('currentNovel', updatedNovel!);
+            ref
+                .read(shelfProvider.notifier)
+                .updateNovelCurrentChapter(updatedNovel);
+            ref.read(currentNovelProvider.notifier).setNovel(updatedNovel);
+          });
+          // Fetch next set of chapterListings then upudate the chapterListProvider.
+          // Start off index at 0.
+        } else {
+          currentNovel = chapterList[currentIndex].id;
+          // Copy with not working  correctly
+          final updatedNovel = novel?.copyWith(
+              currentChapterId: currentNovel,
+              currentPage: novel.currentPage + 1);
+          novelBox.put('currentNovel', updatedNovel!);
+          ref
+              .read(shelfProvider.notifier)
+              .updateNovelCurrentChapter(updatedNovel);
+          ref.read(currentNovelProvider.notifier).setNovel(updatedNovel);
+        }
       },
     );
     print('CurrentNovel: $currentNovel ');
@@ -351,240 +391,6 @@ class _NovelViewState extends ConsumerState<NovelView> {
         color: color,
       ),
       textAlign: TextAlign.center,
-    );
-  }
-}
-
-class NovelViewOptionPanel extends ConsumerStatefulWidget {
-  const NovelViewOptionPanel({super.key});
-
-  @override
-  _NovelViewOptionPanelState createState() => _NovelViewOptionPanelState();
-}
-
-class _NovelViewOptionPanelState extends ConsumerState<NovelViewOptionPanel> {
-  double _currentSliderValue = 0.7;
-  static const brightnessChannel = MethodChannel('brightnessPlatform');
-
-  Future<void> _setBrightness(double brightness) async {
-    try {
-      print('BrightNess: $brightness');
-      await brightnessChannel
-          .invokeMethod('setBrightness', {'brightness': brightness});
-    } on PlatformException catch (e) {
-      print("Failed to set brightness: '${e}'.");
-    }
-  }
-
-  Future<void> _getBrightness() async {
-    try {
-      final brightessVal =
-          await brightnessChannel.invokeMethod('getBrightness');
-    } on PlatformException catch (e) {
-      print("Failed to set brightness: '${e}'.");
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final preferences = ref.watch(preferenceProvider);
-    return Material(
-      elevation: 3,
-      shadowColor: Colors.black,
-      borderRadius: const BorderRadius.vertical(top: Radius.circular(40)),
-      clipBehavior: Clip.hardEdge,
-      child: Container(
-        color: Color.fromARGB(255, 255, 245, 245),
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              'Settings',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
-            ),
-            const SizedBox(height: 20),
-            Text(
-              'Brightness',
-              style: Theme.of(context)
-                  .textTheme
-                  .bodyLarge
-                  ?.copyWith(fontWeight: FontWeight.w600),
-            ),
-            Row(
-              children: [
-                const Icon(
-                  Icons.brightness_1,
-                  size: 8,
-                ),
-                Expanded(
-                  child: SliderTheme(
-                    data: const SliderThemeData(trackHeight: 1),
-                    child: Slider(
-                      divisions: 100,
-                      min: 0,
-                      max: 1,
-                      value: _currentSliderValue,
-                      onChanged: (value) {
-                        setState(() {
-                          _currentSliderValue = value;
-                        });
-                      },
-                      onChangeEnd: _setBrightness,
-                    ),
-                  ),
-                ),
-                const Icon(Icons.brightness_high, size: 16)
-              ],
-            ),
-            const SizedBox(height: 20),
-            Text(
-              'Page Themes',
-              style: Theme.of(context)
-                  .textTheme
-                  .bodyLarge
-                  ?.copyWith(fontWeight: FontWeight.w600),
-            ),
-            const SizedBox(height: 5),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Expanded(
-                  child: TextButton(
-                      style: TextButton.styleFrom(
-                          backgroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(
-                              vertical: 10, horizontal: 0),
-                          minimumSize: Size(40, 20), // Adjust the minimum size
-
-                          shape: const RoundedRectangleBorder(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(10)))),
-                      onPressed: () {
-                        preferences
-                          ..setBackgroundColor(Colors.white)
-                          ..setFontColor(Colors.black87);
-                      },
-                      child: const Text(
-                        'Blanc',
-                        style: TextStyle(color: Colors.black),
-                      )),
-                ),
-                const SizedBox(width: 5),
-                Expanded(
-                  child: TextButton(
-                    style: TextButton.styleFrom(
-                        backgroundColor: const Color(0xFFf8fd98),
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 10, horizontal: 0),
-                        minimumSize:
-                            const Size(40, 20), // Adjust the minimum size
-
-                        shape: const RoundedRectangleBorder(
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(10)))),
-                    onPressed: () {
-                      preferences
-                        ..setBackgroundColor(const Color(0xFFf8fd98))
-                        ..setFontColor(Colors.black87);
-                    },
-                    child: const Text(
-                      'Sunlit',
-                      style: TextStyle(color: Colors.black),
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 5),
-                Expanded(
-                  child: TextButton(
-                      style: TextButton.styleFrom(
-                          backgroundColor: Colors.black,
-                          padding: const EdgeInsets.symmetric(
-                              vertical: 10, horizontal: 0),
-                          minimumSize:
-                              const Size(40, 20), // Adjust the minimum size
-
-                          shape: const RoundedRectangleBorder(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(10)))),
-                      onPressed: () {
-                        preferences
-                          ..setBackgroundColor(Colors.black54)
-                          ..setFontColor(Colors.white70);
-                      },
-                      child: const Text(
-                        'Dark Light',
-                        style: TextStyle(color: Colors.white),
-                      )),
-                ),
-                const SizedBox(width: 5),
-                Expanded(
-                  child: TextButton(
-                      style: TextButton.styleFrom(
-                          backgroundColor: const Color(0xFFEDD1B0),
-                          padding: const EdgeInsets.symmetric(
-                              vertical: 10, horizontal: 0),
-                          minimumSize:
-                              const Size(40, 20), // Adjust the minimum size
-
-                          shape: const RoundedRectangleBorder(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(10)))),
-                      onPressed: () {
-                        preferences
-                          ..setBackgroundColor(const Color(0xFFEDD1B0))
-                          ..setFontColor(Colors.brown[900]!);
-                      },
-                      child: const Text(
-                        'Vintage',
-                        style: TextStyle(color: Colors.brown),
-                      )),
-                ),
-              ],
-            ),
-            const SizedBox(height: 20),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Expanded(
-                  child: Text(
-                    'Font Size',
-                    style: Theme.of(context)
-                        .textTheme
-                        .bodyLarge
-                        ?.copyWith(fontWeight: FontWeight.w600),
-                  ),
-                ),
-                Row(
-                  children: [
-                    InkWell(
-                        onTap: () {
-                          preferences.setFontSize(preferences.fontSize - 1);
-                        },
-                        child: const Text(
-                          'A-',
-                          style: TextStyle(fontWeight: FontWeight.bold),
-                        )),
-                    const SizedBox(width: 10),
-                    Text('${preferences.fontSize.toInt()}pt'),
-                    const SizedBox(width: 10),
-                    InkWell(
-                        onTap: () {
-                          preferences.setFontSize(preferences.fontSize + 1);
-                        },
-                        child: const Text(
-                          'A+',
-                          style: TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.bold),
-                        )),
-                  ],
-                )
-              ],
-            )
-          ],
-        ),
-      ),
     );
   }
 }

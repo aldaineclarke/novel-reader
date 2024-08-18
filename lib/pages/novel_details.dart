@@ -1,8 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:novel_reader/hive_adapters/chapter_list_item.dart';
 import 'package:novel_reader/hive_adapters/current_novel.dart';
-import 'package:novel_reader/models/chapter_data.dart';
 import 'package:novel_reader/pages/novel_chapter_list.dart';
 import 'package:novel_reader/pages/novel_view.dart';
 import 'package:novel_reader/providers/chapter_list_provider.dart';
@@ -22,6 +22,7 @@ class _NovelDetailsPageState extends ConsumerState<NovelDetailsPage> {
   @override
   Widget build(BuildContext context) {
     final novelDetailsFuture = ref.watch(novelDetailsProvider(widget.novelId));
+    // final currentNovel = ref.watch(currentNovelProvider);
     final shelf = ref.watch(shelfProvider);
     return Scaffold(
       appBar: AppBar(
@@ -37,22 +38,37 @@ class _NovelDetailsPageState extends ConsumerState<NovelDetailsPage> {
           error: (error, stackTrace) => const Text('No Content'),
           loading: () => const Center(child: CircularProgressIndicator()),
           data: (novelData) {
-// Define a regular expression to match digits
-            CurrentNovel? novelInShelf;
+            // Define a regular expression to match digits
             final regExp = RegExp(r'\d+');
+
+            // gets the chapterList from the novelInSelf if it exists instead of the default
+            var chapterList =
+                novelData.chapters.map(ChapterListItem.fromJson).toList();
+            var firstChapter = ChapterListItem.fromJson(novelData.chapters[0]);
+            CurrentNovel? novelInShelf;
             try {
               novelInShelf = shelf
                   .where(
                     (element) => element.novelId == novelData.id,
                   )
                   .first;
+              chapterList = novelInShelf.chapterList;
+              if (kDebugMode) {
+                print(
+                    'chapterLogs: ShelfNovel currentChap -  ${novelInShelf?.currentChapterId}');
+              }
+              firstChapter = chapterList
+                  .where((c) => c.id == novelInShelf?.currentChapterId)
+                  .first;
+              if (kDebugMode) {
+                print('chapterLogs: firstChapter -  ${firstChapter.title}');
+              }
             } on StateError catch (e) {
               novelInShelf = null;
             }
 
             // Find all matches in the input string
-            final firstChapter =
-                ChapterListItem.fromJson(novelData.chapters[0]);
+
             final match = regExp.firstMatch(novelData.lastChapter);
 
             final novel = CurrentNovel(
@@ -64,7 +80,18 @@ class _NovelDetailsPageState extends ConsumerState<NovelDetailsPage> {
               description: novelData.description,
               currentChapterId: firstChapter.id,
               chapterCount: novelData.pages ?? 1,
+              chapterList: chapterList,
+              currentPage: 1,
             );
+
+            // Waits until the widget tree builds then set the novelProvider
+            Future(
+              () {
+                print('This was ran');
+                ref.read(currentNovelProvider.notifier).setNovel(novel);
+              },
+            );
+
             return Padding(
               padding: const EdgeInsets.all(20),
               child: Column(
@@ -148,7 +175,7 @@ class _NovelDetailsPageState extends ConsumerState<NovelDetailsPage> {
                             context,
                             MaterialPageRoute<void>(
                               builder: (BuildContext context) =>
-                                  NovelChapterList(novelId: firstChapter.id),
+                                  NovelChapterList(novelId: novel.novelId),
                             ),
                           );
                         },
@@ -187,12 +214,12 @@ class _NovelDetailsPageState extends ConsumerState<NovelDetailsPage> {
                     children: [
                       TextButton(
                         onPressed: () {
-                          ref
-                              .read(currentNovelProvider.notifier)
-                              .setNovel(novel);
+                          // print(curren);
+
                           var chapterId = firstChapter.id;
                           if (novelInShelf != null) {
                             chapterId = novelInShelf.currentChapterId;
+                            // novelInShelf.chapterList
                           }
                           Navigator.push(
                             context,

@@ -11,6 +11,7 @@ import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get_it/get_it.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:novel_reader/hive_adapters/chapter_list_item.dart';
 import 'package:novel_reader/hive_adapters/current_novel.dart';
 import 'package:novel_reader/providers/current_novel_provider.dart';
 // import 'package:novel_reader/providers/current_novel_provider.dart';
@@ -57,7 +58,9 @@ void main() async {
       };
       // Hive Database
       await Hive.initFlutter();
-      Hive.registerAdapter(CurrentNovelAdapter());
+      Hive
+        ..registerAdapter(CurrentNovelAdapter())
+        ..registerAdapter(ChapterListItemAdapter());
       if (!Hive.isBoxOpen(Env.novel_db_name)) {
         final box = await Hive.openBox<CurrentNovel>(Env.novel_db_name);
       }
@@ -107,7 +110,9 @@ void main() async {
 
 Future<CurrentNovelNotifier> loadCurrentNovel() async {
   final novelBox = Hive.box<CurrentNovel>(Env.shelf_db_name);
-  final currentNovel = novelBox.get('currentNovel');
+  final currentNovelBox = Hive.box<CurrentNovel>(Env.novel_db_name);
+  final currentNovel = currentNovelBox.get('currentNovel');
+  print('This is currentNovel: ${currentNovel?.novelTitle}');
   final notifier = CurrentNovelNotifier();
   if (currentNovel != null) {
     notifier.setNovel(currentNovel);

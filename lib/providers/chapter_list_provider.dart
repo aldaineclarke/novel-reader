@@ -1,12 +1,25 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:novel_reader/models/chapter_data.dart';
+import 'package:novel_reader/hive_adapters/chapter_list_item.dart';
 import 'package:novel_reader/models/models.dart';
-import 'package:novel_reader/providers/chapter_data_provider.dart';
+import 'package:novel_reader/providers/current_novel_provider.dart';
+import 'package:novel_reader/providers/shelf_provider.dart';
 import 'package:novel_reader/services/novel_service.dart';
 
 final novelDetailsProvider =
     FutureProvider.family<LightNovel, String>((ref, novelId) async {
   final novelDetails = await NovelService.getNovelInfo(novelId);
+  final currentNovel = ref.read(currentNovelProvider);
+  final shelf = ref.read(shelfProvider.notifier);
+  var chapters = novelDetails.chapters;
+  if (currentNovel != null && shelf.novelInShelf(currentNovel)) {
+    final novel = ref
+        .read(shelfProvider)
+        .firstWhere((element) => element.novelId == currentNovel.novelId);
+
+    ref
+        .read(chapterListProvider.notifier)
+        .setChapterListItem(currentNovel.chapterList);
+  }
   ref
       .read(chapterListProvider.notifier)
       .addChapterListItemsFromJson(novelDetails.chapters);
@@ -71,6 +84,10 @@ class ChapterListNotifier extends StateNotifier<List<ChapterListItem>> {
               url: chapter['url'] ?? ''),
         )
         .toList();
+  }
+
+  void setChapterListItem(List<ChapterListItem> chapters) {
+    state = [...state, ...chapters];
   }
 
   void removeNovelData(int index) {

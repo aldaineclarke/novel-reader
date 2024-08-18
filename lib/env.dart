@@ -8,7 +8,7 @@ abstract class Env {
   static String serverUrl = _Env.serverUrl;
 
   @EnviedField(varName: 'HOSTED_URL')
-  static String hostedUrl = _Env.hosted_url;
+  static String hostedUrl = _Env.hostedUrl;
 
   @EnviedField(varName: 'NOVEL_DB_NAME')
   static String novel_db_name = _Env.novel_db_name;
