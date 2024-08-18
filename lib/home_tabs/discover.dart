@@ -10,6 +10,7 @@ import 'package:novel_reader/pages/novel_list.dart';
 import 'package:novel_reader/providers/current_novel_provider.dart';
 import 'package:novel_reader/providers/novel_notifier_provider.dart';
 import 'package:novel_reader/services/novel_service.dart';
+import 'package:novel_reader/utils/theme_colors.dart';
 
 class DiscoverTab extends ConsumerStatefulWidget {
   const DiscoverTab({super.key});
@@ -51,10 +52,12 @@ class _DiscoverTabState extends ConsumerState<DiscoverTab> {
           decoration: InputDecoration(
             labelText: 'Search Novel',
             labelStyle: const TextStyle(
-                fontSize: 12, fontWeight: FontWeight.w600, color: Colors.blue),
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+                color: ThemeColors.teal),
             prefixIcon: const Icon(
               Icons.search_rounded,
-              color: Colors.blue,
+              color: ThemeColors.teal,
             ),
             suffixIcon: (searchCtrl.text != '')
                 ? GestureDetector(
@@ -73,7 +76,7 @@ class _DiscoverTabState extends ConsumerState<DiscoverTab> {
               borderRadius: BorderRadius.all(
                 Radius.circular(20),
               ),
-              borderSide: BorderSide(color: Color.fromARGB(255, 194, 224, 236)),
+              borderSide: BorderSide(color: ThemeColors.lightBlue),
             ),
             border: const OutlineInputBorder(
               borderRadius: BorderRadius.all(
@@ -242,7 +245,7 @@ class _DiscoverTabState extends ConsumerState<DiscoverTab> {
           padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(
             borderRadius: const BorderRadius.all(Radius.circular(10)),
-            border: Border.all(color: Colors.black26),
+            border: Border.all(color: ThemeColors.lightBlue),
           ),
           child: Row(
             children: [
@@ -308,7 +311,8 @@ class _DiscoverTabState extends ConsumerState<DiscoverTab> {
                           ),
                         );
                       },
-                      child: const Text('Continue '),
+                      child: const Text('Continue ',
+                          style: TextStyle(color: ThemeColors.teal)),
                     ),
                   ],
                 ),
@@ -391,7 +395,10 @@ class NovelSectionWidget extends ConsumerWidget {
                   ),
                 );
               },
-              child: const Text('See All'),
+              child: const Text(
+                'See All',
+                style: TextStyle(color: ThemeColors.teal),
+              ),
             )
           ],
         ),

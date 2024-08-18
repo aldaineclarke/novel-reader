@@ -1,11 +1,10 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:novel_reader/pages/novel_list.dart';
-import 'package:novel_reader/pages/search.dart';
 import 'package:novel_reader/providers/novel_notifier_provider.dart';
 import 'package:novel_reader/services/novel_service.dart';
+import 'package:novel_reader/utils/theme_colors.dart';
 
 class GenresPage extends ConsumerWidget {
   const GenresPage({super.key});
@@ -15,7 +14,10 @@ class GenresPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Genres"),
+        title: const Text(
+          'Genres',
+          style: TextStyle(color: ThemeColors.teal),
+        ),
       ),
       body: FutureBuilder(
         future: NovelService.getGenres(),
@@ -50,7 +52,7 @@ class GenresPage extends ConsumerWidget {
                   },
                   child: Container(
                     decoration: BoxDecoration(
-                      color: Color.fromARGB(255, 207, 149, 24),
+                      color: ThemeColors.teal,
                       borderRadius: BorderRadius.circular(
                         10,
                       ),
@@ -58,6 +60,8 @@ class GenresPage extends ConsumerWidget {
                     child: Center(
                       child: Text(
                         snapshot.data![index],
+                        style: const TextStyle(
+                            color: Colors.white, fontWeight: FontWeight.w500),
                       ),
                     ),
                   ),
@@ -90,7 +94,7 @@ class CustomGridDelegate extends SliverGridDelegate {
       count = 1; // Always fit at least one regardless.
     }
     final double squareDimension = constraints.crossAxisExtent / count;
-    return SliverGridRegularTileLayout(
+    return const SliverGridRegularTileLayout(
         crossAxisCount: 2,
         mainAxisStride: 20,
         crossAxisStride: 20,

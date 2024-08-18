@@ -8,6 +8,7 @@ import 'package:novel_reader/pages/novel_view.dart';
 import 'package:novel_reader/providers/chapter_list_provider.dart';
 import 'package:novel_reader/providers/current_novel_provider.dart';
 import 'package:novel_reader/providers/shelf_provider.dart';
+import 'package:novel_reader/utils/theme_colors.dart';
 
 class NovelDetailsPage extends ConsumerStatefulWidget {
   const NovelDetailsPage({required this.novelId, super.key});
@@ -180,17 +181,35 @@ class _NovelDetailsPageState extends ConsumerState<NovelDetailsPage> {
                           );
                         },
                         child: Chip(
-                          label: Text('${match!.group(0)!}'),
+                          shape: const RoundedRectangleBorder(
+                            side: BorderSide(color: ThemeColors.teal),
+                            borderRadius: BorderRadius.all(
+                              Radius.circular(30),
+                            ),
+                          ),
+                          label: Text(match!.group(0)!),
                           avatar: const Icon(Icons.book),
                         ),
                       ),
                       const SizedBox(width: 10),
                       Chip(
+                        shape: const RoundedRectangleBorder(
+                          side: BorderSide(color: ThemeColors.teal),
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(30),
+                          ),
+                        ),
                         label: Text(novelData.status),
                         avatar: const Icon(Icons.adjust_sharp),
                       ),
                       const SizedBox(width: 10),
                       Chip(
+                        shape: const RoundedRectangleBorder(
+                          side: BorderSide(color: ThemeColors.teal),
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(30),
+                          ),
+                        ),
                         label: Text('${novelData.views}'),
                         avatar: const Icon(Icons.remove_red_eye),
                       ),
@@ -208,6 +227,9 @@ class _NovelDetailsPageState extends ConsumerState<NovelDetailsPage> {
                         ),
                       ],
                     ),
+                  ),
+                  const SizedBox(
+                    height: 10,
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -241,13 +263,19 @@ class _NovelDetailsPageState extends ConsumerState<NovelDetailsPage> {
                               .read(shelfProvider.notifier)
                               .addNovelToShelf(novel);
                         },
-                        style:
-                            TextButton.styleFrom(backgroundColor: Colors.lime),
+                        style: TextButton.styleFrom(
+                            backgroundColor: ThemeColors.teal),
                         child: (ref
                                 .read(shelfProvider.notifier)
                                 .novelInShelf(novel))
-                            ? const Text('On Shelf')
-                            : const Text('Add to Shelf'),
+                            ? const Text(
+                                'On Shelf',
+                                style: TextStyle(color: Colors.white),
+                              )
+                            : const Text(
+                                'Add to Shelf',
+                                style: TextStyle(color: Colors.white),
+                              ),
                       ),
                     ],
                   )

@@ -7,6 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:novel_reader/env.dart';
 import 'package:novel_reader/main_scaffold.dart';
 import 'package:novel_reader/providers/feedback_provider.dart';
+import 'package:novel_reader/utils/book_theme.dart';
 import 'package:path_provider/path_provider.dart';
 
 class MyApp extends ConsumerWidget {
@@ -42,7 +43,8 @@ class MyApp extends ConsumerWidget {
     return Scaffold(
       body: MaterialApp(
         title: 'Novel Reader',
-        theme: ThemeData(primarySwatch: Colors.blue),
+        theme: BookTheme.lightTheme, // Use the light theme
+        darkTheme: BookTheme.darkTheme, // Use the dark theme
         debugShowCheckedModeBanner: false,
         home: MainScaffold(),
       ),

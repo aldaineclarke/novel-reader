@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:novel_reader/pages/novel_details.dart';
 import 'package:novel_reader/providers/shelf_provider.dart';
+import 'package:novel_reader/utils/theme_colors.dart';
 
 class ShelfScreen extends ConsumerStatefulWidget {
   const ShelfScreen({super.key});
@@ -23,7 +24,11 @@ class _ShelfScreenState extends ConsumerState<ShelfScreen> {
     final shelf = ref.watch(shelfProvider);
     return Scaffold(
       appBar: AppBar(
-        title: const Text('My Shelf'),
+        title: const Text(
+          'My Shelf',
+          style:
+              TextStyle(color: ThemeColors.teal, fontWeight: FontWeight.w500),
+        ),
       ),
       body: (shelf.isEmpty)
           ? const Center(
@@ -214,7 +219,12 @@ class _ShelfScreenState extends ConsumerState<ShelfScreen> {
                                 child: const Row(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
-                                    Text('Remove Novel'),
+                                    Text(
+                                      'Remove Novel',
+                                      style: TextStyle(
+                                        color: ThemeColors.brickRed,
+                                      ),
+                                    ),
                                     // Icon(Icons.delete_rounded),
                                   ],
                                 ),
