@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:novel_reader/providers/feedback_provider.dart';
+import 'package:novel_reader/providers/setting_option_provider.dart';
+import 'package:novel_reader/utils/theme_colors.dart';
 
 class MenuScreen extends ConsumerWidget {
   const MenuScreen({super.key});
@@ -8,9 +10,11 @@ class MenuScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final feedbackState = ref.watch(feedbackProvider);
+    final settingOpt = ref.watch(settingsOptionsProvider);
+
     return Scaffold(
       appBar: AppBar(
-        title: Text('Menu', style: Theme.of(context).textTheme.headlineMedium),
+        title: const Text('Menu'),
       ),
       body: ListView(
         padding: const EdgeInsets.fromLTRB(20, 20, 20, 80),
@@ -28,12 +32,8 @@ class MenuScreen extends ConsumerWidget {
                         ?.copyWith(fontWeight: FontWeight.w600),
                   ),
                   const SizedBox(height: 2),
-                  Text(
+                  const Text(
                     'Let us know what you think about the application.',
-                    style: Theme.of(context)
-                        .textTheme
-                        .bodyMedium
-                        ?.copyWith(color: Colors.black45),
                   ),
                 ],
               ),
@@ -45,6 +45,43 @@ class MenuScreen extends ConsumerWidget {
               child: Text(feedbackState ? 'Turn Off' : 'Turn On'),
             )
           ]),
+          const SizedBox(
+            height: 20,
+          ),
+          // Row(
+          //   children: [
+          //     Expanded(
+          //       child: Column(
+          //         crossAxisAlignment: CrossAxisAlignment.start,
+          //         children: [
+          //           Text(
+          //             'Dark Mode',
+          //             style: Theme.of(context)
+          //                 .textTheme
+          //                 .bodyLarge
+          //                 ?.copyWith(fontWeight: FontWeight.w600),
+          //           ),
+          //           const SizedBox(height: 5),
+          //           const Text(
+          //             'Switch between the light and dark mode.',
+          //           )
+          //         ],
+          //       ),
+          //     ),
+          //     Switch(
+          //       // value: settingOpt.darkMode,
+          //       value: settingOpt.darkMode,
+          //       onChanged: (val) {
+          //         if (val == true) {}
+          //         ref
+          //             .read(settingsOptionsProvider.notifier)
+          //             .updateDarkMode(val);
+          //       },
+          //       activeTrackColor: ThemeColors.limeGreen,
+          //       inactiveTrackColor: Colors.grey,
+          //     )
+          //   ],
+          // ),
         ],
       ),
     );

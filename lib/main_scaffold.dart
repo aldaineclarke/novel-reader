@@ -49,7 +49,7 @@ class MainScaffold extends ConsumerWidget {
                   elevation: 0, // Set elevation to 0 to avoid double shadow
                   type: BottomNavigationBarType.fixed,
                   unselectedItemColor: Colors.black26,
-                  selectedItemColor: ThemeColors.teal,
+                  selectedItemColor: Theme.of(context).colorScheme.secondary,
                   unselectedLabelStyle: const TextStyle(color: Colors.black38),
                   showUnselectedLabels: true,
                   currentIndex: pageIndex,

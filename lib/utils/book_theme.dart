@@ -35,7 +35,7 @@ class BookTheme {
       ),
       colorScheme: const ColorScheme.light(
         primary: ThemeColors.teal,
-        secondary: ThemeColors.lightBlue,
+        secondary: ThemeColors.teal,
         error: ThemeColors.brickRed,
       ),
     );
@@ -44,9 +44,9 @@ class BookTheme {
   static ThemeData get darkTheme {
     return ThemeData(
       primaryColor: ThemeColors.teal,
-      scaffoldBackgroundColor: ThemeColors.brown,
+      scaffoldBackgroundColor: const Color.fromARGB(255, 45, 39, 32),
       appBarTheme: const AppBarTheme(
-        color: ThemeColors.teal, // AppBar color
+        color: ThemeColors.brown, // AppBar color
         iconTheme: IconThemeData(color: Colors.white),
         titleTextStyle: TextStyle(
           color: Colors.white,
@@ -71,7 +71,7 @@ class BookTheme {
       ),
       colorScheme: const ColorScheme.dark(
         primary: ThemeColors.teal,
-        secondary: ThemeColors.paleYellow,
+        secondary: Colors.white,
         error: ThemeColors.brickRed,
         background: ThemeColors.brown,
         onPrimary: Colors.white,

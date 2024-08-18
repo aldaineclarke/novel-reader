@@ -26,8 +26,6 @@ class _ShelfScreenState extends ConsumerState<ShelfScreen> {
       appBar: AppBar(
         title: const Text(
           'My Shelf',
-          style:
-              TextStyle(color: ThemeColors.teal, fontWeight: FontWeight.w500),
         ),
       ),
       body: (shelf.isEmpty)

@@ -42,15 +42,18 @@ class _NovelViewOptionPanelState extends ConsumerState<NovelViewOptionPanel> {
       borderRadius: const BorderRadius.vertical(top: Radius.circular(40)),
       clipBehavior: Clip.hardEdge,
       child: Container(
-        color: const Color.fromARGB(255, 255, 245, 245),
+        color: Theme.of(context).colorScheme.background,
         padding: const EdgeInsets.all(20),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
+            Text(
               'Settings',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+              style: Theme.of(context)
+                  .textTheme
+                  .titleLarge
+                  ?.copyWith(fontWeight: FontWeight.w600),
             ),
             const SizedBox(height: 20),
             Text(

@@ -14,7 +14,6 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:novel_reader/hive_adapters/chapter_list_item.dart';
 import 'package:novel_reader/hive_adapters/current_novel.dart';
 import 'package:novel_reader/providers/current_novel_provider.dart';
-// import 'package:novel_reader/providers/current_novel_provider.dart';
 import 'package:pull_to_refresh_flutter3/pull_to_refresh_flutter3.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 

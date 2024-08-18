@@ -16,7 +16,6 @@ class GenresPage extends ConsumerWidget {
       appBar: AppBar(
         title: const Text(
           'Genres',
-          style: TextStyle(color: ThemeColors.teal),
         ),
       ),
       body: FutureBuilder(

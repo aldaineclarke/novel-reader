@@ -30,8 +30,6 @@ class _HomePageState extends ConsumerState<HomePage> {
       appBar: AppBar(
         title: const Text(
           'Babel Novels',
-          style:
-              TextStyle(color: ThemeColors.teal, fontWeight: FontWeight.bold),
         ),
       ),
       body: const DiscoverTab(),

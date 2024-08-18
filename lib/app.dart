@@ -7,12 +7,19 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:novel_reader/env.dart';
 import 'package:novel_reader/main_scaffold.dart';
 import 'package:novel_reader/providers/feedback_provider.dart';
+import 'package:novel_reader/providers/setting_option_provider.dart';
 import 'package:novel_reader/utils/book_theme.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-class MyApp extends ConsumerWidget {
+class MyApp extends ConsumerStatefulWidget {
   const MyApp({super.key});
 
+  @override
+  ConsumerState<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends ConsumerState<MyApp> {
   Future<void> feedback(BuildContext context) async {
     BetterFeedback.of(context).show((feedback) async {
       final screenshotFilePath = await writeImageToStorage(feedback.screenshot);
@@ -36,14 +43,33 @@ class MyApp extends ConsumerWidget {
     return screenshotFilePath;
   }
 
+  void innitiateSettingsPreferences() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final isDarkMode = prefs.getBool('darkMode') ?? false;
+    final settingsOpts = SettingsOptions(
+      darkMode: isDarkMode,
+    );
+    ref.read(settingsOptionsProvider.notifier).updateState(settingsOpts);
+  }
+
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    innitiateSettingsPreferences();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final feedbackState = ref.watch(feedbackProvider);
 
     return Scaffold(
       body: MaterialApp(
-        title: 'Novel Reader',
-        theme: BookTheme.lightTheme, // Use the light theme
+        title: 'Babel Novel',
+        // theme: ref.watch(settingsOptionsProvider).darkMode
+        //     ? BookTheme.darkTheme
+        //     : BookTheme.lightTheme, // Use the light theme
+        theme: BookTheme.lightTheme,
         darkTheme: BookTheme.darkTheme, // Use the dark theme
         debugShowCheckedModeBanner: false,
         home: MainScaffold(),
