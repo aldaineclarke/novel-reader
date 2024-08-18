@@ -166,12 +166,10 @@ class _ShelfScreenState extends ConsumerState<ShelfScreen> {
                                               const TextSpan(
                                                 text:
                                                     'Are you sure you want to remove the novel from your shelf? \n\n',
-                                                style: TextStyle(
-                                                    color: Colors
-                                                        .black), // Customize the style
+                                                // Customize the style
                                               ),
                                               TextSpan(
-                                                text: '${novelItem.novelTitle}',
+                                                text: novelItem.novelTitle,
                                                 style: const TextStyle(
                                                     fontWeight: FontWeight.bold,
                                                     fontSize:

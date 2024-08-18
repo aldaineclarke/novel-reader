@@ -9,12 +9,14 @@ import 'package:novel_reader/env.dart';
 import 'package:novel_reader/hive_adapters/current_novel.dart';
 import 'package:novel_reader/models/chapter_data.dart';
 import 'package:flutter_tts/flutter_tts.dart';
+import 'package:novel_reader/pages/novel_chapter_list.dart';
 
 import 'package:novel_reader/providers/chapter_list_provider.dart';
 import 'package:novel_reader/providers/current_novel_provider.dart';
 import 'package:novel_reader/providers/preference_provider.dart';
 import 'package:novel_reader/providers/shelf_provider.dart';
 import 'package:novel_reader/services/novel_service.dart';
+import 'package:novel_reader/utils/theme_colors.dart';
 import 'package:novel_reader/widgets/novel_panel_options.dart';
 import 'package:pull_to_refresh_flutter3/pull_to_refresh_flutter3.dart';
 
@@ -177,7 +179,7 @@ class _NovelViewState extends ConsumerState<NovelView> {
       elevation: 5,
       child: Container(
         height: 100, // Adjust the height of the panel
-        color: Colors.brown,
+        color: ThemeColors.brown,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -205,7 +207,14 @@ class _NovelViewState extends ConsumerState<NovelView> {
             IconButton(
               icon: const Icon(Icons.more_vert, color: Colors.white),
               onPressed: () {
-                // Navigator.of(context).push();
+                Navigator.push(
+                  context,
+                  MaterialPageRoute<void>(
+                    builder: (context) => NovelChapterList(
+                      novelId: ref.read(currentNovelProvider)!.novelId,
+                    ),
+                  ),
+                );
               },
             ),
           ],
@@ -217,7 +226,6 @@ class _NovelViewState extends ConsumerState<NovelView> {
   @override
   Widget build(BuildContext context) {
     final chapterDataAsyncValue = ref.watch(chapterDataProvider(currentNovel));
-    final textToSpeech = ref.watch(textToSpeechProvider);
     final preferences = ref.watch(preferenceProvider);
     return Scaffold(
       backgroundColor: preferences.backgroundColor,
@@ -399,17 +407,17 @@ var chapterDataProvider =
     FutureProvider.family<ChapterData, String>((ref, currentNovel) async {
   var currentChapter = await NovelService.getNovelChapter(currentNovel);
   //set text
-  ref.read(textToSpeechProvider.notifier).updateText(currentChapter.text);
+  // ref.read(textToSpeechProvider.notifier).updateText(currentChapter.text);
   return currentChapter;
 });
 
-var textToSpeechProvider = StateNotifierProvider<TextToSpeechNotifier, String>(
-    (ref) => TextToSpeechNotifier(''));
+// var textToSpeechProvider = StateNotifierProvider<TextToSpeechNotifier, String>(
+//     (ref) => TextToSpeechNotifier(''));
 
-class TextToSpeechNotifier extends StateNotifier<String> {
-  TextToSpeechNotifier(super.state);
+// class TextToSpeechNotifier extends StateNotifier<String> {
+//   TextToSpeechNotifier(super.state);
 
-  updateText(String text) {
-    state = state + text;
-  }
-}
+//   updateText(String text) {
+//     state = state + text;
+//   }
+// }
