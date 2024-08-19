@@ -1,5 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:novel_reader/models/chapter_data.dart';
+import 'package:babel_novel/models/chapter_data.dart';
 
 class ChapterDataNotifier extends StateNotifier<ChapterInfo> {
   ChapterDataNotifier()

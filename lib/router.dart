@@ -2,12 +2,12 @@ import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:novel_reader/main_scaffold.dart';
-import 'package:novel_reader/pages/genres.dart';
-import 'package:novel_reader/pages/novel_chapter_list.dart';
-import 'package:novel_reader/pages/novel_details.dart';
-import 'package:novel_reader/pages/novel_list.dart';
-import 'package:novel_reader/pages/novel_view.dart';
+import 'package:babel_novel/main_scaffold.dart';
+import 'package:babel_novel/pages/genres.dart';
+import 'package:babel_novel/pages/novel_chapter_list.dart';
+import 'package:babel_novel/pages/novel_details.dart';
+import 'package:babel_novel/pages/novel_list.dart';
+import 'package:babel_novel/pages/novel_view.dart';
 
 import 'pages/home.dart';
 

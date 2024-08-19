@@ -1,8 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive/hive.dart';
-import 'package:novel_reader/env.dart';
-import 'package:novel_reader/hive_adapters/current_novel.dart';
+import 'package:babel_novel/env.dart';
+import 'package:babel_novel/hive_adapters/current_novel.dart';
 
 class ShelfNotifier extends StateNotifier<List<CurrentNovel>> {
   ShelfNotifier() : super([]) {

@@ -1,14 +1,14 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:novel_reader/hive_adapters/chapter_list_item.dart';
-import 'package:novel_reader/hive_adapters/current_novel.dart';
-import 'package:novel_reader/pages/novel_chapter_list.dart';
-import 'package:novel_reader/pages/novel_view.dart';
-import 'package:novel_reader/providers/chapter_list_provider.dart';
-import 'package:novel_reader/providers/current_novel_provider.dart';
-import 'package:novel_reader/providers/shelf_provider.dart';
-import 'package:novel_reader/utils/theme_colors.dart';
+import 'package:babel_novel/hive_adapters/chapter_list_item.dart';
+import 'package:babel_novel/hive_adapters/current_novel.dart';
+import 'package:babel_novel/pages/novel_chapter_list.dart';
+import 'package:babel_novel/pages/novel_view.dart';
+import 'package:babel_novel/providers/chapter_list_provider.dart';
+import 'package:babel_novel/providers/current_novel_provider.dart';
+import 'package:babel_novel/providers/shelf_provider.dart';
+import 'package:babel_novel/utils/theme_colors.dart';
 
 class NovelDetailsPage extends ConsumerStatefulWidget {
   const NovelDetailsPage({required this.novelId, super.key});

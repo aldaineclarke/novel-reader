@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:novel_reader/providers/preference_provider.dart';
+import 'package:babel_novel/providers/preference_provider.dart';
 
 class NovelViewOptionPanel extends ConsumerStatefulWidget {
   const NovelViewOptionPanel({super.key});

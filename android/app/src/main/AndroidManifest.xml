@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="dev.vainestudios.novel_reader">
+    package="dev.vainestudios.babel_novel">
 
     <queries>
     <intent>
@@ -9,7 +9,7 @@
   </queries>
    <application
         android:name="${applicationName}"
-        android:label="Novel Reader"
+        android:label="Babel Novel"
         android:icon="@mipmap/launcher_icon"
 >
         <activity

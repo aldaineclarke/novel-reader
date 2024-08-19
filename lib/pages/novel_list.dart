@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:novel_reader/models/novel_item.dart';
-import 'package:novel_reader/pages/novel_details.dart';
-import 'package:novel_reader/providers/novel_notifier_provider.dart';
+import 'package:babel_novel/models/novel_item.dart';
+import 'package:babel_novel/pages/novel_details.dart';
+import 'package:babel_novel/providers/novel_notifier_provider.dart';
 
 class NovelListScreen extends ConsumerStatefulWidget {
   const NovelListScreen(

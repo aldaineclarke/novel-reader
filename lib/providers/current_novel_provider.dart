@@ -1,7 +1,7 @@
 // I need novel id image, genres, currentChapterId chapterCount
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:novel_reader/hive_adapters/current_novel.dart';
+import 'package:babel_novel/hive_adapters/current_novel.dart';
 
 // class CurrentNovel {
 //   const CurrentNovel({

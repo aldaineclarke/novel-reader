@@ -2,12 +2,12 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:novel_reader/models/chapter_data.dart';
-import 'package:novel_reader/pages/novel_view.dart';
-import 'package:novel_reader/providers/chapter_list_provider.dart';
-import 'package:novel_reader/providers/current_novel_provider.dart';
-import 'package:novel_reader/providers/shelf_provider.dart';
-import 'package:novel_reader/services/novel_service.dart';
+import 'package:babel_novel/models/chapter_data.dart';
+import 'package:babel_novel/pages/novel_view.dart';
+import 'package:babel_novel/providers/chapter_list_provider.dart';
+import 'package:babel_novel/providers/current_novel_provider.dart';
+import 'package:babel_novel/providers/shelf_provider.dart';
+import 'package:babel_novel/services/novel_service.dart';
 
 class NovelChapterList extends ConsumerStatefulWidget {
   const NovelChapterList({required this.novelId, super.key});

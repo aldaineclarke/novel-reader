@@ -1,9 +1,9 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:novel_reader/hive_adapters/chapter_list_item.dart';
-import 'package:novel_reader/models/models.dart';
-import 'package:novel_reader/providers/current_novel_provider.dart';
-import 'package:novel_reader/providers/shelf_provider.dart';
-import 'package:novel_reader/services/novel_service.dart';
+import 'package:babel_novel/hive_adapters/chapter_list_item.dart';
+import 'package:babel_novel/models/models.dart';
+import 'package:babel_novel/providers/current_novel_provider.dart';
+import 'package:babel_novel/providers/shelf_provider.dart';
+import 'package:babel_novel/services/novel_service.dart';
 
 final novelDetailsProvider =
     FutureProvider.family<LightNovel, String>((ref, novelId) async {

@@ -1,4 +1,4 @@
-package dev.vainestudios.novel_reader
+package dev.vainestudios.babel_novel
 
 import android.os.Bundle
 import android.provider.Settings

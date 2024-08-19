@@ -5,19 +5,19 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive/hive.dart';
-import 'package:novel_reader/env.dart';
-import 'package:novel_reader/hive_adapters/current_novel.dart';
-import 'package:novel_reader/models/chapter_data.dart';
+import 'package:babel_novel/env.dart';
+import 'package:babel_novel/hive_adapters/current_novel.dart';
+import 'package:babel_novel/models/chapter_data.dart';
 import 'package:flutter_tts/flutter_tts.dart';
-import 'package:novel_reader/pages/novel_chapter_list.dart';
+import 'package:babel_novel/pages/novel_chapter_list.dart';
 
-import 'package:novel_reader/providers/chapter_list_provider.dart';
-import 'package:novel_reader/providers/current_novel_provider.dart';
-import 'package:novel_reader/providers/preference_provider.dart';
-import 'package:novel_reader/providers/shelf_provider.dart';
-import 'package:novel_reader/services/novel_service.dart';
-import 'package:novel_reader/utils/theme_colors.dart';
-import 'package:novel_reader/widgets/novel_panel_options.dart';
+import 'package:babel_novel/providers/chapter_list_provider.dart';
+import 'package:babel_novel/providers/current_novel_provider.dart';
+import 'package:babel_novel/providers/preference_provider.dart';
+import 'package:babel_novel/providers/shelf_provider.dart';
+import 'package:babel_novel/services/novel_service.dart';
+import 'package:babel_novel/utils/theme_colors.dart';
+import 'package:babel_novel/widgets/novel_panel_options.dart';
 import 'package:pull_to_refresh_flutter3/pull_to_refresh_flutter3.dart';
 
 class NovelView extends ConsumerStatefulWidget {

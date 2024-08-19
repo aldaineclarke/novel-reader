@@ -1,9 +1,9 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get_it/get_it.dart';
-import 'package:novel_reader/models/novel_item.dart';
-import 'package:novel_reader/services/novel_service.dart';
-import 'package:novel_reader/utils/http_client.dart';
+import 'package:babel_novel/models/novel_item.dart';
+import 'package:babel_novel/services/novel_service.dart';
+import 'package:babel_novel/utils/http_client.dart';
 
 class NovelsNotifier extends StateNotifier<List<NovelItem>> {
   NovelsNotifier(this.apiUrl) : super([]) {

@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:novel_reader/services/novel_service.dart';
+import 'package:babel_novel/services/novel_service.dart';
 
 class SearchPage extends StatelessWidget {
   SearchPage(

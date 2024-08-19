@@ -3,14 +3,14 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:novel_reader/hive_adapters/current_novel.dart';
-import 'package:novel_reader/models/novel_item.dart';
-import 'package:novel_reader/pages/novel_details.dart';
-import 'package:novel_reader/pages/novel_list.dart';
-import 'package:novel_reader/providers/current_novel_provider.dart';
-import 'package:novel_reader/providers/novel_notifier_provider.dart';
-import 'package:novel_reader/services/novel_service.dart';
-import 'package:novel_reader/utils/theme_colors.dart';
+import 'package:babel_novel/hive_adapters/current_novel.dart';
+import 'package:babel_novel/models/novel_item.dart';
+import 'package:babel_novel/pages/novel_details.dart';
+import 'package:babel_novel/pages/novel_list.dart';
+import 'package:babel_novel/providers/current_novel_provider.dart';
+import 'package:babel_novel/providers/novel_notifier_provider.dart';
+import 'package:babel_novel/services/novel_service.dart';
+import 'package:babel_novel/utils/theme_colors.dart';
 
 class DiscoverTab extends ConsumerStatefulWidget {
   const DiscoverTab({super.key});

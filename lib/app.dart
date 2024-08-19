@@ -4,11 +4,11 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_email_sender/flutter_email_sender.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:novel_reader/env.dart';
-import 'package:novel_reader/main_scaffold.dart';
-import 'package:novel_reader/providers/feedback_provider.dart';
-import 'package:novel_reader/providers/setting_option_provider.dart';
-import 'package:novel_reader/utils/book_theme.dart';
+import 'package:babel_novel/env.dart';
+import 'package:babel_novel/main_scaffold.dart';
+import 'package:babel_novel/providers/feedback_provider.dart';
+import 'package:babel_novel/providers/setting_option_provider.dart';
+import 'package:babel_novel/utils/book_theme.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 

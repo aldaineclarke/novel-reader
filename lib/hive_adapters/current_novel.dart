@@ -1,5 +1,5 @@
 import 'package:hive/hive.dart';
-import 'package:novel_reader/providers/chapter_data_provider.dart';
+import 'package:babel_novel/providers/chapter_data_provider.dart';
 
 import 'chapter_list_item.dart';
 

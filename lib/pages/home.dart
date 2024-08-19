@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive/hive.dart';
-import 'package:novel_reader/env.dart';
-import 'package:novel_reader/hive_adapters/current_novel.dart';
-import 'package:novel_reader/home_tabs/discover.dart';
-import 'package:novel_reader/providers/current_novel_provider.dart';
-import 'package:novel_reader/utils/theme_colors.dart';
+import 'package:babel_novel/env.dart';
+import 'package:babel_novel/hive_adapters/current_novel.dart';
+import 'package:babel_novel/home_tabs/discover.dart';
+import 'package:babel_novel/providers/current_novel_provider.dart';
+import 'package:babel_novel/utils/theme_colors.dart';
 
 class HomePage extends ConsumerStatefulWidget {
   const HomePage({super.key});

@@ -1,7 +1,7 @@
-import 'package:novel_reader/models/chapter_data.dart';
-import 'package:novel_reader/models/models.dart';
-import 'package:novel_reader/models/novel_item.dart';
-import 'package:novel_reader/utils/http_client.dart';
+import 'package:babel_novel/models/chapter_data.dart';
+import 'package:babel_novel/models/models.dart';
+import 'package:babel_novel/models/novel_item.dart';
+import 'package:babel_novel/utils/http_client.dart';
 import 'package:get_it/get_it.dart';
 
 class NovelService {

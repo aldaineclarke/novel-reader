@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:novel_reader/pages/novel_list.dart';
-import 'package:novel_reader/providers/novel_notifier_provider.dart';
-import 'package:novel_reader/services/novel_service.dart';
-import 'package:novel_reader/utils/theme_colors.dart';
+import 'package:babel_novel/pages/novel_list.dart';
+import 'package:babel_novel/providers/novel_notifier_provider.dart';
+import 'package:babel_novel/services/novel_service.dart';
+import 'package:babel_novel/utils/theme_colors.dart';
 
 class GenresPage extends ConsumerWidget {
   const GenresPage({super.key});

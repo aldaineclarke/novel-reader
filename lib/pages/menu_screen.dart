@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:novel_reader/providers/feedback_provider.dart';
-import 'package:novel_reader/providers/setting_option_provider.dart';
-import 'package:novel_reader/utils/theme_colors.dart';
+import 'package:babel_novel/providers/feedback_provider.dart';
+import 'package:babel_novel/providers/setting_option_provider.dart';
+import 'package:babel_novel/utils/theme_colors.dart';
 
 class MenuScreen extends ConsumerWidget {
   const MenuScreen({super.key});
