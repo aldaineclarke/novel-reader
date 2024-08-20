@@ -30,6 +30,10 @@ class BookTheme {
           color: Colors.black87,
         ),
       ),
+      snackBarTheme: const SnackBarThemeData(
+        backgroundColor: ThemeColors.teal,
+        contentTextStyle: TextStyle(color: Colors.white),
+      ),
       floatingActionButtonTheme: const FloatingActionButtonThemeData(
         backgroundColor: ThemeColors.teal,
       ),
@@ -65,6 +69,11 @@ class BookTheme {
         bodyMedium: TextStyle(
           color: Colors.white70,
         ),
+      ),
+      snackBarTheme: const SnackBarThemeData(
+        backgroundColor: ThemeColors.brown,
+        contentTextStyle: TextStyle(color: Colors.black),
+        actionBackgroundColor: ThemeColors.teal,
       ),
       floatingActionButtonTheme: const FloatingActionButtonThemeData(
         backgroundColor: ThemeColors.teal,

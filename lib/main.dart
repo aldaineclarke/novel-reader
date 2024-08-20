@@ -33,7 +33,7 @@ void main() async {
       );
       GetIt.instance.registerLazySingleton(
         () {
-          return HttpClient(baseOptions: BaseOptions(baseUrl: Env.serverUrl));
+          return HttpClient(baseOptions: BaseOptions(baseUrl: Env.hostedUrl));
         },
       );
       if (!kIsWeb) {

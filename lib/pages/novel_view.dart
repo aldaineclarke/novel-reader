@@ -162,7 +162,6 @@ class _NovelViewState extends ConsumerState<NovelView> {
           style: TextStyle(fontSize: 10),
         ),
       ),
-      backgroundColor: Color.fromARGB(215, 22, 24, 24),
       behavior: SnackBarBehavior.floating,
       width: 130,
       padding: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
