@@ -11,28 +11,6 @@ class NovelViewOptionPanel extends ConsumerStatefulWidget {
 }
 
 class _NovelViewOptionPanelState extends ConsumerState<NovelViewOptionPanel> {
-  double _currentSliderValue = 0.7;
-  static const brightnessChannel = MethodChannel('brightnessPlatform');
-
-  Future<void> _setBrightness(double brightness) async {
-    try {
-      print('BrightNess: $brightness');
-      await brightnessChannel
-          .invokeMethod('setBrightness', {'brightness': brightness});
-    } on PlatformException catch (e) {
-      print("Failed to set brightness: '${e}'.");
-    }
-  }
-
-  Future<void> _getBrightness() async {
-    try {
-      final brightessVal =
-          await brightnessChannel.invokeMethod('getBrightness');
-    } on PlatformException catch (e) {
-      print("Failed to set brightness: '${e}'.");
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     final preferences = ref.watch(preferenceProvider);
@@ -54,40 +32,6 @@ class _NovelViewOptionPanelState extends ConsumerState<NovelViewOptionPanel> {
                   .textTheme
                   .titleLarge
                   ?.copyWith(fontWeight: FontWeight.w600),
-            ),
-            const SizedBox(height: 20),
-            Text(
-              'Brightness',
-              style: Theme.of(context)
-                  .textTheme
-                  .bodyLarge
-                  ?.copyWith(fontWeight: FontWeight.w600),
-            ),
-            Row(
-              children: [
-                const Icon(
-                  Icons.brightness_1,
-                  size: 8,
-                ),
-                Expanded(
-                  child: SliderTheme(
-                    data: const SliderThemeData(trackHeight: 1),
-                    child: Slider(
-                      divisions: 100,
-                      min: 0,
-                      max: 1,
-                      value: _currentSliderValue,
-                      onChanged: (value) {
-                        setState(() {
-                          _currentSliderValue = value;
-                        });
-                      },
-                      onChangeEnd: _setBrightness,
-                    ),
-                  ),
-                ),
-                const Icon(Icons.brightness_high, size: 16)
-              ],
             ),
             const SizedBox(height: 20),
             Text(

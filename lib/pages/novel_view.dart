@@ -190,7 +190,6 @@ class _NovelViewState extends ConsumerState<NovelView> {
               ),
               onPressed: () {
                 // Add any action if needed
-                print('hey');
                 Navigator.of(context).pop();
               },
             ),
@@ -345,7 +344,7 @@ class _NovelViewState extends ConsumerState<NovelView> {
                 right: 0,
                 duration: const Duration(milliseconds: 300),
                 child: SizedBox(
-                  height: MediaQuery.of(context).size.height * .4,
+                  height: MediaQuery.of(context).size.height * .25,
                   child: const NovelViewOptionPanel(),
                 ),
               ),
