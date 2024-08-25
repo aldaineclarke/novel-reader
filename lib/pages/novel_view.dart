@@ -376,7 +376,10 @@ class _NovelViewState extends ConsumerState<NovelView> {
       final chapterTitle = chapterName;
       return Column(
         children: [
-          Text('Chapter $chapterNumber'),
+          Text(
+            'Chapter $chapterNumber',
+            style: TextStyle(color: color),
+          ),
           const SizedBox(height: 10),
           Text(
             chapterTitle,
