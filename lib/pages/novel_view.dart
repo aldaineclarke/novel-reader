@@ -175,18 +175,19 @@ class _NovelViewState extends ConsumerState<NovelView> {
 
   Widget _buildPanel(BuildContext context, String title) {
     return Material(
-      elevation: 5,
-      child: Container(
+      elevation: 1,
+      borderRadius: const BorderRadius.only(
+          bottomLeft: Radius.circular(30), bottomRight: Radius.circular(30)),
+      surfaceTintColor: Theme.of(context).colorScheme.primary,
+      child: SizedBox(
         height: 100, // Adjust the height of the panel
-        color: ThemeColors.brown,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             IconButton(
               icon: const Icon(
-                Icons.chevron_left,
-                color: Colors.white,
-                size: 40,
+                Icons.arrow_back_rounded,
+                // size: 40,
               ),
               onPressed: () {
                 // Add any action if needed
@@ -197,13 +198,13 @@ class _NovelViewState extends ConsumerState<NovelView> {
               child: Text(
                 title,
                 style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 18,
-                    overflow: TextOverflow.ellipsis),
+                    fontSize: 18, overflow: TextOverflow.ellipsis),
               ),
             ),
             IconButton(
-              icon: const Icon(Icons.more_vert, color: Colors.white),
+              icon: const Icon(
+                Icons.more_vert,
+              ),
               onPressed: () {
                 Navigator.push(
                   context,
@@ -339,12 +340,12 @@ class _NovelViewState extends ConsumerState<NovelView> {
               AnimatedPositioned(
                 bottom: isPanelVisible
                     ? 0
-                    : -(MediaQuery.of(context).size.height * .4),
+                    : -(MediaQuery.of(context).size.height * .3),
                 left: 0,
                 right: 0,
                 duration: const Duration(milliseconds: 300),
                 child: SizedBox(
-                  height: MediaQuery.of(context).size.height * .25,
+                  height: MediaQuery.of(context).size.height * .3,
                   child: const NovelViewOptionPanel(),
                 ),
               ),

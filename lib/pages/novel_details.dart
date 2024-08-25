@@ -187,7 +187,7 @@ class _NovelDetailsPageState extends ConsumerState<NovelDetailsPage> {
                               Radius.circular(30),
                             ),
                           ),
-                          label: Text(match!.group(0)!),
+                          label: Text('${match!.group(0)!} Chap'),
                           avatar: const Icon(Icons.book),
                         ),
                       ),

@@ -15,12 +15,13 @@ class _NovelViewOptionPanelState extends ConsumerState<NovelViewOptionPanel> {
   Widget build(BuildContext context) {
     final preferences = ref.watch(preferenceProvider);
     return Material(
-      elevation: 9,
-      shadowColor: Colors.black,
+      elevation: 5, // Increase the elevation for a more pronounced shadow
+      // shadowColor: Colors.black.withOpacity(0.5),
       borderRadius: const BorderRadius.vertical(top: Radius.circular(40)),
       clipBehavior: Clip.hardEdge,
+      surfaceTintColor: Theme.of(context).colorScheme.primary,
       child: Container(
-        color: Theme.of(context).colorScheme.background,
+        // color: Theme.of(context).colorScheme.primary,
         padding: const EdgeInsets.all(20),
         child: Column(
           mainAxisSize: MainAxisSize.min,
