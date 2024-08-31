@@ -1,6 +1,6 @@
 name: babel_novel # TODO(You): Replace with you app's name
 description: This is a novel reader that allows you to read light novels  # TODO(You): Replace with you app's description
-version: 1.0.0+1
+version: 1.0.0+2
 publish_to: 'none'
 
 environment:
