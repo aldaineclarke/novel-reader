@@ -8,7 +8,6 @@ import 'package:hive/hive.dart';
 import 'package:babel_novel/env.dart';
 import 'package:babel_novel/hive_adapters/current_novel.dart';
 import 'package:babel_novel/models/chapter_data.dart';
-import 'package:flutter_tts/flutter_tts.dart';
 import 'package:babel_novel/pages/novel_chapter_list.dart';
 
 import 'package:babel_novel/providers/chapter_list_provider.dart';
@@ -44,20 +43,9 @@ class _NovelViewState extends ConsumerState<NovelView> {
   final testStr =
       'If you find any errors ( Ads popup, ads redirect, broken links, non-standard content, etc.. ), Please let us know < report chapter > so we can fix it as soon as possible.';
 
-  late FlutterTts flutterTts;
-  String _text = 'This is a test'; // Combined text
-
-  Future<void> _speak(String speech) async {
-    await flutterTts.setLanguage('en-US');
-    await flutterTts.setPitch(1);
-    // Text to speech have a limit with the length of the string 2000
-    await flutterTts.speak(speech.substring(0, 4000));
-  }
-
   @override
   void initState() {
     super.initState();
-    flutterTts = FlutterTts();
     currentNovel = super.widget.novelChapter;
     novelBox = Hive.box<CurrentNovel>(Env.novel_db_name);
     final novel = ref.read(currentNovelProvider);
