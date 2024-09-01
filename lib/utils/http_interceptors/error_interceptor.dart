@@ -35,7 +35,7 @@ class ErrorInterceptor extends Interceptor {
               error: '${err.response!.statusCode}: Resource not found.',
             );
           }
-          if (err.response!.statusCode == 500) {
+          if (err.response!.statusCode! >= 500) {
             dioError = err.copyWith(
               error: '${err.response!.statusCode}: Internal server error.',
             );
