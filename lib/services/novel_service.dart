@@ -1,13 +1,19 @@
+import 'package:babel_novel/app.dart';
 import 'package:babel_novel/models/chapter_data.dart';
 import 'package:babel_novel/models/models.dart';
 import 'package:babel_novel/models/novel_item.dart';
+import 'package:babel_novel/services/error_dialog_service.dart';
 import 'package:babel_novel/utils/http_client.dart';
+import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 
 class NovelService {
   // Send un-cached http request
   static Future<List<NovelItem>> getNovelList(String? criteria,
       [int? page = 1]) async {
+    final context = navigatorKey.currentContext!;
+
     final route = criteria ?? '/latest-release';
     final fullRoute = '/novel-list/$route/page/$page';
     try {
@@ -18,6 +24,13 @@ class NovelService {
         return NovelItem.fromJson(data as Map<String, dynamic>);
       }).toList();
       return results;
+    } on DioException catch (e) {
+      ErrorDialogService().showErrorDialog(
+        context,
+        e.error.toString(),
+        () => getNovelList(criteria, page),
+      );
+      return [];
     } catch (e) {
       print(e);
       return [];
@@ -25,6 +38,8 @@ class NovelService {
   }
 
   static Future<List<String>> getGenres() async {
+    final context = navigatorKey.currentContext!;
+
     try {
       final response =
           await GetIt.I<HttpClient>().get<Map<String, dynamic>>('/genres');
@@ -34,32 +49,35 @@ class NovelService {
       // Ensure that results is a List<String>
       final results = resultsDynamic!.cast<String>();
       return results;
+    } on DioException catch (e) {
+      ErrorDialogService().showErrorDialog(
+        context,
+        e.error.toString(),
+        () => getGenres(),
+      );
+      return [];
     } catch (e) {
       print(e);
-      return ["genre1", "genre 2"];
+      return [];
     }
   }
 
   static Future<LightNovel> getNovelInfo(String novelId,
       [int? chapterPage]) async {
+    final context = navigatorKey.currentContext!;
+
     try {
       var url = '/info?id=$novelId';
+
       if (chapterPage != null) {
         url += '&chapterPage=$chapterPage';
       }
       final response =
           await GetIt.I<HttpClient>().get<Map<String, dynamic>>(url);
-      if (response.data == null) throw Exception('No novel found');
       final lightNovel = LightNovel.fromJson(response.data!);
       return lightNovel;
     } catch (e) {
-      return const LightNovel(
-          id: 'id',
-          title: 'title',
-          genres: [],
-          description: 'description',
-          status: 'status',
-          chapters: []);
+      rethrow;
     }
   }
 
@@ -67,6 +85,8 @@ class NovelService {
     String searchText, [
     int? page = 1,
   ]) async {
+    final context = navigatorKey.currentContext!;
+
     final fullRoute = '/search?query=$searchText&page=$page';
     if (searchText == '') {
       return [];
@@ -80,6 +100,13 @@ class NovelService {
         return NovelItem.fromJson(data as Map<String, dynamic>);
       }).toList();
       return results;
+    } on DioException catch (e) {
+      ErrorDialogService().showErrorDialog(
+        context,
+        e.error.toString(),
+        () => Navigator.of(context).pop(),
+      );
+      return [];
     } catch (e) {
       print(e);
       return [];
@@ -87,12 +114,20 @@ class NovelService {
   }
 
   static Future<ChapterData> getNovelChapter(String chapterId) async {
+    final context = navigatorKey.currentContext!;
     try {
       final response = await GetIt.I<HttpClient>()
           .get<Map<String, dynamic>>('/read?chapterId=$chapterId');
       if (response.data == null) throw Exception('No novel found');
       var chapterData = ChapterData.fromJson(response.data!);
       return chapterData;
+    } on DioException catch (e) {
+      ErrorDialogService().showErrorDialog(
+        context,
+        e.error.toString(),
+        () => Navigator.of(context).pop(),
+      );
+      return ChapterData.fromJson({});
     } catch (e) {
       print(e);
       return ChapterData(

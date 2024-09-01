@@ -12,6 +12,8 @@ import 'package:babel_novel/utils/book_theme.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+
 class MyApp extends ConsumerStatefulWidget {
   const MyApp({super.key});
 
@@ -65,6 +67,7 @@ class _MyAppState extends ConsumerState<MyApp> {
 
     return Scaffold(
       body: MaterialApp(
+        navigatorKey: navigatorKey,
         title: 'Babel Novel',
         // theme: ref.watch(settingsOptionsProvider).darkMode
         //     ? BookTheme.darkTheme

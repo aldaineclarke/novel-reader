@@ -1,3 +1,6 @@
+import 'package:babel_novel/providers/novel_detail_provider.dart';
+import 'package:babel_novel/widgets/error_display_widget.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -5,7 +8,6 @@ import 'package:babel_novel/hive_adapters/chapter_list_item.dart';
 import 'package:babel_novel/hive_adapters/current_novel.dart';
 import 'package:babel_novel/pages/novel_chapter_list.dart';
 import 'package:babel_novel/pages/novel_view.dart';
-import 'package:babel_novel/providers/chapter_list_provider.dart';
 import 'package:babel_novel/providers/current_novel_provider.dart';
 import 'package:babel_novel/providers/shelf_provider.dart';
 import 'package:babel_novel/utils/theme_colors.dart';
@@ -20,6 +22,14 @@ class NovelDetailsPage extends ConsumerStatefulWidget {
 }
 
 class _NovelDetailsPageState extends ConsumerState<NovelDetailsPage> {
+  bool isLoading = false;
+
+  void _retry() {
+    setState(() {
+      isLoading = true; // Show loading indicator
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final novelDetailsFuture = ref.watch(novelDetailsProvider(widget.novelId));
@@ -36,9 +46,29 @@ class _NovelDetailsPageState extends ConsumerState<NovelDetailsPage> {
         title: const Text('Book Details'),
       ),
       body: novelDetailsFuture.when(
-          error: (error, stackTrace) => const Text('No Content'),
+          error: (error, stackTrace) {
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  ErrorDisplayWidget(
+                      message: (error as DioException).error.toString()),
+                  ElevatedButton(
+                    onPressed: () {
+                      // Refetch the data by triggering the provider
+                      ref
+                          .read(novelDetailsProvider(widget.novelId).notifier)
+                          .fetchNovelDetails();
+                    },
+                    child: Text('Try Again'),
+                  ),
+                ],
+              ),
+            );
+          },
           loading: () => const Center(child: CircularProgressIndicator()),
           data: (novelData) {
+            isLoading = false;
             // Define a regular expression to match digits
             final regExp = RegExp(r'\d+');
 

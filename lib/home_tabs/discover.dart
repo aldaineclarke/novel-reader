@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:babel_novel/widgets/error_message_modal.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -410,7 +411,7 @@ class NovelSectionWidget extends ConsumerWidget {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return const Center(child: CircularProgressIndicator());
               } else if (snapshot.hasError) {
-                return Text('Has the error ${snapshot.error}');
+                return Text('Error: ${snapshot.error.toString()}');
               } else {
                 return ListView.separated(
                   scrollDirection: Axis.horizontal,
