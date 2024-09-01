@@ -1,3 +1,4 @@
+import 'package:babel_novel/widgets/error_display_widget.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -21,7 +22,9 @@ class SearchPage extends StatelessWidget {
             return const Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
             return const Center(
-              child: Text('No content Just Error'),
+              child: ErrorDisplayWidget(
+                message: 'No novel found with this criteria',
+              ),
             );
           } else {
             return ListView.separated(

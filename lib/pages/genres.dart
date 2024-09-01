@@ -1,3 +1,4 @@
+import 'package:babel_novel/widgets/error_display_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -68,7 +69,7 @@ class GenresPage extends ConsumerWidget {
               },
             );
           } else {
-            return Text("No Content");
+            return const ErrorDisplayWidget(message: 'Unable to fetch genres');
           }
         },
       ),
