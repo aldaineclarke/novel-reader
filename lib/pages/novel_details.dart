@@ -1,4 +1,5 @@
 import 'package:babel_novel/providers/novel_detail_provider.dart';
+import 'package:babel_novel/services/error_dialog_service.dart';
 import 'package:babel_novel/widgets/error_display_widget.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
@@ -94,7 +95,11 @@ class _NovelDetailsPageState extends ConsumerState<NovelDetailsPage> {
               if (kDebugMode) {
                 print('chapterLogs: firstChapter -  ${firstChapter.title}');
               }
-            } on StateError catch (e) {
+            } catch (e) {
+              Future(() {
+                ErrorDialogService()
+                    .showErrorDialog(context, 'No chapter found', () {});
+              });
               novelInShelf = null;
             }
 
