@@ -1,3 +1,6 @@
+// import 'package:babel_novel/providers/chapter_data_provider.dart';
+import 'package:babel_novel/widgets/error_display_widget.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -8,6 +11,7 @@ import 'package:hive/hive.dart';
 import 'package:babel_novel/env.dart';
 import 'package:babel_novel/hive_adapters/current_novel.dart';
 import 'package:babel_novel/models/chapter_data.dart';
+import 'package:babel_novel/providers/current_chapter_provider.dart';
 import 'package:babel_novel/pages/novel_chapter_list.dart';
 
 import 'package:babel_novel/providers/chapter_list_provider.dart';
@@ -78,12 +82,13 @@ class _NovelViewState extends ConsumerState<NovelView> {
     }
     ref
         .read(chapterListProvider.notifier)
-        .addChapterListItemsFromJson(novelData.chapters);
+        .setChapterListItemsFromJson(novelData.chapters);
   }
 
   void _loadNextChapter() {
-    // Simulate fetching more items
+    // Gets the current novel from the provider.
     final novel = ref.read(currentNovelProvider);
+    // Gets the chapters from the chapterList from the provider.
     final chapterList = ref.read(chapterListProvider);
     setState(
       () {
@@ -97,6 +102,7 @@ class _NovelViewState extends ConsumerState<NovelView> {
               print(chapterList.length);
               print(chapterList);
             }
+            currentIndex = 0;
             currentNovel = chapterList[currentIndex].id;
             // Copy with not working  correctly
             final updatedNovel = novel?.copyWith(
@@ -214,142 +220,165 @@ class _NovelViewState extends ConsumerState<NovelView> {
   Widget build(BuildContext context) {
     final chapterDataAsyncValue = ref.watch(chapterDataProvider(currentNovel));
     final preferences = ref.watch(preferenceProvider);
-    return Scaffold(
-      backgroundColor: preferences.backgroundColor,
-      body: chapterDataAsyncValue.when(
-        data: (data) {
-          final chapterData = data;
-          final paragraphs = chapterData.text.split('\n');
-          // _text = paragraphs.join('\n\n'); // Update combined text
+    return SafeArea(
+      child: Scaffold(
+        backgroundColor: preferences.backgroundColor,
+        body: chapterDataAsyncValue.when(
+          data: (data) {
+            final chapterData = data;
+            final paragraphs = chapterData.text.split('\n');
+            // _text = paragraphs.join('\n\n'); // Update combined text
 
-          return Stack(
-            children: [
-              Positioned(
-                child: Scrollbar(
-                  child: SmartRefresher(
-                    onLoading: _onLoad,
-                    enablePullUp: true,
-                    enablePullDown: false,
-                    controller: _nextChapterController,
-                    footer: CustomFooter(
-                      builder: (BuildContext context, LoadStatus? mode) {
-                        Widget body;
-                        if (mode == LoadStatus.idle) {
-                          body = const Text('pull up load');
-                        } else if (mode == LoadStatus.loading) {
-                          body = const CupertinoActivityIndicator();
-                        } else if (mode == LoadStatus.failed) {
-                          body = const Text('Load Failed!Click retry!');
-                        } else if (mode == LoadStatus.canLoading) {
-                          body = const Text('release to load more');
-                        } else {
-                          body = const Text('No more Data');
-                        }
-                        return SizedBox(
-                          height: 55,
-                          child: Center(child: body),
-                        );
-                      },
-                    ),
-                    child: ListView.builder(
-                      controller: _scrollController,
-                      padding: const EdgeInsets.all(20),
-                      itemCount: 1,
-                      itemBuilder: (context, index) {
-                        return GestureDetector(
-                          onDoubleTap: () {
-                            setState(() {
-                              isPanelVisible = !isPanelVisible;
-                            });
-                          },
-                          onTap: () {
-                            showSnackBar(context);
-                          },
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Padding(
-                                padding:
-                                    const EdgeInsets.only(top: 150, bottom: 20),
-                                child: Center(
-                                  child: parseChapterTitle(
-                                    chapterData.chapterTitle,
-                                    preferences.fontColor,
+            return Stack(
+              children: [
+                Positioned(
+                  child: Scrollbar(
+                    child: SmartRefresher(
+                      onLoading: _onLoad,
+                      enablePullUp: true,
+                      enablePullDown: false,
+                      controller: _nextChapterController,
+                      footer: CustomFooter(
+                        builder: (BuildContext context, LoadStatus? mode) {
+                          Widget body;
+                          if (mode == LoadStatus.idle) {
+                            body = const Text('pull up load');
+                          } else if (mode == LoadStatus.loading) {
+                            body = const CupertinoActivityIndicator();
+                          } else if (mode == LoadStatus.failed) {
+                            body = const Text('Load Failed!Click retry!');
+                          } else if (mode == LoadStatus.canLoading) {
+                            body = const Text('release to load more');
+                          } else {
+                            body = const Text('No more Data');
+                          }
+                          return SizedBox(
+                            height: 55,
+                            child: Center(child: body),
+                          );
+                        },
+                      ),
+                      child: ListView.builder(
+                        controller: _scrollController,
+                        padding: const EdgeInsets.all(20),
+                        itemCount: 1,
+                        itemBuilder: (context, index) {
+                          return GestureDetector(
+                            onDoubleTap: () {
+                              setState(() {
+                                isPanelVisible = !isPanelVisible;
+                              });
+                            },
+                            onTap: () {
+                              showSnackBar(context);
+                            },
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.only(
+                                      top: 150, bottom: 20),
+                                  child: Center(
+                                    child: parseChapterTitle(
+                                      chapterData.chapterTitle,
+                                      preferences.fontColor,
+                                    ),
                                   ),
                                 ),
-                              ),
-                              RichText(
-                                text: TextSpan(
-                                  style:
-                                      TextStyle(color: preferences.fontColor),
-                                  children: paragraphs.map((paragraph) {
-                                    if (testStr == paragraph ||
-                                        paragraph.contains(
-                                          chapterData.chapterTitle,
-                                        ) ||
-                                        paragraph.toLowerCase().trim() ==
-                                            chapterData.chapterTitle
-                                                .toLowerCase() ||
-                                        paragraph
-                                            .toLowerCase()
-                                            .contains('chapter')) {
-                                      return const TextSpan(text: '');
-                                    }
-                                    if (hostName == paragraph) {
-                                      return const TextSpan();
-                                    }
-                                    return TextSpan(
-                                      text: '$paragraph\n\n',
-                                      style: TextStyle(
-                                        color: preferences.fontColor,
-                                        fontSize: preferences.fontSize,
-                                        height: preferences.fontSize / 10,
-                                      ),
-                                    );
-                                  }).toList(),
+                                RichText(
+                                  text: TextSpan(
+                                    style:
+                                        TextStyle(color: preferences.fontColor),
+                                    children: paragraphs.map((paragraph) {
+                                      if (testStr == paragraph ||
+                                          paragraph.contains(
+                                            chapterData.chapterTitle,
+                                          ) ||
+                                          paragraph.toLowerCase().trim() ==
+                                              chapterData.chapterTitle
+                                                  .toLowerCase() ||
+                                          paragraph
+                                              .toLowerCase()
+                                              .contains('chapter')) {
+                                        return const TextSpan(text: '');
+                                      }
+                                      if (hostName == paragraph) {
+                                        return const TextSpan();
+                                      }
+                                      return TextSpan(
+                                        text: '$paragraph\n\n',
+                                        style: TextStyle(
+                                          color: preferences.fontColor,
+                                          fontSize: preferences.fontSize,
+                                          height: preferences.fontSize / 10,
+                                        ),
+                                      );
+                                    }).toList(),
+                                  ),
                                 ),
-                              ),
-                            ],
-                          ),
-                        );
-                      },
+                              ],
+                            ),
+                          );
+                        },
+                      ),
                     ),
                   ),
                 ),
-              ),
-              AnimatedPositioned(
-                duration: const Duration(milliseconds: 300),
-                top:
-                    isPanelVisible ? 0 : -100, // Adjust the height of the panel
-                left: 0,
-                right: 0,
-                child: _buildPanel(context, chapterData.novelTitle),
-              ),
-              AnimatedPositioned(
-                bottom: isPanelVisible
-                    ? 0
-                    : -(MediaQuery.of(context).size.height * .3),
-                left: 0,
-                right: 0,
-                duration: const Duration(milliseconds: 300),
-                child: SizedBox(
-                  height: MediaQuery.of(context).size.height * .3,
-                  child: const NovelViewOptionPanel(),
+                AnimatedPositioned(
+                  duration: const Duration(milliseconds: 300),
+                  top: isPanelVisible
+                      ? 0
+                      : -100, // Adjust the height of the panel
+                  left: 0,
+                  right: 0,
+                  child: _buildPanel(context, chapterData.novelTitle),
                 ),
+                AnimatedPositioned(
+                  bottom: isPanelVisible
+                      ? 0
+                      : -(MediaQuery.of(context).size.height * .4),
+                  left: 0,
+                  right: 0,
+                  duration: const Duration(milliseconds: 300),
+                  child: SizedBox(
+                    height: MediaQuery.of(context).size.height * .4,
+                    child: const NovelViewOptionPanel(),
+                  ),
+                ),
+              ],
+            );
+          },
+          error: (error, stacktrace) {
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const ErrorDisplayWidget(
+                    message: 'Not able to view novel chapter right now',
+                  ),
+                  ElevatedButton(
+                    onPressed: () {
+                      // Refetch the data by triggering the provider
+                      ref
+                          .read(chapterDataProvider(currentNovel).notifier)
+                          .fetchChapterDetails();
+                    },
+                    child: const Text('Try Again'),
+                  ),
+                ],
               ),
-            ],
-          );
-        },
-        error: (error, stacktrace) => const Text('No Content'),
-        loading: () => const Center(child: CircularProgressIndicator()),
+            );
+          },
+          loading: () => const Center(child: CircularProgressIndicator()),
+        ),
+        // floatingActionButton: FloatingActionButton(
+        //   onPressed: () {
+        //     print('test');
+        //     _speak(textToSpeech);
+        //   },
+        //   child: const Icon(Icons.mic_none),
+        // ),
       ),
-      // floatingActionButton: FloatingActionButton(
-      //   onPressed: () {
-      //     print('test');
-      //     _speak(textToSpeech);
-      //   },
-      //   child: const Icon(Icons.mic_none),
-      // ),
     );
   }
 
@@ -393,13 +422,7 @@ class _NovelViewState extends ConsumerState<NovelView> {
   }
 }
 
-var chapterDataProvider =
-    FutureProvider.family<ChapterData, String>((ref, currentNovel) async {
-  var currentChapter = await NovelService.getNovelChapter(currentNovel);
-  //set text
-  // ref.read(textToSpeechProvider.notifier).updateText(currentChapter.text);
-  return currentChapter;
-});
+
 
 // var textToSpeechProvider = StateNotifierProvider<TextToSpeechNotifier, String>(
 //     (ref) => TextToSpeechNotifier(''));
