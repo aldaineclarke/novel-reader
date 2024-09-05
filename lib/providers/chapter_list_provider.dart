@@ -1,36 +1,13 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:babel_novel/hive_adapters/chapter_list_item.dart';
 import 'package:babel_novel/models/models.dart';
-import 'package:babel_novel/providers/current_novel_provider.dart';
-import 'package:babel_novel/providers/shelf_provider.dart';
 import 'package:babel_novel/services/novel_service.dart';
-
-final novelDetailsProvider =
-    FutureProvider.family<LightNovel, String>((ref, novelId) async {
-  final novelDetails = await NovelService.getNovelInfo(novelId);
-  final currentNovel = ref.read(currentNovelProvider);
-  final shelf = ref.read(shelfProvider.notifier);
-  var chapters = novelDetails.chapters;
-  if (currentNovel != null && shelf.novelInShelf(currentNovel)) {
-    final novel = ref
-        .read(shelfProvider)
-        .firstWhere((element) => element.novelId == currentNovel.novelId);
-
-    ref
-        .read(chapterListProvider.notifier)
-        .setChapterListItem(currentNovel.chapterList);
-  }
-  ref
-      .read(chapterListProvider.notifier)
-      .addChapterListItemsFromJson(novelDetails.chapters);
-  ref.read(lightNovelProvider.notifier).setLightNovel(novelDetails);
-
-  return Future.value(novelDetails);
-});
+import 'package:flutter/foundation.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final lightNovelProvider =
     StateNotifierProvider<LightNovelNotifier, LightNovel?>(
-        (ref) => LightNovelNotifier());
+  (ref) => LightNovelNotifier(),
+);
 
 class LightNovelNotifier extends StateNotifier<LightNovel?> {
   LightNovelNotifier() : super(null);
@@ -63,17 +40,17 @@ class LightNovelNotifier extends StateNotifier<LightNovel?> {
 class ChapterListNotifier extends StateNotifier<List<ChapterListItem>> {
   ChapterListNotifier() : super([]);
 
-  void addChapterListItemsFromJson(List<Map<String, String>> chapters) {
-    state = [
-      ...state,
-      ...chapters.map(
-        (chapter) => ChapterListItem(
-            title: chapter['title'] ?? '',
-            id: chapter['id'] ?? '',
-            url: chapter['url'] ?? ''),
-      ),
-    ];
-  }
+  // void addChapterListItemsFromJson(List<Map<String, String>> chapters) {
+  //   state = [
+  //     ...state,
+  //     ...chapters.map(
+  //       (chapter) => ChapterListItem(
+  //           title: chapter['title'] ?? '',
+  //           id: chapter['id'] ?? '',
+  //           url: chapter['url'] ?? ''),
+  //     ),
+  //   ];
+  // }
 
   void setChapterListItemsFromJson(List<Map<String, String>> chapters) {
     state = chapters

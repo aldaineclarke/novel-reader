@@ -25,7 +25,7 @@ class _NovelChapterListState extends ConsumerState<NovelChapterList> {
   void initState() {
     // TODO: implement initState
     isOpen = [
-      for (var i = 0; i < ref.read(lightNovelProvider)!.pages; i++) false
+      for (var i = 0; i < (ref.read(lightNovelProvider)?.pages ?? 0); i++) false
     ];
 
     super.initState();
@@ -45,8 +45,8 @@ class _NovelChapterListState extends ConsumerState<NovelChapterList> {
         children: [
           ExpansionPanelList(
             // creates an array of items of length pages.
-            children:
-                [for (var i = 0; i < lightnovel!.pages; i++) i].map((page) {
+            children: [for (var i = 0; i < (lightnovel?.pages ?? 0); i++) i]
+                .map((page) {
               return ExpansionPanel(
                 headerBuilder: (BuildContext context, bool isExpanded) {
                   return ListTile(
@@ -113,7 +113,7 @@ class _NovelChapterListState extends ConsumerState<NovelChapterList> {
                                             'chapterLogs: Chapter Page currentChap -  ${page + 1}');
                                       }
 
-                                      Navigator.push(
+                                      Navigator.pushReplacement(
                                         context,
                                         MaterialPageRoute<void>(
                                           builder: (context) => NovelView(
