@@ -1,4 +1,6 @@
 // import 'package:babel_novel/providers/chapter_data_provider.dart';
+import 'dart:ui';
+
 import 'package:babel_novel/widgets/error_display_widget.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
@@ -43,6 +45,7 @@ class _NovelViewState extends ConsumerState<NovelView> {
   Color _fontColor = Colors.black;
   Color _backgroundColor = Colors.white;
   bool isPanelVisible = false;
+  List<List<RichText>> pages = [];
 
   final testStr =
       'If you find any errors ( Ads popup, ads redirect, broken links, non-standard content, etc.. ), Please let us know < report chapter > so we can fix it as soon as possible.';
@@ -226,102 +229,49 @@ class _NovelViewState extends ConsumerState<NovelView> {
         body: chapterDataAsyncValue.when(
           data: (data) {
             final chapterData = data;
-            final paragraphs = chapterData.text.split('\n');
+            final paragraphs = chapterData.text.split('.');
+            if (kDebugMode) {
+              print(paragraphs);
+            }
             // _text = paragraphs.join('\n\n'); // Update combined text
+            final richTextItems = paragraphs.map((text) {
+              return RichText(
+                text: TextSpan(
+                  text: '$text\n',
+                  style: TextStyle(
+                    color: preferences.fontColor,
+                    fontSize: preferences.fontSize,
+                    height: preferences.fontSize / 10,
+                  ),
+                ),
+              );
+            }).toList();
 
+            splitIntoPages(richTextItems); // Split the fetched data into pages
             return Stack(
               children: [
                 Positioned(
-                  child: Scrollbar(
-                    child: SmartRefresher(
-                      onLoading: _onLoad,
-                      enablePullUp: true,
-                      enablePullDown: false,
-                      controller: _nextChapterController,
-                      footer: CustomFooter(
-                        builder: (BuildContext context, LoadStatus? mode) {
-                          Widget body;
-                          if (mode == LoadStatus.idle) {
-                            body = const Text('pull up load');
-                          } else if (mode == LoadStatus.loading) {
-                            body = const CupertinoActivityIndicator();
-                          } else if (mode == LoadStatus.failed) {
-                            body = const Text('Load Failed!Click retry!');
-                          } else if (mode == LoadStatus.canLoading) {
-                            body = const Text('release to load more');
-                          } else {
-                            body = const Text('No more Data');
-                          }
-                          return SizedBox(
-                            height: 55,
-                            child: Center(child: body),
-                          );
-                        },
-                      ),
-                      child: ListView.builder(
-                        controller: _scrollController,
-                        padding: const EdgeInsets.all(20),
-                        itemCount: 1,
-                        itemBuilder: (context, index) {
-                          return GestureDetector(
-                            onDoubleTap: () {
-                              setState(() {
-                                isPanelVisible = !isPanelVisible;
-                              });
-                            },
-                            onTap: () {
-                              showSnackBar(context);
-                            },
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.only(
-                                      top: 150, bottom: 20),
-                                  child: Center(
-                                    child: parseChapterTitle(
-                                      chapterData.chapterTitle,
-                                      preferences.fontColor,
-                                    ),
-                                  ),
-                                ),
-                                RichText(
-                                  text: TextSpan(
-                                    style:
-                                        TextStyle(color: preferences.fontColor),
-                                    children: paragraphs.map((paragraph) {
-                                      if (testStr == paragraph ||
-                                          paragraph.contains(
-                                            chapterData.chapterTitle,
-                                          ) ||
-                                          paragraph.toLowerCase().trim() ==
-                                              chapterData.chapterTitle
-                                                  .toLowerCase() ||
-                                          paragraph
-                                              .toLowerCase()
-                                              .contains('chapter')) {
-                                        return const TextSpan(text: '');
-                                      }
-                                      if (hostName == paragraph) {
-                                        return const TextSpan();
-                                      }
-                                      return TextSpan(
-                                        text: '$paragraph\n\n',
-                                        style: TextStyle(
-                                          color: preferences.fontColor,
-                                          fontSize: preferences.fontSize,
-                                          height: preferences.fontSize / 10,
-                                        ),
-                                      );
-                                    }).toList(),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          );
-                        },
-                      ),
-                    ),
+                  child: GestureDetector(
+                    onDoubleTap: () {
+                      setState(() {
+                        isPanelVisible = !isPanelVisible;
+                      });
+                    },
+                    onTap: () {
+                      showSnackBar(context);
+                    },
+                    child:
+                        preferences.scrollDirection == ScrollDirection.vertical
+                            ? showScrollView(
+                                chapterData,
+                                preferences,
+                                paragraphs,
+                              )
+                            : showPageView(
+                                chapterData,
+                                preferences,
+                                paragraphs,
+                              ),
                   ),
                 ),
                 AnimatedPositioned(
@@ -371,15 +321,142 @@ class _NovelViewState extends ConsumerState<NovelView> {
           },
           loading: () => const Center(child: CircularProgressIndicator()),
         ),
-        // floatingActionButton: FloatingActionButton(
-        //   onPressed: () {
-        //     print('test');
-        //     _speak(textToSpeech);
-        //   },
-        //   child: const Icon(Icons.mic_none),
-        // ),
       ),
     );
+  }
+
+  Widget showScrollView(ChapterData chapterData,
+      PreferencesProvider preferences, List<String> paragraphs) {
+    return Scrollbar(
+      child: SmartRefresher(
+        onLoading: _onLoad,
+        enablePullUp: true,
+        enablePullDown: false,
+        controller: _nextChapterController,
+        footer: CustomFooter(
+          builder: (BuildContext context, LoadStatus? mode) {
+            Widget body;
+            if (mode == LoadStatus.idle) {
+              body = const Text('pull up load');
+            } else if (mode == LoadStatus.loading) {
+              body = const CupertinoActivityIndicator();
+            } else if (mode == LoadStatus.failed) {
+              body = const Text('Load Failed!Click retry!');
+            } else if (mode == LoadStatus.canLoading) {
+              body = const Text('release to load more');
+            } else {
+              body = const Text('No more Data');
+            }
+            return SizedBox(
+              height: 55,
+              child: Center(child: body),
+            );
+          },
+        ),
+        child: ListView.builder(
+          controller: _scrollController,
+          padding: const EdgeInsets.all(20),
+          itemCount: 1,
+          itemBuilder: (context, index) {
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(top: 150, bottom: 20),
+                  child: Center(
+                    child: parseChapterTitle(
+                      chapterData.chapterTitle,
+                      preferences.fontColor,
+                    ),
+                  ),
+                ),
+                RichText(
+                  text: TextSpan(
+                    style: TextStyle(color: preferences.fontColor),
+                    children: paragraphs.map((paragraph) {
+                      if (testStr == paragraph ||
+                          paragraph.contains(
+                            chapterData.chapterTitle,
+                          ) ||
+                          paragraph.toLowerCase().trim() ==
+                              chapterData.chapterTitle.toLowerCase() ||
+                          paragraph.toLowerCase().contains('chapter')) {
+                        return const TextSpan(text: '');
+                      }
+                      if (hostName == paragraph) {
+                        return const TextSpan();
+                      }
+                      return TextSpan(
+                        text: '$paragraph\n\n',
+                        style: TextStyle(
+                          color: preferences.fontColor,
+                          fontSize: preferences.fontSize,
+                          height: preferences.fontSize / 10,
+                        ),
+                      );
+                    }).toList(),
+                  ),
+                ),
+              ],
+            );
+          },
+        ),
+      ),
+    );
+  }
+
+  Widget showPageView(ChapterData chapterData, PreferencesProvider preferences,
+      List<String> paragraph) {
+    return PageView.builder(
+      itemCount: pages.length,
+      itemBuilder: (context, index) {
+        return SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: pages[index],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  // Function to split RichText items into pages
+  void splitIntoPages(List<RichText> richTextItems) {
+    final availableHeight = MediaQuery.of(context).size.height * .9;
+    double currentHeight = 0;
+    List<RichText> currentPage = [];
+
+    for (var richText in richTextItems) {
+      final span = richText.text as TextSpan;
+      final painter = TextPainter(
+        text: span,
+        maxLines: null,
+        textDirection: TextDirection.ltr,
+      );
+      painter.layout(maxWidth: MediaQuery.of(context).size.width);
+
+      double textHeight = painter.height;
+
+      if (currentHeight + textHeight <= availableHeight) {
+        currentPage.add(richText);
+        currentHeight += textHeight;
+      } else {
+        pages.add(currentPage);
+        currentPage = [richText];
+        currentHeight = textHeight;
+      }
+    }
+
+    if (currentPage.isNotEmpty) {
+      pages.add(currentPage);
+    }
+
+    setState(() {
+      // isLoading = false;
+    });
   }
 
   Widget parseChapterTitle(String title, Color color) {

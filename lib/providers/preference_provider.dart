@@ -9,10 +9,12 @@ class PreferencesProvider extends ChangeNotifier {
   double _fontSize = 14.0;
   Color _fontColor = Colors.black;
   Color _backgroundColor = Colors.white;
+  ScrollDirection _scrollDirection = ScrollDirection.vertical;
 
   double get fontSize => _fontSize;
   Color get fontColor => _fontColor;
   Color get backgroundColor => _backgroundColor;
+  ScrollDirection get scrollDirection => _scrollDirection;
 
   Future<void> _loadPreferences() async {
     final prefs = await SharedPreferences.getInstance();
@@ -20,6 +22,13 @@ class PreferencesProvider extends ChangeNotifier {
     _fontColor = Color(prefs.getInt('font_color') ?? Colors.black.value);
     _backgroundColor =
         Color(prefs.getInt('background_color') ?? Colors.white.value);
+    final scrollDirectionEnumIndex = prefs.getInt('scrollDirection');
+    _scrollDirection =
+        (scrollDirectionEnumIndex != null) // check if an entry exists
+            ? (prefs.getInt('scroll_direction') == 0)
+                ? ScrollDirection.vertical
+                : ScrollDirection.horizontal
+            : ScrollDirection.vertical;
     notifyListeners();
   }
 
@@ -37,6 +46,13 @@ class PreferencesProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> setScrollDirection(ScrollDirection scrollDirection) async {
+    final prefs = await SharedPreferences.getInstance();
+    _scrollDirection = scrollDirection;
+    await prefs.setInt('scroll_direction', scrollDirection.index);
+    notifyListeners();
+  }
+
   Future<void> setBackgroundColor(Color color) async {
     final prefs = await SharedPreferences.getInstance();
     _backgroundColor = color;
@@ -50,3 +66,5 @@ class PreferencesProvider extends ChangeNotifier {
 final preferenceProvider = ChangeNotifierProvider<PreferencesProvider>((ref) {
   return PreferencesProvider();
 });
+
+enum ScrollDirection { vertical, horizontal }
