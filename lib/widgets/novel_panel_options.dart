@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:babel_novel/providers/preference_provider.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class NovelViewOptionPanel extends ConsumerStatefulWidget {
   const NovelViewOptionPanel({super.key});
@@ -49,15 +50,17 @@ class _NovelViewOptionPanelState extends ConsumerState<NovelViewOptionPanel> {
                 Expanded(
                   child: TextButton(
                       style: TextButton.styleFrom(
-                          backgroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(
-                              vertical: 10, horizontal: 0),
-                          minimumSize:
-                              const Size(40, 20), // Adjust the minimum size
+                        backgroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(
+                          vertical: 10,
+                        ),
+                        minimumSize:
+                            const Size(40, 20), // Adjust the minimum size
 
-                          shape: const RoundedRectangleBorder(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(10)))),
+                        shape: const RoundedRectangleBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(10)),
+                        ),
+                      ),
                       onPressed: () {
                         preferences
                           ..setBackgroundColor(Colors.white)
@@ -176,6 +179,65 @@ class _NovelViewOptionPanelState extends ConsumerState<NovelViewOptionPanel> {
                               fontSize: 16, fontWeight: FontWeight.bold),
                         )),
                   ],
+                )
+              ],
+            ),
+            const SizedBox(height: 20),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: Text(
+                    'Scroll View',
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodyLarge
+                        ?.copyWith(fontWeight: FontWeight.w600),
+                  ),
+                ),
+                Row(
+                  children: [
+                    Text(
+                      preferences.scrollDirection == ScrollDirection.vertical
+                          ? 'Scroll'
+                          : 'Page',
+                      style: const TextStyle(fontWeight: FontWeight.w600),
+                    ),
+                    const SizedBox(width: 10),
+                    InkWell(
+                      onTap: () {
+                        preferences.setScrollDirection(
+                          preferences.scrollDirection ==
+                                  ScrollDirection.vertical
+                              ? ScrollDirection.horizontal
+                              : ScrollDirection.vertical,
+                        );
+                      },
+                      child: SvgPicture.asset(
+                        colorFilter: ColorFilter.mode(
+                            Theme.of(context).textTheme.bodyMedium!.color!,
+                            BlendMode.srcIn),
+                        preferences.scrollDirection == ScrollDirection.vertical
+                            ? 'assets/svgs/horizontal_scroll.svg'
+                            : 'assets/svgs/vertical_scroll.svg',
+                        width: 30,
+                        height: 30,
+                      ),
+                    ),
+                  ],
+                )
+              ],
+            ),
+            const SizedBox(height: 10),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  '134 / 234',
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodyLarge
+                      ?.copyWith(fontWeight: FontWeight.w600),
                 )
               ],
             )
