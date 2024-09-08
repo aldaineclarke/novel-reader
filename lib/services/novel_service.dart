@@ -130,11 +130,7 @@ class NovelService {
       return ChapterData.fromJson({});
     } catch (e) {
       print(e);
-      return ChapterData(
-        text: 'No Data',
-        chapterTitle: 'Dummy text',
-        novelTitle: 'Novel Data',
-      );
+      rethrow;
     }
   }
 }
