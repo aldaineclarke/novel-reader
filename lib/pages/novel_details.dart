@@ -53,7 +53,8 @@ class _NovelDetailsPageState extends ConsumerState<NovelDetailsPage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   ErrorDisplayWidget(
-                      message: (error as DioException).error.toString()),
+                    message: (error as DioException).error.toString(),
+                  ),
                   ElevatedButton(
                     onPressed: () {
                       // Refetch the data by triggering the provider
@@ -61,7 +62,7 @@ class _NovelDetailsPageState extends ConsumerState<NovelDetailsPage> {
                           .read(novelDetailsProvider(widget.novelId).notifier)
                           .fetchNovelDetails();
                     },
-                    child: Text('Try Again'),
+                    child: const Text('Try Again'),
                   ),
                 ],
               ),
@@ -96,10 +97,6 @@ class _NovelDetailsPageState extends ConsumerState<NovelDetailsPage> {
                 print('chapterLogs: firstChapter -  ${firstChapter.title}');
               }
             } catch (e) {
-              Future(() {
-                ErrorDialogService()
-                    .showErrorDialog(context, 'No chapter found', () {});
-              });
               novelInShelf = null;
             }
 
