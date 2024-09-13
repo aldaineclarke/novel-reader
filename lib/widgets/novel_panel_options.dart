@@ -1,3 +1,6 @@
+import 'package:babel_novel/providers/current_chapter_provider.dart';
+import 'package:babel_novel/providers/current_novel_provider.dart';
+import 'package:babel_novel/providers/novel_detail_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -15,6 +18,8 @@ class _NovelViewOptionPanelState extends ConsumerState<NovelViewOptionPanel> {
   @override
   Widget build(BuildContext context) {
     final preferences = ref.watch(preferenceProvider);
+    final novelDetails = ref.watch(currentNovelProvider);
+    final regExp = RegExp(r'\d+');
     return Material(
       elevation: 5, // Increase the elevation for a more pronounced shadow
       // shadowColor: Colors.black.withOpacity(0.5),
@@ -233,7 +238,7 @@ class _NovelViewOptionPanelState extends ConsumerState<NovelViewOptionPanel> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  '134 / 234',
+                  '${regExp.firstMatch(novelDetails?.currentChapterId.split("/").last ?? "0")!.group(0)} / ${ref.read(totalNovelPages)} ',
                   style: Theme.of(context)
                       .textTheme
                       .bodyLarge

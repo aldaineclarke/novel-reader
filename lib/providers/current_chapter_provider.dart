@@ -30,3 +30,5 @@ final chapterDataProvider = StateNotifierProvider.family<
   //set text
   return ChapterDataStateNotifier(chapterId, ref);
 });
+
+final totalNovelPages = StateProvider<int>((ref) => 0);

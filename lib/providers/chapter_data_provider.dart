@@ -19,11 +19,6 @@ class ChapterDataNotifier extends StateNotifier<ChapterInfo> {
   }
 }
 
-final chapterDataProvider =
-    StateNotifierProvider<ChapterDataNotifier, ChapterInfo>(
-  (ref) => ChapterDataNotifier(),
-);
-
 class ChapterInfo {
   ChapterInfo({required this.chapterData, required this.chapterId});
   ChapterData chapterData;

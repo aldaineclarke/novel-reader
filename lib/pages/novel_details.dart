@@ -1,3 +1,4 @@
+import 'package:babel_novel/providers/current_chapter_provider.dart';
 import 'package:babel_novel/providers/novel_detail_provider.dart';
 import 'package:babel_novel/services/error_dialog_service.dart';
 import 'package:babel_novel/widgets/error_display_widget.dart';
@@ -120,7 +121,9 @@ class _NovelDetailsPageState extends ConsumerState<NovelDetailsPage> {
             // Waits until the widget tree builds then set the novelProvider
             Future(
               () {
-                print('This was ran');
+                //I use 40 here because by default that is how much chapters available in one page.
+                ref.read(totalNovelPages.notifier).state = novelData.pages * 40;
+
                 ref.read(currentNovelProvider.notifier).setNovel(novel);
               },
             );
