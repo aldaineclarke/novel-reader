@@ -191,7 +191,6 @@ class _ShelfScreenState extends ConsumerState<ShelfScreen> {
                                                   color: Colors.black26),
                                             ),
                                           ),
-                                          const Expanded(child: SizedBox()),
                                           TextButton(
                                             onPressed: () {
                                               final novelIndex =
