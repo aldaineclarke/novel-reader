@@ -22,7 +22,7 @@ class PreferencesProvider extends ChangeNotifier {
     _fontColor = Color(prefs.getInt('font_color') ?? Colors.black.value);
     _backgroundColor =
         Color(prefs.getInt('background_color') ?? Colors.white.value);
-    final scrollDirectionEnumIndex = prefs.getInt('scrollDirection');
+    final scrollDirectionEnumIndex = prefs.getInt('scroll_direction');
     _scrollDirection =
         (scrollDirectionEnumIndex != null) // check if an entry exists
             ? (prefs.getInt('scroll_direction') == 0)
