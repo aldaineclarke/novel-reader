@@ -1,3 +1,4 @@
+import 'package:babel_novel/providers/chapter_list_provider.dart';
 import 'package:babel_novel/providers/current_chapter_provider.dart';
 import 'package:babel_novel/providers/novel_detail_provider.dart';
 import 'package:babel_novel/services/error_dialog_service.dart';
@@ -81,19 +82,27 @@ class _NovelDetailsPageState extends ConsumerState<NovelDetailsPage> {
             var firstChapter = ChapterListItem.fromJson(novelData.chapters[0]);
             CurrentNovel? novelInShelf;
             try {
-              novelInShelf = shelf
+              final novelInShelfList = shelf
                   .where(
                     (element) => element.novelId == novelData.id,
                   )
-                  .first;
-              chapterList = novelInShelf.chapterList;
+                  .toList();
+
+              if (novelInShelfList.isNotEmpty) {
+                novelInShelf = novelInShelfList.first;
+                chapterList = novelInShelf.chapterList;
+              }
               if (kDebugMode) {
                 print(
                     'chapterLogs: ShelfNovel currentChap -  ${novelInShelf?.currentChapterId}');
+                print(novelData.chapters);
               }
-              firstChapter = chapterList
+              final chapterId = chapterList
                   .where((c) => c.id == novelInShelf?.currentChapterId)
-                  .first;
+                  .toList();
+              if (chapterId.isNotEmpty) {
+                firstChapter = chapterId.first;
+              }
               if (kDebugMode) {
                 print('chapterLogs: firstChapter -  ${firstChapter.title}');
               }
@@ -123,6 +132,11 @@ class _NovelDetailsPageState extends ConsumerState<NovelDetailsPage> {
               () {
                 //I use 40 here because by default that is how much chapters available in one page.
                 ref.read(totalNovelPages.notifier).state = novelData.pages * 40;
+                if (ref.read(chapterListProvider).isEmpty) {
+                  ref
+                      .read(chapterListProvider.notifier)
+                      .setChapterListItem(chapterList);
+                }
 
                 ref.read(currentNovelProvider.notifier).setNovel(novel);
               },
