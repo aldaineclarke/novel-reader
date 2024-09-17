@@ -64,7 +64,7 @@ class ChapterListNotifier extends StateNotifier<List<ChapterListItem>> {
   }
 
   void setChapterListItem(List<ChapterListItem> chapters) {
-    state = [...state, ...chapters];
+    state = chapters;
   }
 
   void removeNovelData(int index) {

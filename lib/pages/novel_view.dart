@@ -1,28 +1,21 @@
 // import 'package:babel_novel/providers/chapter_data_provider.dart';
-import 'dart:ui';
-
-import 'package:babel_novel/widgets/error_display_widget.dart';
-import 'package:dio/dio.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:hive/hive.dart';
 import 'package:babel_novel/env.dart';
 import 'package:babel_novel/hive_adapters/current_novel.dart';
 import 'package:babel_novel/models/chapter_data.dart';
-import 'package:babel_novel/providers/current_chapter_provider.dart';
 import 'package:babel_novel/pages/novel_chapter_list.dart';
-
 import 'package:babel_novel/providers/chapter_list_provider.dart';
+import 'package:babel_novel/providers/current_chapter_provider.dart';
 import 'package:babel_novel/providers/current_novel_provider.dart';
 import 'package:babel_novel/providers/preference_provider.dart';
 import 'package:babel_novel/providers/shelf_provider.dart';
 import 'package:babel_novel/services/novel_service.dart';
-import 'package:babel_novel/utils/theme_colors.dart';
+import 'package:babel_novel/widgets/error_display_widget.dart';
 import 'package:babel_novel/widgets/novel_panel_options.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hive/hive.dart';
 import 'package:pull_to_refresh_flutter3/pull_to_refresh_flutter3.dart';
 
 class NovelView extends ConsumerStatefulWidget {
@@ -38,6 +31,7 @@ class _NovelViewState extends ConsumerState<NovelView> {
   final ScrollController _scrollController = ScrollController();
   late String currentNovel;
   final RefreshController _nextChapterController = RefreshController();
+  final PageController _pageViewController = PageController();
   int currentIndex = 1;
   final String hostName = 'AnimeDaily.Net';
   late Box<CurrentNovel> novelBox;
@@ -63,19 +57,68 @@ class _NovelViewState extends ConsumerState<NovelView> {
     currentIndex = novelList.indexWhere((chapterItem) {
       return chapterItem.id == novel?.currentChapterId;
     });
+    // _pageViewController.addListener(_checkThenSkipToNextChapter);
+
     if (kDebugMode) {
       print('chapterLogs: CurrentIndex - ${currentIndex}');
     }
 
     novelBox.put('currentNovel', novel!);
 
-    // _scrollController.addListener(_scrollListener);
+    // Delay function call until after widget build is complete
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _fetchAndProcessData();
+    });
   }
 
   @override
   void dispose() {
     _scrollController.dispose();
+    _pageViewController.dispose();
     super.dispose();
+  }
+
+  Future<void> _fetchAndProcessData() async {
+    final data =
+        await ref.read(chapterDataProvider(currentNovel)); // ensure async call
+    final isolatedPreference = ref.read(preferenceProvider);
+    if (data?.value != null) {
+      final chapterData = data.value;
+      final paragraphs = chapterData!.text.split('.');
+
+      // Map paragraphs to RichText widgets based on user preferences
+      setState(() {
+        final richTextItems = paragraphs.map((text) {
+          return RichText(
+            text: TextSpan(
+              text: '$text\n',
+              style: TextStyle(
+                color: isolatedPreference.fontColor,
+                fontSize: isolatedPreference.fontSize,
+                height: isolatedPreference.fontSize / 10,
+              ),
+            ),
+          );
+        }).toList();
+
+        // If horizontal scrolling is enabled, split into pages
+        if (isolatedPreference.scrollDirection == ScrollDirection.horizontal) {
+          splitIntoPages(richTextItems);
+        }
+      });
+    }
+  }
+
+  void _checkThenSkipToNextChapter() {
+    print('Position: ${_pageViewController.position.pixels}');
+    print('Max: ${_pageViewController.position.maxScrollExtent}');
+// Check if the current page is the last page
+    if (_pageViewController.position.pixels ==
+        _pageViewController.position.maxScrollExtent) {
+      // Perform the action when the user reaches the last page
+      print('Reached the end of the page view');
+      _loadNextChapter();
+    }
   }
 
   Future<void> fetchPageChapterList(String novelId, {int page = 1}) async {
@@ -91,6 +134,7 @@ class _NovelViewState extends ConsumerState<NovelView> {
   void _loadNextChapter() {
     // Gets the current novel from the provider.
     final novel = ref.read(currentNovelProvider);
+    pages = [];
     // Gets the chapters from the chapterList from the provider.
     final chapterList = ref.read(chapterListProvider);
     setState(
@@ -134,6 +178,7 @@ class _NovelViewState extends ConsumerState<NovelView> {
       },
     );
     print('CurrentNovel: $currentNovel ');
+    _fetchAndProcessData();
   }
 
   void _onRefresh() async {
@@ -230,9 +275,6 @@ class _NovelViewState extends ConsumerState<NovelView> {
           data: (data) {
             final chapterData = data;
             final paragraphs = chapterData.text.split('.');
-            if (kDebugMode) {
-              print(paragraphs);
-            }
             // _text = paragraphs.join('\n\n'); // Update combined text
             final richTextItems = paragraphs.map((text) {
               return RichText(
@@ -246,8 +288,6 @@ class _NovelViewState extends ConsumerState<NovelView> {
                 ),
               );
             }).toList();
-
-            splitIntoPages(richTextItems); // Split the fetched data into pages
             return Stack(
               children: [
                 Positioned(
@@ -407,9 +447,27 @@ class _NovelViewState extends ConsumerState<NovelView> {
 
   Widget showPageView(ChapterData chapterData, PreferencesProvider preferences,
       List<String> paragraph) {
+    pages = ref
+        .read(chapterDataProvider(currentNovel).notifier)
+        .splitChaptersIntoPages(MediaQuery.of(context).size.height * .9,
+            MediaQuery.of(context).size.width);
     return PageView.builder(
-      itemCount: pages.length,
+      itemCount: pages.length + 1,
+      controller: _pageViewController,
+      allowImplicitScrolling: true,
+      onPageChanged: (value) {
+        print('value : $value');
+        print('Total Pages : ${pages.length}');
+        // Check if the user has reached the last page
+        if (value == pages.length) {
+          // Prevent looping by jumping to the next chapter or triggering method
+          _loadNextChapter(); // Method to call when the user reaches the last page
+        }
+      },
       itemBuilder: (context, index) {
+        if (index == pages.length) {
+          return const Center(child: CircularProgressIndicator());
+        }
         return SingleChildScrollView(
           child: Padding(
             padding: const EdgeInsets.all(16),
