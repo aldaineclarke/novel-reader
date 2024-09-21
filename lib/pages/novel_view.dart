@@ -32,6 +32,8 @@ class _NovelViewState extends ConsumerState<NovelView> {
   late String currentNovel;
   final RefreshController _nextChapterController = RefreshController();
   final PageController _pageViewController = PageController();
+  double startPosition = 0;
+  bool shouldGoBack = false;
   int currentIndex = 1;
   final String hostName = 'AnimeDaily.Net';
   late Box<CurrentNovel> novelBox;
@@ -117,6 +119,8 @@ class _NovelViewState extends ConsumerState<NovelView> {
         _pageViewController.position.maxScrollExtent) {
       // Perform the action when the user reaches the last page
       print('Reached the end of the page view');
+      currentIndex++;
+
       _loadNextChapter();
     }
   }
@@ -139,7 +143,12 @@ class _NovelViewState extends ConsumerState<NovelView> {
     final chapterList = ref.read(chapterListProvider);
     setState(
       () {
-        currentIndex++;
+        if (currentIndex < 0) {
+          // means thata for some reason we were not able to find the item in the list
+          currentIndex = novel!.chapterList.indexWhere((chapterItem) {
+            return chapterItem.id == currentNovel;
+          });
+        }
         if (currentIndex == chapterList.length) {
           // novel?.copyWith(currentPage: novel.currentPage + 1);
 
@@ -178,7 +187,7 @@ class _NovelViewState extends ConsumerState<NovelView> {
       },
     );
     print('CurrentNovel: $currentNovel ');
-    _fetchAndProcessData();
+    // _fetchAndProcessData();
   }
 
   void _onRefresh() async {
@@ -192,6 +201,8 @@ class _NovelViewState extends ConsumerState<NovelView> {
     // monitor network fetch
     await Future.delayed(Duration(milliseconds: 1000));
     // if failed,use refreshFailed()
+    currentIndex++;
+
     _loadNextChapter();
     _nextChapterController.loadComplete();
   }
@@ -296,6 +307,31 @@ class _NovelViewState extends ConsumerState<NovelView> {
                       setState(() {
                         isPanelVisible = !isPanelVisible;
                       });
+                    },
+                    onHorizontalDragStart: (details) {
+                      // set the start position
+                      startPosition = details.globalPosition.dx;
+                    },
+                    onHorizontalDragUpdate: (details) {
+                      // compare the start position with the current position
+                      // set state to determine if I should reload or not.
+                      if (startPosition > details.globalPosition.dx) {
+                        shouldGoBack = false;
+                      } else if (startPosition < details.globalPosition.dx) {
+                        shouldGoBack = true;
+                      }
+                      setState(() {});
+                    },
+                    onHorizontalDragEnd: (details) {
+                      // based on the state which hold if user swipes right.
+                      print(shouldGoBack);
+                      // Call the previous chapter function
+                      if (shouldGoBack) {
+                        currentIndex -= 1;
+                      } else if (shouldGoBack == false) {
+                        currentIndex += 1;
+                      }
+                      _loadNextChapter();
                     },
                     onTap: () {
                       showSnackBar(context);
@@ -461,6 +497,8 @@ class _NovelViewState extends ConsumerState<NovelView> {
         // Check if the user has reached the last page
         if (value == pages.length) {
           // Prevent looping by jumping to the next chapter or triggering method
+          currentIndex++;
+
           _loadNextChapter(); // Method to call when the user reaches the last page
         }
       },
@@ -556,8 +594,6 @@ class _NovelViewState extends ConsumerState<NovelView> {
     );
   }
 }
-
-
 
 // var textToSpeechProvider = StateNotifierProvider<TextToSpeechNotifier, String>(
 //     (ref) => TextToSpeechNotifier(''));

@@ -100,6 +100,9 @@ class _DiscoverTabState extends ConsumerState<DiscoverTab> {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(child: CircularProgressIndicator());
                 } else if (snapshot.hasData) {
+                  if (snapshot.data!.isEmpty) {
+                    return const Center(child: Text('No novels found. '));
+                  }
                   return ListView.separated(
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),

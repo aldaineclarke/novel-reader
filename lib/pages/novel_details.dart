@@ -131,12 +131,10 @@ class _NovelDetailsPageState extends ConsumerState<NovelDetailsPage> {
             Future(
               () {
                 //I use 40 here because by default that is how much chapters available in one page.
-                ref.read(totalNovelPages.notifier).state = novelData.pages * 40;
-                if (ref.read(chapterListProvider).isEmpty) {
-                  ref
-                      .read(chapterListProvider.notifier)
-                      .setChapterListItem(chapterList);
-                }
+                ref.read(totalNovelPages.notifier).state = chapterList.length;
+                ref
+                    .read(chapterListProvider.notifier)
+                    .setChapterListItem(chapterList);
 
                 ref.read(currentNovelProvider.notifier).setNovel(novel);
               },
@@ -236,7 +234,7 @@ class _NovelDetailsPageState extends ConsumerState<NovelDetailsPage> {
                               Radius.circular(30),
                             ),
                           ),
-                          label: Text('${match!.group(0)!} Chap'),
+                          label: Text('${chapterList.length} Chap'),
                           avatar: const Icon(Icons.book),
                         ),
                       ),

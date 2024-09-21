@@ -34,9 +34,10 @@ class _NovelChapterListState extends ConsumerState<NovelChapterList> {
   @override
   Widget build(BuildContext context) {
     final lightnovel = ref.watch(lightNovelProvider);
+    final currentNovel = ref.watch(currentNovelProvider);
 // Define a regular expression to match digits
     final regExp = RegExp(r'\d+');
-    const pageLimit = 40;
+    const pageLimit = 100;
 
     // Find all matches in the input string
     return Scaffold(
@@ -45,8 +46,12 @@ class _NovelChapterListState extends ConsumerState<NovelChapterList> {
         children: [
           ExpansionPanelList(
             // creates an array of items of length pages.
-            children: [for (var i = 0; i < (lightnovel?.pages ?? 0); i++) i]
-                .map((page) {
+            children: [
+              for (var i = 0; i < (lightnovel!.chapters.length / 100 ?? 0); i++)
+                i
+            ].map((page) {
+              final start = page * pageLimit + 1;
+              final end = page * pageLimit + pageLimit;
               return ExpansionPanel(
                 headerBuilder: (BuildContext context, bool isExpanded) {
                   return ListTile(
@@ -56,79 +61,11 @@ class _NovelChapterListState extends ConsumerState<NovelChapterList> {
                   );
                 },
                 body: isOpen[page]
-                    ? FutureBuilder(
-                        future:
-                            NovelService.getNovelInfo(widget.novelId, page + 1),
-                        builder: (context, snapshot) {
-                          if (snapshot.connectionState ==
-                              ConnectionState.waiting) {
-                            return const Padding(
-                              padding: EdgeInsets.all(10.0),
-                              child: Center(
-                                child: CircularProgressIndicator(),
-                              ),
-                            );
-                          } else if (snapshot.hasError) {
-                            return const Text('No Content');
-                          } else {
-                            final chapters = snapshot.data!.chapters;
-                            //fills thee chapterlist provider with the 40 chapters fetched
-
-                            return Column(
-                              children: chapters.map(
-                                (chapter) {
-                                  final chapterData =
-                                      ChapterListItem.fromJson(chapter);
-                                  return ListTile(
-                                    onTap: () {
-                                      ref
-                                          .read(chapterListProvider.notifier)
-                                          .setChapterListItemsFromJson(
-                                            snapshot.data!.chapters,
-                                          );
-                                      final novel =
-                                          ref.read(currentNovelProvider);
-                                      final updateNovel = novel!.copyWith(
-                                        currentChapterId: chapterData.id,
-                                        chapterList:
-                                            ref.read(chapterListProvider),
-                                        currentPage: page + 1,
-                                      );
-
-                                      /// currentNovelProvider is set when the User reads a chapter of a novel..we can change it to when they view the novel details page for simplicity
-                                      ref
-                                          .read(currentNovelProvider.notifier)
-                                          .setNovel(updateNovel);
-                                      ref
-                                          .read(shelfProvider.notifier)
-                                          .updateNovelDetails(
-                                            updateNovel,
-                                          );
-                                      if (kDebugMode) {
-                                        print(
-                                            'chapterLogs: Chapter currentChap -  ${novel.currentChapterId}');
-                                        print(
-                                            'chapterLogs: Chapter List currentChap -  ${novel.chapterList.map((e) => e.title)}');
-                                        print(
-                                            'chapterLogs: Chapter Page currentChap -  ${page + 1}');
-                                      }
-
-                                      Navigator.pushReplacement(
-                                        context,
-                                        MaterialPageRoute<void>(
-                                          builder: (context) => NovelView(
-                                            novelChapter: chapterData.id,
-                                          ),
-                                        ),
-                                      );
-                                    },
-                                    title: Text(chapterData.title),
-                                  );
-                                },
-                              ).toList(),
-                            );
-                          }
-                        })
+                    ? showChapterList(lightnovel!.chapters
+                        .map((e) => ChapterListItem.fromJson(e))
+                        .toList()
+                        .sublist(start,
+                            lightnovel!.chapters.length < end ? null : end))
                     : const SizedBox(),
                 isExpanded: isOpen[page],
               );
@@ -141,6 +78,46 @@ class _NovelChapterListState extends ConsumerState<NovelChapterList> {
           ),
         ],
       ),
+    );
+  }
+
+  Widget showChapterList(List<ChapterListItem> chapters) {
+    //fills thee chapterlist provider with the 40 chapters fetched
+
+    return Column(
+      children: chapters.map(
+        (chapter) {
+          final chapterData = chapter;
+          return ListTile(
+            onTap: () {
+              final novel = ref.read(currentNovelProvider);
+              final updateNovel = novel!.copyWith(
+                currentChapterId: chapterData.id,
+              );
+
+              /// currentNovelProvider is set when the User reads a chapter of a novel..we can change it to when they view the novel details page for simplicity
+              ref.read(currentNovelProvider.notifier).setNovel(updateNovel);
+              ref.read(shelfProvider.notifier).updateNovelDetails(
+                    updateNovel,
+                  );
+              if (kDebugMode) {
+                print(
+                    'chapterLogs: Chapter currentChap -  ${novel.currentChapterId}');
+              }
+
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute<void>(
+                  builder: (context) => NovelView(
+                    novelChapter: chapterData.id,
+                  ),
+                ),
+              );
+            },
+            title: Text(chapterData.title),
+          );
+        },
+      ).toList(),
     );
   }
 }
