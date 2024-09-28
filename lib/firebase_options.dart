@@ -58,10 +58,10 @@ class DefaultFirebaseOptions {
   );
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyBI0FDohQ6jsP5EoCkOinBUCKnEpH-Ru18',
-    appId: '1:1045008187828:android:77fa54521af103f42a72e1',
+    apiKey: 'AIzaSyBb0XlskVG9WzAdC07XqRvzFNThlGbRSLQ',
+    appId: '1:953081664116:android:55344bb79bfa937de6f721',
     messagingSenderId: '1045008187828',
-    projectId: 'flutter-rest-starter',
+    projectId: 'novelworld-a84e4',
     databaseURL: 'https://flutter-rest-starter.firebaseio.com',
     storageBucket: 'flutter-rest-starter.appspot.com',
   );

@@ -29,11 +29,12 @@ void main() async {
       // Retain native splash screen until Dart is ready
       FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
       await Firebase.initializeApp(
-        options: DefaultFirebaseOptions.currentPlatform,
+        name: 'Babel Novels',
+        options: DefaultFirebaseOptions.android,
       );
       GetIt.instance.registerLazySingleton(
         () {
-          return HttpClient(baseOptions: BaseOptions(baseUrl: Env.hostedUrl));
+          return HttpClient(baseOptions: BaseOptions(baseUrl: Env.serverUrl));
         },
       );
       if (!kIsWeb) {
