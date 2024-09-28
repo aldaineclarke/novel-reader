@@ -327,32 +327,37 @@ class _DiscoverTabState extends ConsumerState<DiscoverTab> {
         )
       else
         const SizedBox.shrink(),
-      NovelSectionWidget(
-        sectionHeader: 'Latest Release',
-        ctaText: 'See All',
-        routeName: 'latest-release',
-        provider: latestReleasesProvider,
-      ),
-      const SizedBox(height: 20),
-      NovelSectionWidget(
-        sectionHeader: 'New Novels',
-        ctaText: 'See All',
-        routeName: 'new-novels',
-        provider: newNovelsProvider,
-      ),
-      const SizedBox(height: 20),
-      NovelSectionWidget(
-        sectionHeader: 'Completed Novels',
-        ctaText: 'See All',
-        routeName: 'complete-novels',
-        provider: completedNovelsProvider,
-      ),
-      const SizedBox(height: 20),
-      NovelSectionWidget(
-        sectionHeader: 'Most Popular',
-        ctaText: 'See All',
-        routeName: 'most-popular',
-        provider: mostPopularNovelsProvider,
+      Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          NovelSectionWidget(
+            sectionHeader: 'Latest Release',
+            ctaText: 'See All',
+            routeName: 'latest-release',
+            provider: latestReleasesProvider,
+          ),
+          const SizedBox(height: 20),
+          NovelSectionWidget(
+            sectionHeader: 'New Novels',
+            ctaText: 'See All',
+            routeName: 'new-novels',
+            provider: newNovelsProvider,
+          ),
+          const SizedBox(height: 20),
+          NovelSectionWidget(
+            sectionHeader: 'Completed Novels',
+            ctaText: 'See All',
+            routeName: 'complete-novels',
+            provider: completedNovelsProvider,
+          ),
+          const SizedBox(height: 20),
+          NovelSectionWidget(
+            sectionHeader: 'Most Popular',
+            ctaText: 'See All',
+            routeName: 'most-popular',
+            provider: mostPopularNovelsProvider,
+          ),
+        ],
       ),
     ];
   }
