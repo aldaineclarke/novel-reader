@@ -50,9 +50,10 @@ class _NovelChapterListState extends ConsumerState<NovelChapterList> {
               for (var i = 0; i < (lightnovel!.chapters.length / 100 ?? 0); i++)
                 i
             ].map((page) {
-              final start = page * pageLimit + 1;
+              final start = page * pageLimit;
               final end = page * pageLimit + pageLimit;
               return ExpansionPanel(
+                canTapOnHeader: true,
                 headerBuilder: (BuildContext context, bool isExpanded) {
                   return ListTile(
                     title: Text(
@@ -62,7 +63,7 @@ class _NovelChapterListState extends ConsumerState<NovelChapterList> {
                 },
                 body: isOpen[page]
                     ? showChapterList(lightnovel!.chapters
-                        .map((e) => ChapterListItem.fromJson(e))
+                        .map(ChapterListItem.fromJson)
                         .toList()
                         .sublist(start,
                             lightnovel!.chapters.length < end ? null : end))
