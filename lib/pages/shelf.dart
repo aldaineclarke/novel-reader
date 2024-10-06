@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:babel_novel/pages/novel_details.dart';
@@ -120,33 +121,37 @@ class _ShelfScreenState extends ConsumerState<ShelfScreen> {
                                     ],
                                   ),
                                   const SizedBox(height: 10),
-                                  SizedBox(
-                                    child: Wrap(
-                                      runSpacing: 2,
-                                      spacing: 2,
-                                      children: novelItem.genres.map((e) {
-                                        return Container(
-                                          decoration: const BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.horizontal(
-                                              left: Radius.circular(10),
-                                              right: Radius.circular(10),
-                                            ),
-                                            color: Color.fromARGB(
-                                                255, 249, 255, 255),
-                                          ),
-                                          padding: const EdgeInsets.all(5),
-                                          child: Text(
-                                            e,
-                                            style: const TextStyle(
-                                              fontSize: 12,
-                                              fontWeight: FontWeight.w500,
-                                              color: Color.fromARGB(
-                                                  255, 12, 58, 95),
-                                            ),
-                                          ),
-                                        );
-                                      }).toList(),
+                                  Expanded(
+                                    child: ListView(
+                                      children: [
+                                        Wrap(
+                                          runSpacing: 2,
+                                          spacing: 2,
+                                          children: novelItem.genres.map((e) {
+                                            return Container(
+                                              decoration: const BoxDecoration(
+                                                borderRadius:
+                                                    BorderRadius.horizontal(
+                                                  left: Radius.circular(10),
+                                                  right: Radius.circular(10),
+                                                ),
+                                                color: Color.fromARGB(
+                                                    255, 249, 255, 255),
+                                              ),
+                                              padding: const EdgeInsets.all(5),
+                                              child: Text(
+                                                e,
+                                                style: const TextStyle(
+                                                  fontSize: 12,
+                                                  fontWeight: FontWeight.w500,
+                                                  color: Color.fromARGB(
+                                                      255, 12, 58, 95),
+                                                ),
+                                              ),
+                                            );
+                                          }).toList(),
+                                        ),
+                                      ],
                                     ),
                                   ),
                                 ],
