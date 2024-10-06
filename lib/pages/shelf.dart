@@ -1,3 +1,4 @@
+import 'package:babel_novel/models/novel_item.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -44,8 +45,16 @@ class _ShelfScreenState extends ConsumerState<ShelfScreen> {
                     Navigator.push(
                       context,
                       MaterialPageRoute<void>(
-                        builder: (context) =>
-                            NovelDetailsPage(novelId: novelItem.novelId),
+                        builder: (context) => NovelDetailsPage(
+                          novel: NovelItem(
+                            genres: novelItem.genres,
+                            id: novelItem.novelId,
+                            image: novelItem.novelImage,
+                            lastChapter: novelItem.currentChapterId,
+                            url: novelItem.novelId,
+                            title: novelItem.novelTitle,
+                          ), // not sure if this will convert it to a map
+                        ),
                       ),
                     );
                   },

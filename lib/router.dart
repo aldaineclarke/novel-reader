@@ -45,13 +45,13 @@ GoRouter appRouter() => GoRouter(
               print('ID: $id');
               return NovelChapterList(novelId: id);
             }),
-        GoRoute(
-            path: '/novels/:id',
-            name: NovelDetailsPage.routeName,
-            builder: (BuildContext context, GoRouterState state) {
-              final id = state.pathParameters['id'] ?? '';
-              return NovelDetailsPage(novelId: id);
-            }),
+        // GoRoute(
+        //     path: '/novels/:id',
+        //     name: NovelDetailsPage.routeName,
+        //     builder: (BuildContext context, GoRouterState state) {
+        //       final id = state.pathParameters['id'] ?? '';
+        //       return NovelDetailsPage(novelId: id);
+        //     }),
       ],
       observers: [
         FirebaseAnalyticsObserver(analytics: FirebaseAnalytics.instance),

@@ -94,7 +94,7 @@ class _NovelListScreenState extends ConsumerState<NovelListScreen> {
                             context,
                             MaterialPageRoute<void>(
                               builder: (context) =>
-                                  NovelDetailsPage(novelId: novelItem.id),
+                                  NovelDetailsPage(novel: novelItem),
                             ),
                           );
                         },

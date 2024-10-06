@@ -118,7 +118,7 @@ class _DiscoverTabState extends ConsumerState<DiscoverTab> {
                             context,
                             MaterialPageRoute<void>(
                               builder: (context) =>
-                                  NovelDetailsPage(novelId: novelItem.id),
+                                  NovelDetailsPage(novel: novelItem),
                             ),
                           );
                         },
@@ -132,27 +132,30 @@ class _DiscoverTabState extends ConsumerState<DiscoverTab> {
                             children: [
                               ClipRRect(
                                 borderRadius: BorderRadius.circular(15),
-                                child: Image(
-                                  loadingBuilder: (BuildContext context,
-                                      Widget child,
-                                      ImageChunkEvent? loadingProgress) {
-                                    if (loadingProgress == null) {
-                                      return child;
-                                    }
-                                    return Container(
-                                      decoration: BoxDecoration(
-                                        border:
-                                            Border.all(color: Colors.indigo),
-                                        image: const DecorationImage(
-                                          fit: BoxFit.cover,
-                                          image: AssetImage(
-                                              'assets/images/loading_img.jpg'),
+                                child: Hero(
+                                  tag: 'DetailTag',
+                                  child: Image(
+                                    loadingBuilder: (BuildContext context,
+                                        Widget child,
+                                        ImageChunkEvent? loadingProgress) {
+                                      if (loadingProgress == null) {
+                                        return child;
+                                      }
+                                      return Container(
+                                        decoration: BoxDecoration(
+                                          border:
+                                              Border.all(color: Colors.indigo),
+                                          image: const DecorationImage(
+                                            fit: BoxFit.cover,
+                                            image: AssetImage(
+                                                'assets/images/loading_img.jpg'),
+                                          ),
                                         ),
-                                      ),
-                                    );
-                                  },
-                                  image: NetworkImage(novelItem.image),
-                                  fit: BoxFit.cover,
+                                      );
+                                    },
+                                    image: NetworkImage(novelItem.image),
+                                    fit: BoxFit.cover,
+                                  ),
                                 ),
                               ),
                               const SizedBox(width: 10),
@@ -311,8 +314,16 @@ class _DiscoverTabState extends ConsumerState<DiscoverTab> {
                         // as well as fetch the subsequent chapters for that page
                         Navigator.of(context).push(
                           MaterialPageRoute<void>(
-                            builder: (context) =>
-                                NovelDetailsPage(novelId: currentNovel.novelId),
+                            builder: (context) => NovelDetailsPage(
+                              novel: NovelItem(
+                                genres: currentNovel.genres,
+                                id: currentNovel.novelId,
+                                image: currentNovel.novelImage,
+                                lastChapter: currentNovel.currentChapterId,
+                                url: currentNovel.novelId,
+                                title: currentNovel.novelTitle,
+                              ),
+                            ),
                           ),
                         );
                       },
@@ -334,28 +345,28 @@ class _DiscoverTabState extends ConsumerState<DiscoverTab> {
             sectionHeader: 'Latest Release',
             ctaText: 'See All',
             routeName: 'latest-release',
-            provider: latestReleasesProvider,
+            // provider: latestReleasesProvider,
           ),
           const SizedBox(height: 20),
           NovelSectionWidget(
             sectionHeader: 'New Novels',
             ctaText: 'See All',
             routeName: 'new-novels',
-            provider: newNovelsProvider,
+            // provider: newNovelsProvider,
           ),
           const SizedBox(height: 20),
           NovelSectionWidget(
             sectionHeader: 'Completed Novels',
             ctaText: 'See All',
             routeName: 'complete-novels',
-            provider: completedNovelsProvider,
+            // provider: completedNovelsProvider,
           ),
           const SizedBox(height: 20),
           NovelSectionWidget(
             sectionHeader: 'Most Popular',
             ctaText: 'See All',
             routeName: 'most-popular',
-            provider: mostPopularNovelsProvider,
+            // provider: mostPopularNovelsProvider,
           ),
         ],
       ),
@@ -368,13 +379,11 @@ class NovelSectionWidget extends ConsumerWidget {
     required this.sectionHeader,
     required this.ctaText,
     required this.routeName,
-    required this.provider,
     super.key,
   });
   final String sectionHeader;
   final String ctaText;
   final String routeName;
-  final StateNotifierProvider<NovelsNotifier, List<NovelItem>> provider;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -392,9 +401,6 @@ class NovelSectionWidget extends ConsumerWidget {
             ),
             TextButton(
               onPressed: () {
-                // GoRouter.of(context).go(
-                //   Uri(path: '/novel-list/$routeName').toString(),
-                // );
                 Navigator.push(
                   context,
                   MaterialPageRoute<void>(
@@ -433,14 +439,11 @@ class NovelSectionWidget extends ConsumerWidget {
                     final novelItem = snapshot.data![index];
                     return InkWell(
                       onTap: () {
-                        // return GoRouter.of(context)
-                        //     .go('/novels/${novelItem.id}');
-
                         Navigator.push(
                           context,
                           MaterialPageRoute<void>(
                             builder: (context) =>
-                                NovelDetailsPage(novelId: novelItem.id),
+                                NovelDetailsPage(novel: novelItem),
                           ),
                         );
                       },
