@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:babel_novel/widgets/error_display_widget.dart';
 import 'package:babel_novel/widgets/error_message_modal.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -13,6 +14,7 @@ import 'package:babel_novel/providers/current_novel_provider.dart';
 import 'package:babel_novel/providers/novel_notifier_provider.dart';
 import 'package:babel_novel/services/novel_service.dart';
 import 'package:babel_novel/utils/theme_colors.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
 class DiscoverTab extends ConsumerStatefulWidget {
   const DiscoverTab({super.key});
@@ -424,7 +426,36 @@ class NovelSectionWidget extends ConsumerWidget {
             future: NovelService.getNovelList(routeName),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Center(child: CircularProgressIndicator());
+                return Skeletonizer(
+                    child: ListView.separated(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: 3,
+                        separatorBuilder: (BuildContext context, int index) =>
+                            const SizedBox(width: 20, height: 20),
+                        itemBuilder: (context, index) {
+                          return SizedBox(
+                            height: MediaQuery.sizeOf(context).height * .4,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Expanded(
+                                    child: Container(
+                                  width: 150,
+                                  height: 200,
+                                  decoration: const BoxDecoration(
+                                    image: DecorationImage(
+                                      fit: BoxFit.cover,
+                                      image: AssetImage(
+                                          'assets/images/loading_img.jpg'),
+                                    ),
+                                  ),
+                                )),
+                                const Text('Title of Novel which'),
+                                const Text('Last Chapter')
+                              ],
+                            ),
+                          );
+                        }));
               } else if (snapshot.hasError) {
                 return ErrorDisplayWidget(
                   message: 'Error: ${snapshot.error.toString()}',
@@ -520,14 +551,17 @@ class NovelItemWidget extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 10),
-          Text(
-            novelItem.title,
-            style: Theme.of(context)
-                .textTheme
-                .bodyMedium
-                ?.copyWith(fontWeight: FontWeight.w600),
-            softWrap: false,
-            overflow: TextOverflow.fade,
+          Skeletonizer(
+            enabled: novelItem.title == null,
+            child: Text(
+              novelItem.title,
+              style: Theme.of(context)
+                  .textTheme
+                  .bodyMedium
+                  ?.copyWith(fontWeight: FontWeight.w600),
+              softWrap: false,
+              overflow: TextOverflow.fade,
+            ),
           ),
           Row(
             children: [
