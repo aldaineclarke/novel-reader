@@ -427,39 +427,41 @@ class NovelSectionWidget extends ConsumerWidget {
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return Skeletonizer(
-                    child: ListView.separated(
-                        scrollDirection: Axis.horizontal,
-                        itemCount: 3,
-                        separatorBuilder: (BuildContext context, int index) =>
-                            const SizedBox(width: 20, height: 20),
-                        itemBuilder: (context, index) {
-                          return SizedBox(
-                            height: MediaQuery.sizeOf(context).height * .4,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Expanded(
-                                    child: Container(
-                                  width: 150,
-                                  height: 200,
-                                  decoration: const BoxDecoration(
-                                    borderRadius: BorderRadius.all(
-                                      Radius.circular(15),
-                                    ),
-                                    image: DecorationImage(
-                                      fit: BoxFit.cover,
-                                      image: AssetImage(
-                                        'assets/images/loading_img.jpg',
-                                      ),
-                                    ),
+                  child: ListView.separated(
+                    scrollDirection: Axis.horizontal,
+                    itemCount: 3,
+                    separatorBuilder: (BuildContext context, int index) =>
+                        const SizedBox(width: 20, height: 20),
+                    itemBuilder: (context, index) {
+                      return SizedBox(
+                        height: MediaQuery.sizeOf(context).height * .4,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Expanded(
+                                child: Container(
+                              width: 150,
+                              height: 200,
+                              decoration: const BoxDecoration(
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(15),
+                                ),
+                                image: DecorationImage(
+                                  fit: BoxFit.cover,
+                                  image: AssetImage(
+                                    'assets/images/loading_img.jpg',
                                   ),
-                                )),
-                                const Text('Title of Novel which'),
-                                const Text('Last Chapter')
-                              ],
-                            ),
-                          );
-                        }));
+                                ),
+                              ),
+                            )),
+                            const Text('Title of Novel which'),
+                            const Text('Last Chapter')
+                          ],
+                        ),
+                      );
+                    },
+                  ),
+                );
               } else if (snapshot.hasError) {
                 return ErrorDisplayWidget(
                   message: 'Error: ${snapshot.error.toString()}',
