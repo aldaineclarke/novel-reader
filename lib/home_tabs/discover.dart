@@ -443,10 +443,14 @@ class NovelSectionWidget extends ConsumerWidget {
                                   width: 150,
                                   height: 200,
                                   decoration: const BoxDecoration(
+                                    borderRadius: BorderRadius.all(
+                                      Radius.circular(15),
+                                    ),
                                     image: DecorationImage(
                                       fit: BoxFit.cover,
                                       image: AssetImage(
-                                          'assets/images/loading_img.jpg'),
+                                        'assets/images/loading_img.jpg',
+                                      ),
                                     ),
                                   ),
                                 )),

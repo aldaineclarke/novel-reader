@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:babel_novel/models/novel_item.dart';
 import 'package:babel_novel/pages/novel_details.dart';
 import 'package:babel_novel/providers/novel_notifier_provider.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
 class NovelListScreen extends ConsumerStatefulWidget {
   const NovelListScreen(
@@ -77,8 +78,10 @@ class _NovelListScreenState extends ConsumerState<NovelListScreen> {
             }
             return false;
           },
-          child: novels.isEmpty
-              ? const Center(child: CircularProgressIndicator())
+          child: novels
+                  .isEmpty // essentially it is or should be impossible to have a empty novel list
+
+              ? skeletonizerWidget()
               : Scrollbar(
                   child: ListView.separated(
                     controller: _scrollController,
@@ -215,6 +218,102 @@ class _NovelListScreenState extends ConsumerState<NovelListScreen> {
                 child: const Icon(Icons.arrow_upward_rounded),
               )
             : null,
+      ),
+    );
+  }
+
+  Widget skeletonizerWidget() {
+    return Skeletonizer(
+      child: ListView.separated(
+        controller: _scrollController,
+        padding: const EdgeInsets.all(20),
+        itemCount: 4,
+        separatorBuilder: (context, index) => const SizedBox(height: 20),
+        itemBuilder: (context, index) {
+          return Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Container(
+                width: 150,
+                height: 200,
+                decoration: const BoxDecoration(
+                  borderRadius: BorderRadius.all(Radius.circular(15)),
+                  image: DecorationImage(
+                    fit: BoxFit.cover,
+                    image: AssetImage('assets/images/loading_img.jpg'),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'This is a test novel content for skeletonizer',
+                      style: Theme.of(context)
+                          .textTheme
+                          .bodyMedium
+                          ?.copyWith(fontWeight: FontWeight.w600),
+                      softWrap: false,
+                      overflow: TextOverflow.fade,
+                      textAlign: TextAlign.start,
+                    ),
+                    Row(
+                      children: [
+                        const Icon(
+                          Icons.timer_outlined,
+                          color: Colors.lime,
+                          size: 18,
+                        ),
+                        const SizedBox(
+                          width: 5,
+                        ),
+                        Expanded(
+                          child: Text(
+                            'novelItem.lastChapter',
+                            style: Theme.of(context).textTheme.bodySmall,
+                            softWrap: false,
+                            overflow: TextOverflow.fade,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 10),
+                    SizedBox(
+                      child: Wrap(
+                        runSpacing: 2,
+                        spacing: 2,
+                        children:
+                            List.generate(5, (index) => 'Genres').map((e) {
+                          return Container(
+                            decoration: const BoxDecoration(
+                              borderRadius: BorderRadius.horizontal(
+                                left: Radius.circular(10),
+                                right: Radius.circular(10),
+                              ),
+                              color: Color.fromARGB(255, 249, 255, 255),
+                            ),
+                            padding: const EdgeInsets.all(5),
+                            child: Text(
+                              e,
+                              style: const TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w500,
+                                color: Color.fromARGB(255, 12, 58, 95),
+                              ),
+                            ),
+                          );
+                        }).toList(),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          );
+        },
       ),
     );
   }
