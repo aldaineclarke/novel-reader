@@ -16,7 +16,6 @@ class NovelsNotifier extends StateNotifier<List<NovelItem>> {
 
   void addNovels(List<NovelItem> newNovelItems) {
     state = [...state, ...newNovelItems];
-    _page++;
   }
 
   Future<void> fetchNovels() async {
@@ -33,7 +32,6 @@ class NovelsNotifier extends StateNotifier<List<NovelItem>> {
       }).toList();
 
       state = [...state, ...newNovelItems];
-      _page++;
     } catch (e) {
       if (kDebugMode) {
         print(e);
