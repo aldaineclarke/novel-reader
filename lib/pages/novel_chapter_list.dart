@@ -62,11 +62,15 @@ class _NovelChapterListState extends ConsumerState<NovelChapterList> {
                   );
                 },
                 body: isOpen[page]
-                    ? showChapterList(lightnovel!.chapters
-                        .map(ChapterListItem.fromJson)
-                        .toList()
-                        .sublist(start,
-                            lightnovel!.chapters.length < end ? null : end))
+                    ? showChapterList(
+                        lightnovel!.chapters
+                            .map(ChapterListItem.fromJson)
+                            .toList()
+                            .sublist(start,
+                                lightnovel!.chapters.length < end ? null : end),
+                        lightnovel.chapters
+                            .map(ChapterListItem.fromJson)
+                            .toList())
                     : const SizedBox(),
                 isExpanded: isOpen[page],
               );
@@ -82,18 +86,22 @@ class _NovelChapterListState extends ConsumerState<NovelChapterList> {
     );
   }
 
-  Widget showChapterList(List<ChapterListItem> chapters) {
+  Widget showChapterList(List<ChapterListItem> subChapterList,
+      List<ChapterListItem> mainChapterList) {
     //fills thee chapterlist provider with the 40 chapters fetched
 
     return Column(
-      children: chapters.map(
+      children: subChapterList.map(
         (chapter) {
           final chapterData = chapter;
           return ListTile(
             onTap: () {
               final novel = ref.read(currentNovelProvider);
+              var chapterIndex =
+                  mainChapterList.indexWhere((item) => item.id == chapter.id);
               final updateNovel = novel!.copyWith(
                 currentChapterId: chapterData.id,
+                chapterCount: chapterIndex + 1,
               );
 
               /// currentNovelProvider is set when the User reads a chapter of a novel..we can change it to when they view the novel details page for simplicity

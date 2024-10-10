@@ -163,6 +163,7 @@ class _NovelViewState extends ConsumerState<NovelView> {
             // Copy with not working  correctly
             final updatedNovel = novel?.copyWith(
                 currentChapterId: currentNovel,
+                chapterCount: currentIndex + 1,
                 currentPage: novel.currentPage + 1);
             novelBox.put('currentNovel', updatedNovel!);
             ref
@@ -177,6 +178,7 @@ class _NovelViewState extends ConsumerState<NovelView> {
           // Copy with not working  correctly
           final updatedNovel = novel?.copyWith(
               currentChapterId: currentNovel,
+              chapterCount: currentIndex + 1,
               currentPage: novel.currentPage + 1);
           novelBox.put('currentNovel', updatedNovel!);
           ref

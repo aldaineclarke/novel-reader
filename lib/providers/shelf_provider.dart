@@ -34,8 +34,10 @@ class ShelfNotifier extends StateNotifier<List<CurrentNovel>> {
     // Check if the novel exists in the shelf
     if (novels.isNotEmpty) {
       // Update the currentChapterId for the first matching novel
-      final updatedNovel =
-          novels.first.copyWith(currentChapterId: novel.currentChapterId);
+      final updatedNovel = novels.first.copyWith(
+        currentChapterId: novel.currentChapterId,
+        chapterCount: novel.chapterCount,
+      );
       // Update the state
       state = [
         for (final n in state)
@@ -71,6 +73,7 @@ class ShelfNotifier extends StateNotifier<List<CurrentNovel>> {
         currentChapterId: novel.currentChapterId,
         chapterList: novel.chapterList,
         currentPage: novel.currentPage,
+        chapterCount: novel.chapterCount,
       );
       // Update the state
       state = [

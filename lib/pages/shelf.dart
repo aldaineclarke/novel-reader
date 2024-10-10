@@ -1,4 +1,5 @@
 import 'package:babel_novel/models/novel_item.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -42,6 +43,9 @@ class _ShelfScreenState extends ConsumerState<ShelfScreen> {
                 final novelItem = shelf[index];
                 return InkWell(
                   onTap: () {
+                    if (kDebugMode) {
+                      print('Item: ${novelItem.toString()}');
+                    }
                     Navigator.push(
                       context,
                       MaterialPageRoute<void>(
@@ -94,77 +98,103 @@ class _ShelfScreenState extends ConsumerState<ShelfScreen> {
                           child: Column(
                             children: [
                               Expanded(
-                                  child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    novelItem.novelTitle,
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .bodyMedium
-                                        ?.copyWith(fontWeight: FontWeight.w600),
-                                    softWrap: false,
-                                    overflow: TextOverflow.fade,
-                                    textAlign: TextAlign.start,
-                                  ),
-                                  Row(
-                                    children: [
-                                      const Icon(
-                                        Icons.timer_outlined,
-                                        color: Colors.lime,
-                                        size: 18,
-                                      ),
-                                      const SizedBox(
-                                        width: 5,
-                                      ),
-                                      Expanded(
-                                        child: Text(
-                                          '${novelItem.chapterCount}',
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .bodySmall,
-                                          softWrap: false,
-                                          overflow: TextOverflow.fade,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  const SizedBox(height: 10),
-                                  Expanded(
-                                    child: ListView(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      novelItem.novelTitle,
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyMedium
+                                          ?.copyWith(
+                                              fontWeight: FontWeight.w600),
+                                      softWrap: false,
+                                      overflow: TextOverflow.fade,
+                                      textAlign: TextAlign.start,
+                                    ),
+                                    Row(
                                       children: [
-                                        Wrap(
-                                          runSpacing: 2,
-                                          spacing: 2,
-                                          children: novelItem.genres.map((e) {
-                                            return Container(
-                                              decoration: const BoxDecoration(
-                                                borderRadius:
-                                                    BorderRadius.horizontal(
-                                                  left: Radius.circular(10),
-                                                  right: Radius.circular(10),
-                                                ),
-                                                color: Color.fromARGB(
-                                                    255, 249, 255, 255),
-                                              ),
-                                              padding: const EdgeInsets.all(5),
-                                              child: Text(
-                                                e,
-                                                style: const TextStyle(
-                                                  fontSize: 12,
-                                                  fontWeight: FontWeight.w500,
-                                                  color: Color.fromARGB(
-                                                      255, 12, 58, 95),
-                                                ),
-                                              ),
-                                            );
-                                          }).toList(),
+                                        const Icon(
+                                          Icons.timer_outlined,
+                                          color: Colors.lime,
+                                          size: 18,
+                                        ),
+                                        const SizedBox(
+                                          width: 5,
+                                        ),
+                                        Expanded(
+                                          child: Text(
+                                            'Completed',
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .bodySmall,
+                                            softWrap: false,
+                                            overflow: TextOverflow.fade,
+                                          ),
                                         ),
                                       ],
                                     ),
-                                  ),
-                                ],
-                              )),
+                                    const SizedBox(height: 10),
+                                    Expanded(
+                                      child: ListView(
+                                        children: [
+                                          Wrap(
+                                            runSpacing: 2,
+                                            spacing: 2,
+                                            children: novelItem.genres.map((e) {
+                                              return Container(
+                                                decoration: const BoxDecoration(
+                                                  borderRadius:
+                                                      BorderRadius.horizontal(
+                                                    left: Radius.circular(10),
+                                                    right: Radius.circular(10),
+                                                  ),
+                                                  color: Color.fromARGB(
+                                                      255, 249, 255, 255),
+                                                ),
+                                                padding:
+                                                    const EdgeInsets.all(5),
+                                                child: Text(
+                                                  e,
+                                                  style: const TextStyle(
+                                                    fontSize: 12,
+                                                    fontWeight: FontWeight.w500,
+                                                    color: Color.fromARGB(
+                                                        255, 12, 58, 95),
+                                                  ),
+                                                ),
+                                              );
+                                            }).toList(),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              Container(
+                                  height: 5,
+                                  clipBehavior: Clip.hardEdge,
+                                  decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(5),
+                                      color: const Color.fromARGB(
+                                          156, 158, 158, 158)),
+                                  width: double.maxFinite,
+                                  // width: double.infinity,
+                                  child: Align(
+                                    alignment: Alignment.centerLeft,
+                                    child: FractionallySizedBox(
+                                      widthFactor: novelItem.chapterCount /
+                                          novelItem.chapterList
+                                              .length, // 20% of the parent's width
+
+                                      child: Container(
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .primary, // Child's color for visualization
+                                      ),
+                                    ),
+                                  )),
                               TextButton(
                                 onPressed: () {
                                   showDialog<void>(

@@ -270,7 +270,8 @@ class _NovelDetailsPageState extends ConsumerState<NovelDetailsPage> {
                     author: novelData.author,
                     description: novelData.description,
                     currentChapterId: firstChapter.id,
-                    chapterCount: novelData.pages ?? 1,
+                    //can call this progress count. I am repurposing this variable
+                    chapterCount: 1,
                     chapterList: chapterList,
                     currentPage: 1,
                   );
@@ -421,7 +422,7 @@ class _NovelDetailsPageState extends ConsumerState<NovelDetailsPage> {
                               child: (novelInShelf == null)
                                   ? const Text('Start Reading')
                                   : Text(
-                                      'Continue Chapter ${regExp.firstMatch(novelInShelf.currentChapterId)?.group(0)}',
+                                      'Continue Chapter ${novelInShelf.chapterCount}',
                                     ),
                             ),
                             TextButton(
