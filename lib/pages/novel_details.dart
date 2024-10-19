@@ -60,7 +60,7 @@ class _NovelDetailsPageState extends ConsumerState<NovelDetailsPage> {
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(15),
                   child: Hero(
-                    tag: 'DetailTag',
+                    tag: 'DetailTag-${widget.novel.id}',
                     child: Image(
                       loadingBuilder: (BuildContext context, Widget child,
                           ImageChunkEvent? loadingProgress) {

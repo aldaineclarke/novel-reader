@@ -134,30 +134,27 @@ class _DiscoverTabState extends ConsumerState<DiscoverTab> {
                             children: [
                               ClipRRect(
                                 borderRadius: BorderRadius.circular(15),
-                                child: Hero(
-                                  tag: 'DetailTag',
-                                  child: Image(
-                                    loadingBuilder: (BuildContext context,
-                                        Widget child,
-                                        ImageChunkEvent? loadingProgress) {
-                                      if (loadingProgress == null) {
-                                        return child;
-                                      }
-                                      return Container(
-                                        decoration: BoxDecoration(
-                                          border:
-                                              Border.all(color: Colors.indigo),
-                                          image: const DecorationImage(
-                                            fit: BoxFit.cover,
-                                            image: AssetImage(
-                                                'assets/images/loading_img.jpg'),
-                                          ),
+                                child: Image(
+                                  loadingBuilder: (BuildContext context,
+                                      Widget child,
+                                      ImageChunkEvent? loadingProgress) {
+                                    if (loadingProgress == null) {
+                                      return child;
+                                    }
+                                    return Container(
+                                      decoration: BoxDecoration(
+                                        border:
+                                            Border.all(color: Colors.indigo),
+                                        image: const DecorationImage(
+                                          fit: BoxFit.cover,
+                                          image: AssetImage(
+                                              'assets/images/loading_img.jpg'),
                                         ),
-                                      );
-                                    },
-                                    image: NetworkImage(novelItem.image),
-                                    fit: BoxFit.cover,
-                                  ),
+                                      ),
+                                    );
+                                  },
+                                  image: NetworkImage(novelItem.image),
+                                  fit: BoxFit.cover,
                                 ),
                               ),
                               const SizedBox(width: 10),
